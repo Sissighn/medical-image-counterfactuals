@@ -1,0 +1,38 @@
+# macOS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local environment files
+.env
+.env.*
+
+# Datasets and generated dataset splits
+data/
+
+# Model checkpoints and weights
+models/
+*.pth
+*.pt
+*.ckpt
+
+# Large/generated visual artifacts
+results/cfproto/**/*.png
+results/cfproto/**/*.jpg
+results/cfproto/**/*.jpeg
+
+# Notebook checkpoints
+.ipynb_checkpoints/
