@@ -256,6 +256,34 @@ def save_comparison(original_pixels, cf_pixels, output_path, title):
     plt.close(fig)
 
 
+def compute_image_debug_stats(original_pixels, cf_pixels):
+    diff = torch.abs(original_pixels - cf_pixels)
+    return {
+        "value_range": "[0, 1]",
+        "difference_formula": "abs(original_image - counterfactual_image)",
+        "normalization_note": (
+            "Images are denormalized from ImageNet mean/std before visualization "
+            "and difference computation."
+        ),
+        "original": {
+            "min": float(original_pixels.min().item()),
+            "max": float(original_pixels.max().item()),
+            "mean": float(original_pixels.mean().item()),
+        },
+        "counterfactual": {
+            "min": float(cf_pixels.min().item()),
+            "max": float(cf_pixels.max().item()),
+            "mean": float(cf_pixels.mean().item()),
+        },
+        "diff": {
+            "min": float(diff.min().item()),
+            "max": float(diff.max().item()),
+            "mean": float(diff.mean().item()),
+            "std": float(diff.std().item()),
+        },
+    }
+
+
 def compute_change_metrics(original_pixels, cf_pixels, threshold=0.03):
     diff = torch.abs(cf_pixels - original_pixels)
     return {
@@ -391,6 +419,27 @@ def main():
         title = f"{classes[original_class]} -> {classes[result['prediction']]}"
         save_comparison(original_pixels, result["image"], output_path, title)
         change_metrics = compute_change_metrics(original_pixels, result["image"])
+        image_debug_stats = compute_image_debug_stats(original_pixels, result["image"])
+
+        print(
+            "  original "
+            f"min={image_debug_stats['original']['min']:.4f} "
+            f"max={image_debug_stats['original']['max']:.4f} "
+            f"mean={image_debug_stats['original']['mean']:.4f}"
+        )
+        print(
+            "  counterfactual "
+            f"min={image_debug_stats['counterfactual']['min']:.4f} "
+            f"max={image_debug_stats['counterfactual']['max']:.4f} "
+            f"mean={image_debug_stats['counterfactual']['mean']:.4f}"
+        )
+        print(
+            "  diff "
+            f"min={image_debug_stats['diff']['min']:.4f} "
+            f"max={image_debug_stats['diff']['max']:.4f} "
+            f"mean={image_debug_stats['diff']['mean']:.4f} "
+            f"std={image_debug_stats['diff']['std']:.4f}"
+        )
 
         record = {
             "sample_index": sample_idx,
@@ -426,6 +475,7 @@ def main():
             "runtime_seconds": result["runtime_seconds"],
             "best_step": result["best_step"],
             "change_metrics": change_metrics,
+            "image_debug_stats": image_debug_stats,
             "image_path": str(output_path),
             "summary_path": str(output_path.with_suffix(".summary.png")),
         }
