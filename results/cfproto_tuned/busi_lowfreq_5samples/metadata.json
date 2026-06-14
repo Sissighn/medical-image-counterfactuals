@@ -1,0 +1,167 @@
+{
+    "method": "PyTorch prototype-guided counterfactual inspired by CFProto",
+    "model_path": "models/busi_resnet18_pretrained.pth",
+    "dataset_path": "data/processed/BUSI",
+    "classes": [
+        "benign",
+        "malignant",
+        "normal"
+    ],
+    "parameters": {
+        "steps": 600,
+        "learning_rate": 0.03,
+        "lambda_l2": 10.0,
+        "lambda_tv": 0.8,
+        "lambda_proto": 0.03,
+        "max_delta": 0.1,
+        "perturbation_resolution": 12,
+        "force_grayscale": true
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "true_class": "benign",
+            "original_prediction": "benign",
+            "target_class": "malignant",
+            "counterfactual_prediction": "malignant",
+            "valid": true,
+            "original_probabilities": [
+                0.9968323111534119,
+                0.002999682677909732,
+                0.00016804154438432306
+            ],
+            "counterfactual_probabilities": [
+                0.007349146530032158,
+                0.9914472103118896,
+                0.0012037091655656695
+            ],
+            "runtime_seconds": 9.762917041778564,
+            "best_step": 600,
+            "change_metrics": {
+                "l1_mean": 0.03392299637198448,
+                "l2_mean": 0.0404721274971962,
+                "linf": 0.09484857320785522,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.5258091688156128
+            },
+            "image_path": "results/cfproto_tuned/busi_lowfreq_5samples/sample_00.png",
+            "summary_path": "results/cfproto_tuned/busi_lowfreq_5samples/sample_00.summary.png"
+        },
+        {
+            "sample_index": 1,
+            "true_class": "benign",
+            "original_prediction": "benign",
+            "target_class": "normal",
+            "counterfactual_prediction": "normal",
+            "valid": true,
+            "original_probabilities": [
+                0.9997206330299377,
+                7.1421054599341e-05,
+                0.00020800784113816917
+            ],
+            "counterfactual_probabilities": [
+                0.36136701703071594,
+                0.01562870293855667,
+                0.6230041980743408
+            ],
+            "runtime_seconds": 9.470762252807617,
+            "best_step": 600,
+            "change_metrics": {
+                "l1_mean": 0.04420924559235573,
+                "l2_mean": 0.0523819774389267,
+                "linf": 0.09964030981063843,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.6296436190605164
+            },
+            "image_path": "results/cfproto_tuned/busi_lowfreq_5samples/sample_01.png",
+            "summary_path": "results/cfproto_tuned/busi_lowfreq_5samples/sample_01.summary.png"
+        },
+        {
+            "sample_index": 2,
+            "true_class": "benign",
+            "original_prediction": "benign",
+            "target_class": "normal",
+            "counterfactual_prediction": "normal",
+            "valid": true,
+            "original_probabilities": [
+                0.998917818069458,
+                0.00022272283968050033,
+                0.000859575520735234
+            ],
+            "counterfactual_probabilities": [
+                0.149961918592453,
+                0.007998672313988209,
+                0.8420394062995911
+            ],
+            "runtime_seconds": 9.464590072631836,
+            "best_step": 600,
+            "change_metrics": {
+                "l1_mean": 0.044775769114494324,
+                "l2_mean": 0.05244062468409538,
+                "linf": 0.0991937518119812,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.6515066623687744
+            },
+            "image_path": "results/cfproto_tuned/busi_lowfreq_5samples/sample_02.png",
+            "summary_path": "results/cfproto_tuned/busi_lowfreq_5samples/sample_02.summary.png"
+        },
+        {
+            "sample_index": 3,
+            "true_class": "benign",
+            "original_prediction": "benign",
+            "target_class": "normal",
+            "counterfactual_prediction": "benign",
+            "valid": false,
+            "original_probabilities": [
+                0.9997790455818176,
+                5.514336589840241e-05,
+                0.00016579707153141499
+            ],
+            "counterfactual_probabilities": [
+                0.7538418769836426,
+                0.01020759530365467,
+                0.23595048487186432
+            ],
+            "runtime_seconds": 9.421487808227539,
+            "best_step": null,
+            "change_metrics": {
+                "l1_mean": 0.04399360343813896,
+                "l2_mean": 0.05272596701979637,
+                "linf": 0.099704310297966,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.6063855290412903
+            },
+            "image_path": "results/cfproto_tuned/busi_lowfreq_5samples/sample_03.png",
+            "summary_path": "results/cfproto_tuned/busi_lowfreq_5samples/sample_03.summary.png"
+        },
+        {
+            "sample_index": 4,
+            "true_class": "benign",
+            "original_prediction": "benign",
+            "target_class": "malignant",
+            "counterfactual_prediction": "malignant",
+            "valid": true,
+            "original_probabilities": [
+                0.9977282881736755,
+                0.0018344564596191049,
+                0.00043724870192818344
+            ],
+            "counterfactual_probabilities": [
+                0.004327596630901098,
+                0.9956068396568298,
+                6.559831672348082e-05
+            ],
+            "runtime_seconds": 9.502489805221558,
+            "best_step": 600,
+            "change_metrics": {
+                "l1_mean": 0.033289723098278046,
+                "l2_mean": 0.04055096209049225,
+                "linf": 0.09495767951011658,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.4985451102256775
+            },
+            "image_path": "results/cfproto_tuned/busi_lowfreq_5samples/sample_04.png",
+            "summary_path": "results/cfproto_tuned/busi_lowfreq_5samples/sample_04.summary.png"
+        }
+    ]
+}
