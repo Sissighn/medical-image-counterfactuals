@@ -1,0 +1,119 @@
+{
+    "method": "PyTorch prototype-guided counterfactual inspired by CFProto",
+    "model_path": "models/busi_resnet18_pretrained.pth",
+    "dataset_path": "data/processed/BUSI",
+    "classes": [
+        "benign",
+        "malignant",
+        "normal"
+    ],
+    "parameters": {
+        "steps": 20,
+        "learning_rate": 0.03,
+        "lambda_l2": 10.0,
+        "lambda_tv": 0.8,
+        "lambda_proto": 0.03,
+        "max_delta": 0.1,
+        "perturbation_resolution": 12,
+        "target_strategy": "second_best",
+        "force_grayscale": true
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.9968323111534119,
+            "target_class_index": 1,
+            "target_class": "malignant",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "malignant",
+            "counterfactual_confidence": 0.534091591835022,
+            "valid_counterfactual": true,
+            "true_class": "benign",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "malignant",
+                    "valid": true,
+                    "counterfactual_prediction": "malignant",
+                    "best_step": 20
+                }
+            ],
+            "original_probabilities": [
+                0.9968323111534119,
+                0.002999682677909732,
+                0.00016804154438432306
+            ],
+            "counterfactual_probabilities": [
+                0.46443888545036316,
+                0.534091591835022,
+                0.001469494542106986
+            ],
+            "runtime_seconds": 0.57492995262146,
+            "best_step": 20,
+            "change_metrics": {
+                "l1_mean": 0.02418709360063076,
+                "l2_mean": 0.02801932953298092,
+                "linf": 0.052053868770599365,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.37573739886283875
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.027450978755950928,
+                    "max": 1.0,
+                    "mean": 0.5191391706466675
+                },
+                "counterfactual": {
+                    "min": 0.01366855576634407,
+                    "max": 1.0,
+                    "mean": 0.5269749164581299
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.052053868770599365,
+                    "mean": 0.02418709360063076,
+                    "std": 0.014144564978778362
+                }
+            },
+            "image_path": "results/cfproto_tuned/plot_title_smoke/sample_00.png",
+            "summary_path": "results/cfproto_tuned/plot_title_smoke/sample_00.summary.png"
+        }
+    ],
+    "aggregate_metrics": {
+        "num_samples": 1,
+        "valid_count": 1,
+        "validity": 1.0,
+        "l1_mean": {
+            "mean": 0.02418709360063076,
+            "min": 0.02418709360063076,
+            "max": 0.02418709360063076
+        },
+        "l2_mean": {
+            "mean": 0.02801932953298092,
+            "min": 0.02801932953298092,
+            "max": 0.02801932953298092
+        },
+        "linf": {
+            "mean": 0.052053868770599365,
+            "min": 0.052053868770599365,
+            "max": 0.052053868770599365
+        },
+        "changed_pixel_fraction": {
+            "mean": 0.37573739886283875,
+            "min": 0.37573739886283875,
+            "max": 0.37573739886283875
+        },
+        "runtime_seconds": {
+            "mean": 0.57492995262146,
+            "min": 0.57492995262146,
+            "max": 0.57492995262146
+        }
+    }
+}

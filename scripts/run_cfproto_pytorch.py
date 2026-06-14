@@ -238,20 +238,46 @@ def generate_counterfactual(
     }
 
 
-def save_comparison(original_pixels, cf_pixels, output_path, title):
+def save_comparison(
+    original_pixels,
+    cf_pixels,
+    output_path,
+    true_label,
+    original_prediction,
+    original_confidence,
+    target_class,
+    counterfactual_prediction,
+    counterfactual_confidence,
+    valid_counterfactual,
+):
     diff = torch.abs(cf_pixels - original_pixels)
     grid = torch.cat([original_pixels, cf_pixels, diff / diff.max().clamp_min(1e-8)], dim=0)
     utils.save_image(grid, output_path, nrow=3)
 
     figure_path = output_path.with_suffix(".summary.png")
-    fig, axes = plt.subplots(1, 3, figsize=(9, 3))
-    labels = ["Original", "Counterfactual", "Absolute difference"]
-    for axis, image, label in zip(axes, grid, labels):
+    fig, axes = plt.subplots(1, 3, figsize=(10, 4.8))
+    labels = ["Original", "Counterfactual"]
+    for axis, image, label in zip(axes[:2], [original_pixels[0], cf_pixels[0]], labels):
         axis.imshow(image.detach().cpu().permute(1, 2, 0))
         axis.set_title(label)
         axis.axis("off")
-    fig.suptitle(title)
-    fig.tight_layout()
+
+    diff_image = diff[0].mean(dim=0).detach().cpu()
+    diff_plot = axes[2].imshow(diff_image, cmap="gray", vmin=0.0, vmax=1.0)
+    axes[2].set_title("Absolute difference")
+    axes[2].axis("off")
+    fig.colorbar(diff_plot, ax=axes[2], fraction=0.046, pad=0.04)
+
+    valid_text = "yes" if valid_counterfactual else "no"
+    title = (
+        f"True label: {true_label}\n"
+        f"Target: {original_prediction} -> {target_class}\n"
+        f"Prediction: {original_prediction} ({original_confidence:.2f}) -> "
+        f"{counterfactual_prediction} ({counterfactual_confidence:.2f})\n"
+        f"Valid CF: {valid_text}"
+    )
+    fig.suptitle(title, y=0.98, fontsize=11)
+    fig.tight_layout(rect=[0, 0, 1, 0.78])
     fig.savefig(figure_path, dpi=150)
     plt.close(fig)
 
@@ -416,8 +442,21 @@ def main():
 
         original_pixels = denormalize(image).detach()
         output_path = output_dir / f"sample_{sample_idx:02d}.png"
-        title = f"{classes[original_class]} -> {classes[result['prediction']]}"
-        save_comparison(original_pixels, result["image"], output_path, title)
+        original_confidence = float(sample["probabilities"][original_class])
+        counterfactual_confidence = float(result["probabilities"][result["prediction"]])
+        valid_counterfactual = result["prediction"] == target_class
+        save_comparison(
+            original_pixels=original_pixels,
+            cf_pixels=result["image"],
+            output_path=output_path,
+            true_label=classes[sample["label"]],
+            original_prediction=classes[original_class],
+            original_confidence=original_confidence,
+            target_class=classes[target_class],
+            counterfactual_prediction=classes[result["prediction"]],
+            counterfactual_confidence=counterfactual_confidence,
+            valid_counterfactual=valid_counterfactual,
+        )
         change_metrics = compute_change_metrics(original_pixels, result["image"])
         image_debug_stats = compute_image_debug_stats(original_pixels, result["image"])
 
@@ -447,18 +486,16 @@ def main():
             "true_label": classes[sample["label"]],
             "original_prediction_index": original_class,
             "original_prediction": classes[original_class],
-            "original_confidence": float(sample["probabilities"][original_class]),
+            "original_confidence": original_confidence,
             "target_class_index": target_class,
             "target_class": classes[target_class],
             "counterfactual_prediction_index": result["prediction"],
             "counterfactual_prediction": classes[result["prediction"]],
-            "counterfactual_confidence": float(
-                result["probabilities"][result["prediction"]]
-            ),
-            "valid_counterfactual": result["prediction"] == target_class,
+            "counterfactual_confidence": counterfactual_confidence,
+            "valid_counterfactual": valid_counterfactual,
             # Backward-compatible aliases for earlier result files.
             "true_class": classes[sample["label"]],
-            "valid": result["prediction"] == target_class,
+            "valid": valid_counterfactual,
             "attempted_targets": [
                 {
                     "target_class": attempt["target_class"],
