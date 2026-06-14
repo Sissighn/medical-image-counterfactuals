@@ -30,6 +30,8 @@ models/
 *.ckpt
 
 # Large/generated visual artifacts
+results/cfproto/
+results/cfproto_tuned/
 results/cfproto*/**/*.png
 results/cfproto*/**/*.jpg
 results/cfproto*/**/*.jpeg
