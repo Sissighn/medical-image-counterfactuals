@@ -120,6 +120,17 @@ def select_target_class(probabilities, original_class):
     return int((original_class + 1) % probabilities.shape[0])
 
 
+def select_target_classes(probabilities, original_class, strategy):
+    ranked = torch.argsort(probabilities, descending=True).tolist()
+    candidates = [class_idx for class_idx in ranked if class_idx != original_class]
+
+    if strategy == "all":
+        return candidates
+    if not candidates:
+        return [int((original_class + 1) % probabilities.shape[0])]
+    return [candidates[0]]
+
+
 def generate_counterfactual(
     model,
     image,
@@ -133,10 +144,19 @@ def generate_counterfactual(
     lambda_proto,
     max_delta,
     force_grayscale,
+    perturbation_resolution,
 ):
     original_pixels = denormalize(image).detach()
-    cf_pixels = original_pixels.clone().detach().requires_grad_(True)
-    optimizer = torch.optim.Adam([cf_pixels], lr=learning_rate)
+    channels = 1 if force_grayscale else 3
+    perturbation = torch.zeros(
+        1,
+        channels,
+        perturbation_resolution,
+        perturbation_resolution,
+        device=image.device,
+        requires_grad=True,
+    )
+    optimizer = torch.optim.Adam([perturbation], lr=learning_rate)
     target = torch.tensor([target_class], device=image.device)
 
     best = None
@@ -145,13 +165,23 @@ def generate_counterfactual(
     for step in range(steps):
         optimizer.zero_grad()
 
+        smooth_delta = F.interpolate(
+            torch.tanh(perturbation),
+            size=original_pixels.shape[-2:],
+            mode="bilinear",
+            align_corners=False,
+        )
+        if force_grayscale:
+            smooth_delta = smooth_delta.repeat(1, 3, 1, 1)
+
+        cf_pixels = (original_pixels + max_delta * smooth_delta).clamp(0.0, 1.0)
         cf_normalized = normalize(cf_pixels)
         logits, features = model(cf_normalized)
         probabilities = F.softmax(logits, dim=1)
 
         class_loss = F.cross_entropy(logits, target)
         l2_loss = F.mse_loss(cf_pixels, original_pixels)
-        tv_loss = total_variation(cf_pixels)
+        tv_loss = total_variation(smooth_delta)
         proto_loss = F.mse_loss(features[0], target_prototype)
 
         loss = (
@@ -164,13 +194,6 @@ def generate_counterfactual(
         optimizer.step()
 
         with torch.no_grad():
-            lower_bound = (original_pixels - max_delta).clamp(0.0, 1.0)
-            upper_bound = (original_pixels + max_delta).clamp(0.0, 1.0)
-            cf_pixels.copy_(torch.max(torch.min(cf_pixels, upper_bound), lower_bound))
-            if force_grayscale:
-                grayscale = cf_pixels.mean(dim=1, keepdim=True)
-                cf_pixels.copy_(grayscale.repeat(1, 3, 1, 1))
-            cf_pixels.clamp_(0.0, 1.0)
             prediction = int(torch.argmax(probabilities, dim=1).item())
             target_probability = float(probabilities[0, target_class].item())
 
@@ -187,7 +210,19 @@ def generate_counterfactual(
     runtime = time.time() - start_time
 
     with torch.no_grad():
-        final_pixels = best["image"] if best is not None else cf_pixels.detach().clone()
+        if best is not None:
+            final_pixels = best["image"]
+        else:
+            smooth_delta = F.interpolate(
+                torch.tanh(perturbation),
+                size=original_pixels.shape[-2:],
+                mode="bilinear",
+                align_corners=False,
+            )
+            if force_grayscale:
+                smooth_delta = smooth_delta.repeat(1, 3, 1, 1)
+            final_pixels = (original_pixels + max_delta * smooth_delta).clamp(0.0, 1.0)
+
         final_normalized = normalize(final_pixels)
         final_logits, _ = model(final_normalized)
         final_probabilities = F.softmax(final_logits, dim=1)
@@ -232,6 +267,36 @@ def compute_change_metrics(original_pixels, cf_pixels, threshold=0.03):
     }
 
 
+def compute_aggregate_metrics(records):
+    valid_count = sum(record["valid"] for record in records)
+    aggregate = {
+        "num_samples": len(records),
+        "valid_count": valid_count,
+        "validity": valid_count / len(records) if records else 0.0,
+    }
+
+    if not records:
+        return aggregate
+
+    metric_names = ["l1_mean", "l2_mean", "linf", "changed_pixel_fraction"]
+    for metric_name in metric_names:
+        values = [record["change_metrics"][metric_name] for record in records]
+        aggregate[metric_name] = {
+            "mean": sum(values) / len(values),
+            "min": min(values),
+            "max": max(values),
+        }
+
+    runtimes = [record["runtime_seconds"] for record in records]
+    aggregate["runtime_seconds"] = {
+        "mean": sum(runtimes) / len(runtimes),
+        "min": min(runtimes),
+        "max": max(runtimes),
+    }
+
+    return aggregate
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_path", type=str, required=True)
@@ -244,6 +309,8 @@ def main():
     parser.add_argument("--lambda_tv", type=float, default=0.2)
     parser.add_argument("--lambda_proto", type=float, default=0.05)
     parser.add_argument("--max_delta", type=float, default=0.12)
+    parser.add_argument("--perturbation_resolution", type=int, default=28)
+    parser.add_argument("--target_strategy", choices=["second_best", "all"], default="all")
     parser.add_argument("--allow_color_changes", action="store_true")
     parser.add_argument("--batch_size", type=int, default=16)
     args = parser.parse_args()
@@ -277,25 +344,47 @@ def main():
         image = sample["image"]
         original_class = sample["prediction"]
         original_probabilities = torch.tensor(sample["probabilities"])
-        target_class = select_target_class(original_probabilities, original_class)
+        target_candidates = select_target_classes(
+            original_probabilities, original_class, args.target_strategy
+        )
+        attempted_targets = []
+        best_attempt = None
 
-        print(
-            f"Sample {sample_idx}: {classes[original_class]} -> {classes[target_class]}"
-        )
-        result = generate_counterfactual(
-            model=model,
-            image=image,
-            original_class=original_class,
-            target_class=target_class,
-            target_prototype=prototypes[target_class],
-            steps=args.steps,
-            learning_rate=args.learning_rate,
-            lambda_l2=args.lambda_l2,
-            lambda_tv=args.lambda_tv,
-            lambda_proto=args.lambda_proto,
-            max_delta=args.max_delta,
-            force_grayscale=not args.allow_color_changes,
-        )
+        for target_class in target_candidates:
+            print(
+                f"Sample {sample_idx}: {classes[original_class]} -> {classes[target_class]}"
+            )
+            result = generate_counterfactual(
+                model=model,
+                image=image,
+                original_class=original_class,
+                target_class=target_class,
+                target_prototype=prototypes[target_class],
+                steps=args.steps,
+                learning_rate=args.learning_rate,
+                lambda_l2=args.lambda_l2,
+                lambda_tv=args.lambda_tv,
+                lambda_proto=args.lambda_proto,
+                max_delta=args.max_delta,
+                force_grayscale=not args.allow_color_changes,
+                perturbation_resolution=args.perturbation_resolution,
+            )
+            attempt = {
+                "target_class_index": target_class,
+                "target_class": classes[target_class],
+                "result": result,
+            }
+            attempted_targets.append(attempt)
+
+            if result["valid"]:
+                best_attempt = attempt
+                break
+
+            if best_attempt is None:
+                best_attempt = attempt
+
+        target_class = best_attempt["target_class_index"]
+        result = best_attempt["result"]
 
         original_pixels = denormalize(image).detach()
         output_path = output_dir / f"sample_{sample_idx:02d}.png"
@@ -310,6 +399,17 @@ def main():
             "target_class": classes[target_class],
             "counterfactual_prediction": classes[result["prediction"]],
             "valid": result["valid"],
+            "attempted_targets": [
+                {
+                    "target_class": attempt["target_class"],
+                    "valid": attempt["result"]["valid"],
+                    "counterfactual_prediction": classes[
+                        attempt["result"]["prediction"]
+                    ],
+                    "best_step": attempt["result"]["best_step"],
+                }
+                for attempt in attempted_targets
+            ],
             "original_probabilities": sample["probabilities"],
             "counterfactual_probabilities": result["probabilities"],
             "runtime_seconds": result["runtime_seconds"],
@@ -332,9 +432,12 @@ def main():
             "lambda_tv": args.lambda_tv,
             "lambda_proto": args.lambda_proto,
             "max_delta": args.max_delta,
+            "perturbation_resolution": args.perturbation_resolution,
+            "target_strategy": args.target_strategy,
             "force_grayscale": not args.allow_color_changes,
         },
         "records": records,
+        "aggregate_metrics": compute_aggregate_metrics(records),
     }
 
     metadata_path = output_dir / "metadata.json"
