@@ -1,0 +1,36 @@
+{
+    "model_path": "models/busi_resnet18_pretrained.pth",
+    "dataset_path": "data/processed/BUSI",
+    "classes": [
+        "benign",
+        "malignant",
+        "normal"
+    ],
+    "class_to_idx": {
+        "benign": 0,
+        "malignant": 1,
+        "normal": 2
+    },
+    "accuracy": 0.8389830508474576,
+    "f1_weighted": 0.8364830088623213,
+    "precision_weighted": 0.8372790223008549,
+    "recall_weighted": 0.8389830508474576,
+    "classification_report": "              precision    recall  f1-score   support\n\n      benign       0.87      0.88      0.87        66\n   malignant       0.79      0.69      0.73        32\n      normal       0.83      0.95      0.88        20\n\n    accuracy                           0.84       118\n   macro avg       0.83      0.84      0.83       118\nweighted avg       0.84      0.84      0.84       118\n",
+    "confusion_matrix": [
+        [
+            58,
+            5,
+            3
+        ],
+        [
+            9,
+            22,
+            1
+        ],
+        [
+            0,
+            1,
+            19
+        ]
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "method": "PyTorch prototype-guided counterfactual inspired by CFProto",
+    "model_path": "models/pneumonia_resnet18_pretrained.pth",
+    "dataset_path": "data/processed/Pneumonia",
+    "classes": [
+        "NORMAL",
+        "PNEUMONIA"
+    ],
+    "parameters": {
+        "steps": 60,
+        "learning_rate": 0.03,
+        "lambda_l2": 0.2,
+        "lambda_tv": 0.01,
+        "lambda_proto": 0.1
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "true_class": "NORMAL",
+            "original_prediction": "NORMAL",
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction": "PNEUMONIA",
+            "valid": true,
+            "original_probabilities": [
+                0.6365812420845032,
+                0.3634187579154968
+            ],
+            "counterfactual_probabilities": [
+                0.006292842328548431,
+                0.9937072396278381
+            ],
+            "runtime_seconds": 1.3060929775238037,
+            "best_step": 60,
+            "image_path": "results/cfproto/pneumonia_smoke/sample_00.png",
+            "summary_path": "results/cfproto/pneumonia_smoke/sample_00.summary.png"
+        }
+    ]
+}
