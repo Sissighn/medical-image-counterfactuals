@@ -268,7 +268,7 @@ def compute_change_metrics(original_pixels, cf_pixels, threshold=0.03):
 
 
 def compute_aggregate_metrics(records):
-    valid_count = sum(record["valid"] for record in records)
+    valid_count = sum(record["valid_counterfactual"] for record in records)
     aggregate = {
         "num_samples": len(records),
         "valid_count": valid_count,
@@ -394,11 +394,22 @@ def main():
 
         record = {
             "sample_index": sample_idx,
-            "true_class": classes[sample["label"]],
+            "true_label_index": sample["label"],
+            "true_label": classes[sample["label"]],
+            "original_prediction_index": original_class,
             "original_prediction": classes[original_class],
+            "original_confidence": float(sample["probabilities"][original_class]),
+            "target_class_index": target_class,
             "target_class": classes[target_class],
+            "counterfactual_prediction_index": result["prediction"],
             "counterfactual_prediction": classes[result["prediction"]],
-            "valid": result["valid"],
+            "counterfactual_confidence": float(
+                result["probabilities"][result["prediction"]]
+            ),
+            "valid_counterfactual": result["prediction"] == target_class,
+            # Backward-compatible aliases for earlier result files.
+            "true_class": classes[sample["label"]],
+            "valid": result["prediction"] == target_class,
             "attempted_targets": [
                 {
                     "target_class": attempt["target_class"],
@@ -444,7 +455,7 @@ def main():
     with open(metadata_path, "w") as f:
         json.dump(metadata, f, indent=4)
 
-    valid_count = sum(record["valid"] for record in records)
+    valid_count = sum(record["valid_counterfactual"] for record in records)
     print(f"Saved {len(records)} counterfactual attempts to {output_dir}")
     print(f"Valid counterfactuals: {valid_count}/{len(records)}")
 
