@@ -238,7 +238,11 @@ def generate_counterfactual(
     }
 
 
-def save_comparison(
+def image_to_grayscale(image):
+    return image.mean(dim=0).detach().cpu()
+
+
+def save_counterfactual_visualization(
     original_pixels,
     cf_pixels,
     output_path,
@@ -255,18 +259,34 @@ def save_comparison(
     utils.save_image(grid, output_path, nrow=3)
 
     figure_path = output_path.with_suffix(".summary.png")
-    fig, axes = plt.subplots(1, 3, figsize=(10, 4.8))
+    fig, axes = plt.subplots(1, 4, figsize=(13, 4.8))
+
+    original_gray = image_to_grayscale(original_pixels[0])
+    cf_gray = image_to_grayscale(cf_pixels[0])
+    diff_image = image_to_grayscale(diff[0])
+
     labels = ["Original", "Counterfactual"]
-    for axis, image, label in zip(axes[:2], [original_pixels[0], cf_pixels[0]], labels):
-        axis.imshow(image.detach().cpu().permute(1, 2, 0))
+    for axis, image, label in zip(axes[:2], [original_gray, cf_gray], labels):
+        axis.imshow(image, cmap="gray", vmin=0.0, vmax=1.0)
         axis.set_title(label)
         axis.axis("off")
 
-    diff_image = diff[0].mean(dim=0).detach().cpu()
     diff_plot = axes[2].imshow(diff_image, cmap="gray", vmin=0.0, vmax=1.0)
-    axes[2].set_title("Absolute difference")
+    axes[2].set_title("Difference")
     axes[2].axis("off")
     fig.colorbar(diff_plot, ax=axes[2], fraction=0.046, pad=0.04)
+
+    axes[3].imshow(original_gray, cmap="gray", vmin=0.0, vmax=1.0)
+    overlay_plot = axes[3].imshow(
+        diff_image,
+        cmap="hot",
+        vmin=0.0,
+        vmax=1.0,
+        alpha=0.4,
+    )
+    axes[3].set_title("Overlay")
+    axes[3].axis("off")
+    fig.colorbar(overlay_plot, ax=axes[3], fraction=0.046, pad=0.04)
 
     valid_text = "yes" if valid_counterfactual else "no"
     title = (
@@ -280,6 +300,10 @@ def save_comparison(
     fig.tight_layout(rect=[0, 0, 1, 0.78])
     fig.savefig(figure_path, dpi=150)
     plt.close(fig)
+
+
+def save_comparison(*args, **kwargs):
+    save_counterfactual_visualization(*args, **kwargs)
 
 
 def compute_image_debug_stats(original_pixels, cf_pixels):
