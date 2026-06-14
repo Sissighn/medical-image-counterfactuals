@@ -1,0 +1,383 @@
+{
+    "method": "PyTorch prototype-guided counterfactual inspired by CFProto",
+    "model_path": "models/busi_resnet18_pretrained.pth",
+    "dataset_path": "data/processed/BUSI",
+    "classes": [
+        "benign",
+        "malignant",
+        "normal"
+    ],
+    "parameters": {
+        "steps": 800,
+        "learning_rate": 0.04,
+        "lambda_l2": 7.0,
+        "lambda_tv": 10.0,
+        "lambda_proto": 0.03,
+        "max_delta": 0.15,
+        "perturbation_resolution": 12,
+        "target_strategy": "all",
+        "force_grayscale": true
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.9968323111534119,
+            "target_class_index": 1,
+            "target_class": "malignant",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "malignant",
+            "counterfactual_confidence": 0.9726462364196777,
+            "valid_counterfactual": true,
+            "true_class": "benign",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "malignant",
+                    "valid": true,
+                    "counterfactual_prediction": "malignant",
+                    "best_step": 800
+                }
+            ],
+            "original_probabilities": [
+                0.9968323111534119,
+                0.002999682677909732,
+                0.00016804154438432306
+            ],
+            "counterfactual_probabilities": [
+                0.0259866826236248,
+                0.9726462364196777,
+                0.0013670690823346376
+            ],
+            "runtime_seconds": 12.900398969650269,
+            "best_step": 800,
+            "change_metrics": {
+                "l1_mean": 0.03685734421014786,
+                "l2_mean": 0.04410960525274277,
+                "linf": 0.14564818143844604,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.6055484414100647
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.027450978755950928,
+                    "max": 1.0,
+                    "mean": 0.5191391706466675
+                },
+                "counterfactual": {
+                    "min": 0.012562282383441925,
+                    "max": 1.0,
+                    "mean": 0.5517328381538391
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.14564818143844604,
+                    "mean": 0.03685734421014786,
+                    "std": 0.024232160300016403
+                }
+            },
+            "image_path": "results/cfproto_assessment/busi_5samples/sample_00.png",
+            "summary_path": "results/cfproto_assessment/busi_5samples/sample_00.summary.png"
+        },
+        {
+            "sample_index": 1,
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.9997206330299377,
+            "target_class_index": 2,
+            "target_class": "normal",
+            "counterfactual_prediction_index": 2,
+            "counterfactual_prediction": "normal",
+            "counterfactual_confidence": 0.8983101844787598,
+            "valid_counterfactual": true,
+            "true_class": "benign",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "normal",
+                    "valid": true,
+                    "counterfactual_prediction": "normal",
+                    "best_step": 800
+                }
+            ],
+            "original_probabilities": [
+                0.9997206330299377,
+                7.1421054599341e-05,
+                0.00020800784113816917
+            ],
+            "counterfactual_probabilities": [
+                0.09556479752063751,
+                0.006125072482973337,
+                0.8983101844787598
+            ],
+            "runtime_seconds": 12.781316041946411,
+            "best_step": 800,
+            "change_metrics": {
+                "l1_mean": 0.050644125789403915,
+                "l2_mean": 0.06308185309171677,
+                "linf": 0.14871637523174286,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.6394292116165161
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.003921538591384888,
+                    "max": 1.0,
+                    "mean": 0.35338664054870605
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 1.0,
+                    "mean": 0.3585149347782135
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.14871637523174286,
+                    "mean": 0.050644125789403915,
+                    "std": 0.03760986775159836
+                }
+            },
+            "image_path": "results/cfproto_assessment/busi_5samples/sample_01.png",
+            "summary_path": "results/cfproto_assessment/busi_5samples/sample_01.summary.png"
+        },
+        {
+            "sample_index": 2,
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.998917818069458,
+            "target_class_index": 2,
+            "target_class": "normal",
+            "counterfactual_prediction_index": 2,
+            "counterfactual_prediction": "normal",
+            "counterfactual_confidence": 0.9309074282646179,
+            "valid_counterfactual": true,
+            "true_class": "benign",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "normal",
+                    "valid": true,
+                    "counterfactual_prediction": "normal",
+                    "best_step": 800
+                }
+            ],
+            "original_probabilities": [
+                0.998917818069458,
+                0.00022272283968050033,
+                0.000859575520735234
+            ],
+            "counterfactual_probabilities": [
+                0.06316312402486801,
+                0.005929397884756327,
+                0.9309074282646179
+            ],
+            "runtime_seconds": 12.738984823226929,
+            "best_step": 800,
+            "change_metrics": {
+                "l1_mean": 0.045348018407821655,
+                "l2_mean": 0.05556189641356468,
+                "linf": 0.1472887098789215,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.6333506107330322
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.003921538591384888,
+                    "max": 0.988235354423523,
+                    "mean": 0.3916734755039215
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 1.0,
+                    "mean": 0.3899158239364624
+                },
+                "diff": {
+                    "min": 3.3527612686157227e-07,
+                    "max": 0.1472887098789215,
+                    "mean": 0.045348018407821655,
+                    "std": 0.03210433945059776
+                }
+            },
+            "image_path": "results/cfproto_assessment/busi_5samples/sample_02.png",
+            "summary_path": "results/cfproto_assessment/busi_5samples/sample_02.summary.png"
+        },
+        {
+            "sample_index": 3,
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.9997790455818176,
+            "target_class_index": 2,
+            "target_class": "normal",
+            "counterfactual_prediction_index": 2,
+            "counterfactual_prediction": "normal",
+            "counterfactual_confidence": 0.7423545718193054,
+            "valid_counterfactual": true,
+            "true_class": "benign",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "normal",
+                    "valid": true,
+                    "counterfactual_prediction": "normal",
+                    "best_step": 800
+                }
+            ],
+            "original_probabilities": [
+                0.9997790455818176,
+                5.514336589840241e-05,
+                0.00016579707153141499
+            ],
+            "counterfactual_probabilities": [
+                0.2464590072631836,
+                0.01118646189570427,
+                0.7423545718193054
+            ],
+            "runtime_seconds": 12.722401857376099,
+            "best_step": 800,
+            "change_metrics": {
+                "l1_mean": 0.054024700075387955,
+                "l2_mean": 0.06627695262432098,
+                "linf": 0.14895185828208923,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.6581233739852905
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0313725471496582,
+                    "max": 1.0,
+                    "mean": 0.3984611928462982
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 1.0,
+                    "mean": 0.3940138518810272
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.14895185828208923,
+                    "mean": 0.054024700075387955,
+                    "std": 0.03839239478111267
+                }
+            },
+            "image_path": "results/cfproto_assessment/busi_5samples/sample_03.png",
+            "summary_path": "results/cfproto_assessment/busi_5samples/sample_03.summary.png"
+        },
+        {
+            "sample_index": 4,
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.9977282881736755,
+            "target_class_index": 1,
+            "target_class": "malignant",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "malignant",
+            "counterfactual_confidence": 0.9835736155509949,
+            "valid_counterfactual": true,
+            "true_class": "benign",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "malignant",
+                    "valid": true,
+                    "counterfactual_prediction": "malignant",
+                    "best_step": 790
+                }
+            ],
+            "original_probabilities": [
+                0.9977282881736755,
+                0.0018344564596191049,
+                0.00043724870192818344
+            ],
+            "counterfactual_probabilities": [
+                0.016308946534991264,
+                0.9835736155509949,
+                0.00011750522389775142
+            ],
+            "runtime_seconds": 12.69247317314148,
+            "best_step": 790,
+            "change_metrics": {
+                "l1_mean": 0.028711985796689987,
+                "l2_mean": 0.04042552039027214,
+                "linf": 0.13892731070518494,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.3660714328289032
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.8588235378265381,
+                    "mean": 0.21127106249332428
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9310085773468018,
+                    "mean": 0.23492008447647095
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.13892731070518494,
+                    "mean": 0.028711985796689987,
+                    "std": 0.02845786139369011
+                }
+            },
+            "image_path": "results/cfproto_assessment/busi_5samples/sample_04.png",
+            "summary_path": "results/cfproto_assessment/busi_5samples/sample_04.summary.png"
+        }
+    ],
+    "aggregate_metrics": {
+        "num_samples": 5,
+        "valid_count": 5,
+        "validity": 1.0,
+        "l1_mean": {
+            "mean": 0.04311723485589027,
+            "min": 0.028711985796689987,
+            "max": 0.054024700075387955
+        },
+        "l2_mean": {
+            "mean": 0.05389116555452347,
+            "min": 0.04042552039027214,
+            "max": 0.06627695262432098
+        },
+        "linf": {
+            "mean": 0.1459064871072769,
+            "min": 0.13892731070518494,
+            "max": 0.14895185828208923
+        },
+        "changed_pixel_fraction": {
+            "mean": 0.5805046141147614,
+            "min": 0.3660714328289032,
+            "max": 0.6581233739852905
+        },
+        "runtime_seconds": {
+            "mean": 12.767114973068237,
+            "min": 12.69247317314148,
+            "max": 12.900398969650269
+        }
+    }
+}
