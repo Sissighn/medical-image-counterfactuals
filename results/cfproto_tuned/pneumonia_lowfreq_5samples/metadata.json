@@ -1,0 +1,156 @@
+{
+    "method": "PyTorch prototype-guided counterfactual inspired by CFProto",
+    "model_path": "models/pneumonia_resnet18_pretrained.pth",
+    "dataset_path": "data/processed/Pneumonia",
+    "classes": [
+        "NORMAL",
+        "PNEUMONIA"
+    ],
+    "parameters": {
+        "steps": 600,
+        "learning_rate": 0.03,
+        "lambda_l2": 10.0,
+        "lambda_tv": 0.8,
+        "lambda_proto": 0.03,
+        "max_delta": 0.1,
+        "perturbation_resolution": 12,
+        "force_grayscale": true
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "true_class": "NORMAL",
+            "original_prediction": "NORMAL",
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction": "PNEUMONIA",
+            "valid": true,
+            "original_probabilities": [
+                0.6365812420845032,
+                0.3634187579154968
+            ],
+            "counterfactual_probabilities": [
+                0.003270782297477126,
+                0.9967292547225952
+            ],
+            "runtime_seconds": 9.699803829193115,
+            "best_step": 600,
+            "change_metrics": {
+                "l1_mean": 0.028361372649669647,
+                "l2_mean": 0.035390786826610565,
+                "linf": 0.0953977108001709,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.40166613459587097
+            },
+            "image_path": "results/cfproto_tuned/pneumonia_lowfreq_5samples/sample_00.png",
+            "summary_path": "results/cfproto_tuned/pneumonia_lowfreq_5samples/sample_00.summary.png"
+        },
+        {
+            "sample_index": 1,
+            "true_class": "NORMAL",
+            "original_prediction": "NORMAL",
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction": "PNEUMONIA",
+            "valid": true,
+            "original_probabilities": [
+                0.8753835558891296,
+                0.12461640685796738
+            ],
+            "counterfactual_probabilities": [
+                0.004529275000095367,
+                0.9954707622528076
+            ],
+            "runtime_seconds": 9.547064781188965,
+            "best_step": 600,
+            "change_metrics": {
+                "l1_mean": 0.029824664816260338,
+                "l2_mean": 0.036665886640548706,
+                "linf": 0.09378120303153992,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.4379185140132904
+            },
+            "image_path": "results/cfproto_tuned/pneumonia_lowfreq_5samples/sample_01.png",
+            "summary_path": "results/cfproto_tuned/pneumonia_lowfreq_5samples/sample_01.summary.png"
+        },
+        {
+            "sample_index": 2,
+            "true_class": "NORMAL",
+            "original_prediction": "NORMAL",
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction": "PNEUMONIA",
+            "valid": true,
+            "original_probabilities": [
+                0.7860183119773865,
+                0.2139817476272583
+            ],
+            "counterfactual_probabilities": [
+                0.00850763451308012,
+                0.9914923310279846
+            ],
+            "runtime_seconds": 9.539839029312134,
+            "best_step": 600,
+            "change_metrics": {
+                "l1_mean": 0.035338155925273895,
+                "l2_mean": 0.04269140586256981,
+                "linf": 0.09700065851211548,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.5149274468421936
+            },
+            "image_path": "results/cfproto_tuned/pneumonia_lowfreq_5samples/sample_02.png",
+            "summary_path": "results/cfproto_tuned/pneumonia_lowfreq_5samples/sample_02.summary.png"
+        },
+        {
+            "sample_index": 3,
+            "true_class": "NORMAL",
+            "original_prediction": "NORMAL",
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction": "PNEUMONIA",
+            "valid": true,
+            "original_probabilities": [
+                0.5729365348815918,
+                0.4270634949207306
+            ],
+            "counterfactual_probabilities": [
+                0.0012252022279426455,
+                0.9987748265266418
+            ],
+            "runtime_seconds": 9.537262916564941,
+            "best_step": 600,
+            "change_metrics": {
+                "l1_mean": 0.01879887282848358,
+                "l2_mean": 0.02479378506541252,
+                "linf": 0.09029635787010193,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.22024473547935486
+            },
+            "image_path": "results/cfproto_tuned/pneumonia_lowfreq_5samples/sample_03.png",
+            "summary_path": "results/cfproto_tuned/pneumonia_lowfreq_5samples/sample_03.summary.png"
+        },
+        {
+            "sample_index": 4,
+            "true_class": "NORMAL",
+            "original_prediction": "NORMAL",
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction": "PNEUMONIA",
+            "valid": true,
+            "original_probabilities": [
+                0.835712194442749,
+                0.16428779065608978
+            ],
+            "counterfactual_probabilities": [
+                0.006944173946976662,
+                0.9930558800697327
+            ],
+            "runtime_seconds": 9.525965929031372,
+            "best_step": 600,
+            "change_metrics": {
+                "l1_mean": 0.03581523150205612,
+                "l2_mean": 0.043695759028196335,
+                "linf": 0.09709697961807251,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.5087292790412903
+            },
+            "image_path": "results/cfproto_tuned/pneumonia_lowfreq_5samples/sample_04.png",
+            "summary_path": "results/cfproto_tuned/pneumonia_lowfreq_5samples/sample_04.summary.png"
+        }
+    ]
+}
