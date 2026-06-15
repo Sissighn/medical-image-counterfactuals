@@ -137,6 +137,39 @@ Mean runtime: 0.97s
 Border exclusion: 0.10
 ```
 
+## 20-Sample Evaluation
+
+After the initial smoke tests, SEDC-T was evaluated on 20 correctly classified samples per dataset.
+
+BUSI:
+
+```text
+Output: results/sedc_t/busi_20samples_max12
+Samples: 20
+Validity: 19/20
+Mean changed pixel fraction: 0.1169
+Mean changed segments: 4.85
+Mean runtime: 2.69s
+```
+
+Pneumonia:
+
+```text
+Output: results/sedc_t/pneumonia_20samples_max12
+Samples: 20
+Validity: 17/20
+Mean changed pixel fraction: 0.1115
+Mean changed segments: 6.85
+Mean runtime: 1.60s
+Border exclusion: 0.10
+```
+
+The full comparison with CFProto is documented in:
+
+```text
+results/method_comparison.md
+```
+
 ## Current Interpretation
 
 Compared with the CFProto-inspired method, SEDC-T produces more localized and easier-to-read explanations. The selected regions are visible directly in the overlay plot.
