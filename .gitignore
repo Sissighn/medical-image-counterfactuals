@@ -35,6 +35,10 @@ results/cfproto_tuned/
 results/cfproto*/**/*.png
 results/cfproto*/**/*.jpg
 results/cfproto*/**/*.jpeg
+results/sedc_t/**/*.png
+results/sedc_t/**/*.jpg
+results/sedc_t/**/*.jpeg
+results/sedc_t/*smoke/
 
 # Notebook checkpoints
 .ipynb_checkpoints/
