@@ -3,3 +3,4 @@ torchvision
 scikit-learn
 pillow
 matplotlib
+scikit-image
