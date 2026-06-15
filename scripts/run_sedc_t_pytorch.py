@@ -138,29 +138,80 @@ def replace_segments(image_pixels, replacement_pixels, segments, selected_segmen
     return image_pixels * (1.0 - mask) + replacement_pixels * mask
 
 
-def get_allowed_segments(segments, border_fraction):
-    all_segments = set(int(segment_id) for segment_id in torch.unique(torch.as_tensor(segments)))
-    if border_fraction <= 0:
-        return all_segments
+def compute_segment_pixel_fraction(segments, selected_segments):
+    if not selected_segments:
+        return 0.0
 
+    segments_tensor = torch.as_tensor(segments)
+    segment_mask = torch.zeros(segments.shape, dtype=torch.bool)
+    for segment_id in selected_segments:
+        segment_mask |= segments_tensor == segment_id
+
+    return float(segment_mask.float().mean().item())
+
+
+def create_roi_mask(shape, roi_mode):
+    height, width = shape
+    mask = torch.zeros(height, width, dtype=torch.bool)
+
+    if roi_mode == "none":
+        mask[:, :] = True
+        return mask
+
+    if roi_mode == "lung_fields":
+        y_min = int(height * 0.15)
+        y_max = int(height * 0.88)
+        left_x_min = int(width * 0.08)
+        left_x_max = int(width * 0.47)
+        right_x_min = int(width * 0.53)
+        right_x_max = int(width * 0.92)
+
+        mask[y_min:y_max, left_x_min:left_x_max] = True
+        mask[y_min:y_max, right_x_min:right_x_max] = True
+        return mask
+
+    if roi_mode == "central_chest":
+        y_min = int(height * 0.10)
+        y_max = int(height * 0.90)
+        x_min = int(width * 0.08)
+        x_max = int(width * 0.92)
+
+        mask[y_min:y_max, x_min:x_max] = True
+        return mask
+
+    raise ValueError(f"Unsupported ROI mode: {roi_mode}")
+
+
+def get_allowed_segments(segments, border_fraction, roi_mode, roi_min_overlap):
+    all_segments = set(int(segment_id) for segment_id in torch.unique(torch.as_tensor(segments)))
     height, width = segments.shape
     min_y = int(height * border_fraction)
     max_y = int(height * (1.0 - border_fraction))
     min_x = int(width * border_fraction)
     max_x = int(width * (1.0 - border_fraction))
+    segments_tensor = torch.as_tensor(segments)
+    roi_mask = create_roi_mask(segments.shape, roi_mode)
 
     allowed = set()
     for segment_id in all_segments:
-        ys, xs = torch.where(torch.as_tensor(segments) == segment_id)
-        if (
+        segment_mask = segments_tensor == segment_id
+        ys, xs = torch.where(segment_mask)
+
+        inside_border = (
             int(ys.min()) >= min_y
             and int(ys.max()) < max_y
             and int(xs.min()) >= min_x
             and int(xs.max()) < max_x
-        ):
+        )
+        if not inside_border:
+            continue
+
+        roi_overlap = float((segment_mask & roi_mask).float().sum().item())
+        roi_overlap /= float(segment_mask.float().sum().item())
+        if roi_overlap >= roi_min_overlap:
             allowed.add(segment_id)
 
-    return allowed
+    return allowed, roi_mask
 
 
 def generate_sedc_t_counterfactual(
@@ -183,6 +234,7 @@ def generate_sedc_t_counterfactual(
 
     for step in range(max_segments):
         best_candidate = None
+        valid_candidates = []
 
         for segment_id in sorted(available_segments):
             candidate_segments = selected_segments + [segment_id]
@@ -199,13 +251,28 @@ def generate_sedc_t_counterfactual(
                 "probabilities": probabilities,
                 "target_probability": target_probability,
                 "pixels": candidate_pixels,
+                "changed_pixel_fraction": compute_segment_pixel_fraction(
+                    segments, candidate_segments
+                ),
             }
+
+            if prediction == target_class:
+                valid_candidates.append(candidate)
 
             if (
                 best_candidate is None
                 or candidate["target_probability"] > best_candidate["target_probability"]
             ):
                 best_candidate = candidate
+
+        if valid_candidates:
+            best_candidate = sorted(
+                valid_candidates,
+                key=lambda item: (
+                    item["changed_pixel_fraction"],
+                    -item["target_probability"],
+                ),
+            )[0]
 
         selected_segments = best_candidate["segments"]
         available_segments.remove(best_candidate["segment_id"])
@@ -373,6 +440,18 @@ def main():
     parser.add_argument("--replacement_mode", choices=["blur", "mean"], default="blur")
     parser.add_argument("--blur_kernel", type=int, default=31)
     parser.add_argument("--exclude_border_fraction", type=float, default=0.0)
+    parser.add_argument(
+        "--roi_mode",
+        choices=["none", "central_chest", "lung_fields"],
+        default="none",
+        help="Restrict candidate segments to a simple geometric region of interest.",
+    )
+    parser.add_argument(
+        "--roi_min_overlap",
+        type=float,
+        default=0.50,
+        help="Minimum fraction of a segment that must overlap the ROI to be selectable.",
+    )
     parser.add_argument("--batch_size", type=int, default=16)
     args = parser.parse_args()
 
@@ -402,7 +481,12 @@ def main():
             original_pixels, args.replacement_mode, args.blur_kernel
         )
         segments = create_segments(original_pixels, args.n_segments, args.compactness)
-        allowed_segments = get_allowed_segments(segments, args.exclude_border_fraction)
+        allowed_segments, roi_mask = get_allowed_segments(
+            segments,
+            args.exclude_border_fraction,
+            args.roi_mode,
+            args.roi_min_overlap,
+        )
 
         original_class = sample["prediction"]
         original_confidence = float(sample["probabilities"][original_class])
@@ -495,6 +579,11 @@ def main():
             "runtime_seconds": result["runtime_seconds"],
             "search_history": result["search_history"],
             "change_metrics": change_metrics,
+            "candidate_segments": {
+                "allowed": len(allowed_segments),
+                "total": int(torch.unique(torch.as_tensor(segments)).numel()),
+                "roi_pixel_fraction": float(roi_mask.float().mean().item()),
+            },
             "image_path": str(output_path),
             "summary_path": str(output_path.with_suffix(".summary.png")),
         }
@@ -512,6 +601,8 @@ def main():
             "replacement_mode": args.replacement_mode,
             "blur_kernel": args.blur_kernel,
             "exclude_border_fraction": args.exclude_border_fraction,
+            "roi_mode": args.roi_mode,
+            "roi_min_overlap": args.roi_min_overlap,
             "target_strategy": args.target_strategy,
         },
         "records": records,
