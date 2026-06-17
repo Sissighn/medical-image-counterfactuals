@@ -170,6 +170,55 @@ The full comparison with CFProto is documented in:
 results/method_comparison.md
 ```
 
+## Improved SEDC-T Run
+
+The SEDC-T implementation was improved in two small ways:
+
+```text
+1. Minimality-aware candidate selection:
+   If several candidate replacements already produce the target class, the method now
+   chooses the candidate with the smallest changed pixel fraction.
+
+2. Optional ROI restriction:
+   Candidate segments can be restricted to a simple geometric region of interest.
+   For Pneumonia, the new lung_fields ROI restricts the search toward left and right
+   lung-field regions.
+```
+
+The new CLI options are:
+
+```text
+--roi_mode none|central_chest|lung_fields
+--roi_min_overlap 0.35
+```
+
+Improved BUSI run:
+
+```text
+Output: results/sedc_t/busi_minimal_20samples
+Samples: 20
+Validity: 19/20
+Mean changed pixel fraction: 0.1073
+Mean changed segments: 4.85
+Mean runtime: 2.19s
+```
+
+Improved Pneumonia run:
+
+```text
+Output: results/sedc_t/pneumonia_lung_roi_minimal_20samples
+Samples: 20
+Validity: 17/20
+Mean changed pixel fraction: 0.1085
+Mean changed segments: 6.90
+Mean runtime: 1.02s
+ROI: lung_fields
+ROI minimum overlap: 0.35
+Border exclusion: 0.10
+```
+
+The improved version keeps the same validity as before, but the average changed pixel fraction is slightly lower. The Pneumonia results are still not fully medically convincing, so a proper lung segmentation mask remains an important future improvement.
+
 ## Current Interpretation
 
 Compared with the CFProto-inspired method, SEDC-T produces more localized and easier-to-read explanations. The selected regions are visible directly in the overlay plot.
