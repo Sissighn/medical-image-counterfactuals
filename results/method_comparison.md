@@ -38,6 +38,19 @@ Pneumonia:
 exclude_border_fraction=0.10
 ```
 
+Improved SEDC-T settings:
+
+```text
+Candidate selection:
+If several candidate segment replacements already reach the target class, choose the
+candidate with the smallest changed pixel fraction.
+
+Pneumonia:
+roi_mode=lung_fields
+roi_min_overlap=0.35
+exclude_border_fraction=0.10
+```
+
 ## Quantitative Results
 
 | Method | Dataset | Validity | Mean L1 | Mean L2 | Mean changed pixel fraction | Mean runtime |
@@ -46,13 +59,17 @@ exclude_border_fraction=0.10
 | CFProto | Pneumonia | 1.00 | 0.0382 | 0.0458 | 0.5228 | 10.44s |
 | SEDC-T | BUSI | 0.95 | 0.0145 | 0.0508 | 0.1169 | 2.69s |
 | SEDC-T | Pneumonia | 0.85 | 0.0071 | 0.0242 | 0.1115 | 1.60s |
+| SEDC-T improved | BUSI | 0.95 | 0.0133 | 0.0483 | 0.1073 | 2.19s |
+| SEDC-T improved | Pneumonia | 0.85 | 0.0070 | 0.0244 | 0.1085 | 1.02s |
 
 Additional SEDC-T sparsity:
 
 | Dataset | Mean changed segments | Mean changed segment fraction |
 | --- | ---: | ---: |
-| BUSI | 4.85 | 0.0794 |
-| Pneumonia | 6.85 | 0.0958 |
+| BUSI SEDC-T | 4.85 | 0.0794 |
+| Pneumonia SEDC-T | 6.85 | 0.0958 |
+| BUSI SEDC-T improved | 4.85 | 0.0794 |
+| Pneumonia SEDC-T improved | 6.90 | 0.0965 |
 
 ## Interpretation
 
@@ -63,6 +80,8 @@ SEDC-T achieved slightly lower validity, especially on Pneumonia, but produced m
 For BUSI, SEDC-T often selects lesion-adjacent regions, which is useful for qualitative interpretation.
 
 For Pneumonia, excluding border segments was important. Without this constraint, SEDC-T could select non-lung border regions. With border exclusion, the selected regions moved into the lung fields, making the results more meaningful.
+
+The improved SEDC-T version keeps the same validity as the previous SEDC-T run but slightly reduces the changed pixel fraction and runtime. The improvement is useful, but it does not fully solve the medical plausibility problem for Pneumonia: some selected segments can still overlap broad anatomical structures instead of clean disease-specific regions. A real lung segmentation mask would be the next major improvement.
 
 ## Current Conclusion
 
@@ -81,3 +100,13 @@ Strength: localized, sparse, faster, visually easier to interpret
 Weakness: validity is not perfect and segment replacement creates artificial occlusions
 Best role: main interpretable region-based method so far
 ```
+
+## Selected Examples
+
+The most useful SEDC-T examples for report and presentation are documented in:
+
+```text
+results/sedc_t_selected_examples.md
+```
+
+The selected BUSI examples are the strongest qualitative results. The Pneumonia examples should be presented more carefully because some selected regions are not clearly disease-specific and may reflect broader anatomical or model-bias effects.
