@@ -1,0 +1,147 @@
+{
+    "dvce_repo": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs",
+    "python": "3.11.14 (main, Oct  9 2025, 16:16:55) [Clang 17.0.0 (clang-1700.3.19.1)]",
+    "compatibility_patches": [
+        "np.float -> float",
+        "np.int -> int",
+        "torchvision.models.utils.load_state_dict_from_url -> torch.hub.load_state_dict_from_url",
+        "CLIP.clip -> installed openai clip package when available"
+    ],
+    "diffusion_checkpoint": {
+        "path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+        "exists": true
+    },
+    "imports": [
+        {
+            "module": "torch",
+            "ok": true,
+            "version": "2.12.1",
+            "error": null
+        },
+        {
+            "module": "torchvision",
+            "ok": true,
+            "version": "0.27.1",
+            "error": null
+        },
+        {
+            "module": "numpy",
+            "ok": true,
+            "version": "1.26.4",
+            "error": null
+        },
+        {
+            "module": "scipy",
+            "ok": true,
+            "version": "1.10.1",
+            "error": null
+        },
+        {
+            "module": "yaml",
+            "ok": true,
+            "version": "6.0.3",
+            "error": null
+        },
+        {
+            "module": "lpips",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "blobfile",
+            "ok": true,
+            "version": "3.2.0",
+            "error": null
+        },
+        {
+            "module": "timm",
+            "ok": true,
+            "version": "1.0.27",
+            "error": null
+        },
+        {
+            "module": "kornia",
+            "ok": true,
+            "version": "0.8.3",
+            "error": null
+        },
+        {
+            "module": "robustness",
+            "ok": true,
+            "version": "1.2.1.post2",
+            "error": null
+        },
+        {
+            "module": "robustbench",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "perceptual_advex",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "advex_uar",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "clip",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "configs",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "utils_svces.config",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "blended_diffusion.guided_diffusion.guided_diffusion.script_util",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "blended_diffusion.optimization.arguments",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "blended_diffusion.optimization.dff_attack",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "blended_diffusion.optimization",
+            "ok": true,
+            "version": "",
+            "error": null
+        },
+        {
+            "module": "blended_diffusion.optimization.image_editor",
+            "ok": false,
+            "version": "",
+            "error": "ModuleNotFoundError: No module named 'guided_diffusion.guided_diffusion'"
+        }
+    ],
+    "all_core_imports_ok": true,
+    "notes": [
+        "image_editor is not required for the first DiffusionAttack import path.",
+        "Full generation still requires the OpenAI 256x256 diffusion checkpoint."
+    ]
+}
