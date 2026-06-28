@@ -1,0 +1,34 @@
+# Optional DVCE feasibility dependencies.
+# Use a separate environment for DVCE experiments; do not mix this blindly into
+# the main project environment.
+#
+# The original DVCE repository targets Python 3.8, PyTorch 1.9.0 and CUDA 10.2.
+# On local Mac/MPS, full DVCE generation may still fail or be too slow.
+
+PyYAML
+blobfile
+lpips
+timm
+kornia
+pytorch-msssim
+tensorboard
+matplotlib
+scikit-image
+pandas
+seaborn
+tqdm
+opencv-python
+robustness
+cox
+advex-uar
+perceptual-advex
+torchdiffeq
+geotorch
+gdown
+
+# RobustBench is required by the original DVCE setup for some ImageNet models.
+# Install separately if needed:
+# pip install git+https://github.com/RobustBench/robustbench.git
+#
+# OpenAI CLIP is required by some blended-diffusion paths:
+# pip install git+https://github.com/openai/CLIP.git
