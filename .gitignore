@@ -13,6 +13,7 @@ __pycache__/
 
 # Virtual environments
 .venv/
+.venv-*/
 venv/
 env/
 
@@ -28,6 +29,10 @@ models/
 *.pth
 *.pt
 *.ckpt
+checkpoints/
+
+# External method repositories used for local experiments
+external/
 
 # Large/generated visual artifacts
 results/cfproto/
@@ -39,6 +44,9 @@ results/sedc_t/**/*.png
 results/sedc_t/**/*.jpg
 results/sedc_t/**/*.jpeg
 results/sedc_t/*smoke/
+results/dvce_feasibility/**/*.png
+results/dvce_feasibility/**/*.jpg
+results/dvce_feasibility/**/*.jpeg
 
 # Notebook checkpoints
 .ipynb_checkpoints/
