@@ -1,0 +1,97 @@
+{
+    "purpose": "DVCE medical adapter prototype smoke test",
+    "status": "steps_1_to_3_completed",
+    "python": "3.11.14 (main, Oct  9 2025, 16:16:55) [Clang 17.0.0 (clang-1700.3.19.1)]",
+    "device": "mps",
+    "dvce_repo": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs",
+    "dvce_checkpoint": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+    "runner_settings": {
+        "timestep_respacing": "10",
+        "skip_timesteps": 8,
+        "model_output_size": 256,
+        "batch_size": 16
+    },
+    "classifier_adapter": {
+        "model_path": "models/pneumonia_resnet18_pretrained.pth",
+        "dataset_path": "data/processed/Pneumonia",
+        "classes": [
+            "NORMAL",
+            "PNEUMONIA"
+        ],
+        "true_label_index": 0,
+        "true_label": "NORMAL",
+        "original_prediction_index": 0,
+        "original_prediction": "NORMAL",
+        "original_confidence": 0.6365812420845032,
+        "target_class_index": 1,
+        "target_class": "PNEUMONIA",
+        "target_initial_confidence": 0.3634187579154968,
+        "input_01_stats": {
+            "shape": [
+                1,
+                3,
+                224,
+                224
+            ],
+            "min": 0.047058820724487305,
+            "max": 0.9529411792755127,
+            "mean": 0.5138252973556519,
+            "std": 0.2218317836523056
+        },
+        "input_256_stats": {
+            "shape": [
+                1,
+                3,
+                256,
+                256
+            ],
+            "min": 0.04852940887212753,
+            "max": 0.9455575942993164,
+            "mean": 0.5138214230537415,
+            "std": 0.22115056216716766
+        },
+        "sample_preview_path": "results/dvce_feasibility/pneumonia_medical_prototype_smoke/dvce_medical_input_256.png"
+    },
+    "adapter_forward_check": {
+        "logits_shape": [
+            1,
+            2
+        ],
+        "prediction_index": 0,
+        "confidence": 0.5635339021682739,
+        "probabilities": [
+            0.5635339021682739,
+            0.43646612763404846
+        ]
+    },
+    "classifier_guidance_gradient_check": {
+        "target_loss": 0.82904452085495,
+        "gradient_available": true,
+        "gradient_stats": {
+            "shape": [
+                1,
+                3,
+                256,
+                256
+            ],
+            "min": -0.6398410797119141,
+            "max": 0.5465206503868103,
+            "mean": 3.809128611464985e-05,
+            "std": 0.03651632368564606
+        },
+        "has_nonzero_gradient": true
+    },
+    "dvce_core_initialization": {
+        "ok": true,
+        "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+        "checkpoint_exists": true,
+        "model_output_size": 256,
+        "timestep_respacing": "10",
+        "diffusion_num_timesteps": 10,
+        "model_parameter_count": 552814086,
+        "loaded_on_device": "cpu",
+        "elapsed_seconds": 2.305,
+        "note": "This initializes the DVCE/OpenAI diffusion backbone only. No denoising loop or counterfactual image is generated in this step."
+    },
+    "next_step_after_success": "Run a single targeted DVCE generation attempt and save original, generated image, difference map, prediction metadata, and validity."
+}
