@@ -7,9 +7,11 @@ This comparison summarizes the first quantitative comparison between:
 ```text
 CFProto-inspired prototype-guided optimization
 SEDC-T-inspired targeted segment replacement
+DVCE medical single-image feasibility prototype
 ```
 
-Both methods were tested on the pretrained ResNet18 baselines for BUSI and Pneumonia.
+CFProto and SEDC-T were tested on 20 correctly classified test samples per dataset.
+DVCE has currently been tested as a single-image generative feasibility prototype.
 
 ## Evaluation Setup
 
@@ -110,3 +112,27 @@ results/sedc_t_selected_examples.md
 ```
 
 The selected BUSI examples are the strongest qualitative results. The Pneumonia examples should be presented more carefully because some selected regions are not clearly disease-specific and may reflect broader anatomical or model-bias effects.
+
+## DVCE Feasibility Status
+
+DVCE was added as the first generative counterfactual method. It is not yet a
+full 20-sample quantitative comparison, but the first single-image generation
+step works.
+
+Current DVCE results:
+
+| Dataset | Target | Valid CF | Counterfactual confidence | Mean absolute difference | Runtime |
+| --- | --- | --- | ---: | ---: | ---: |
+| BUSI | benign -> malignant | yes | 0.4770 | 0.1149 | 16.845s |
+| Pneumonia | NORMAL -> PNEUMONIA | yes | 1.0000 | 0.0979 | 18.722s |
+
+The DVCE candidates are model-valid, but they still show visible high-frequency
+noise and color artifacts. Therefore, DVCE is currently best described as a
+successful feasibility-level generative method, not yet as a fully optimized
+medical explanation method.
+
+Detailed DVCE setup and results are documented in:
+
+```text
+results/dvce_feasibility.md
+```
