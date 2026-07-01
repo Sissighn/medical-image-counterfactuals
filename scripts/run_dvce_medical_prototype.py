@@ -137,6 +137,38 @@ def choose_correct_sample(model, test_loader, device):
     raise RuntimeError("No correctly classified test sample found.")
 
 
+def choose_correct_samples(model, test_loader, device, num_samples):
+    samples = []
+    dataset_index = 0
+    with torch.no_grad():
+        for images, labels in test_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+            logits = model(images)
+            probabilities = F.softmax(logits, dim=1)
+            predictions = torch.argmax(probabilities, dim=1)
+
+            for idx in range(images.shape[0]):
+                if predictions[idx] == labels[idx]:
+                    samples.append(
+                        {
+                            "sample_index": len(samples),
+                            "dataset_index": dataset_index + idx,
+                            "image_normalized": images[idx : idx + 1].detach(),
+                            "true_label_index": int(labels[idx].item()),
+                            "prediction_index": int(predictions[idx].item()),
+                            "probabilities": probabilities[idx].detach().cpu().tolist(),
+                        }
+                    )
+                    if len(samples) >= num_samples:
+                        return samples
+            dataset_index += images.shape[0]
+
+    if not samples:
+        raise RuntimeError("No correctly classified test sample found.")
+    return samples
+
+
 def select_target_class(probabilities, original_class):
     ranked_classes = torch.argsort(torch.tensor(probabilities), descending=True).tolist()
     for class_index in ranked_classes:
@@ -466,6 +498,185 @@ def save_preview(image_01, output_path):
     utils.save_image(resized, output_path)
 
 
+def mean_or_none(values):
+    values = [value for value in values if value is not None]
+    if not values:
+        return None
+    return float(sum(values) / len(values))
+
+
+def summarize_generation_records(records):
+    successful_records = [record for record in records if record.get("ok")]
+    valid_records = [
+        record
+        for record in successful_records
+        if record.get("valid_counterfactual") is True
+    ]
+    return {
+        "num_samples": len(records),
+        "successful_generations": len(successful_records),
+        "failed_generations": len(records) - len(successful_records),
+        "valid_count": len(valid_records),
+        "generation_success_rate": len(successful_records) / len(records) if records else 0.0,
+        "validity": len(valid_records) / len(records) if records else 0.0,
+        "validity_among_successful_generations": (
+            len(valid_records) / len(successful_records) if successful_records else 0.0
+        ),
+        "mean_counterfactual_confidence": mean_or_none(
+            [record.get("counterfactual_confidence") for record in successful_records]
+        ),
+        "mean_runtime_seconds": mean_or_none(
+            [record.get("runtime_seconds") for record in successful_records]
+        ),
+        "mean_absolute_difference": mean_or_none(
+            [record.get("mean_absolute_difference") for record in successful_records]
+        ),
+        "mean_changed_pixels_threshold_0_05": mean_or_none(
+            [record.get("changed_pixels_threshold_0_05") for record in successful_records]
+        ),
+    }
+
+
+def run_generation_for_sample(
+    sample,
+    sample_output_dir,
+    repo_path,
+    adapter,
+    classes,
+    device,
+    args,
+):
+    original_class = sample["prediction_index"]
+    target_class = select_target_class(sample["probabilities"], original_class)
+    image_01 = denormalize(sample["image_normalized"]).to(device)
+    image_256 = F.interpolate(
+        image_01,
+        size=(args.model_output_size, args.model_output_size),
+        mode="bilinear",
+        align_corners=False,
+    )
+
+    sample_output_dir.mkdir(parents=True, exist_ok=True)
+    preview_path = sample_output_dir / "dvce_medical_input_256.png"
+    save_preview(image_01.detach().cpu(), preview_path)
+
+    adapter_forward = run_adapter_forward(adapter, image_256)
+    gradient_check = run_classifier_guidance_gradient_check(
+        adapter, image_256, target_class
+    )
+
+    record_base = {
+        "sample_index": sample["sample_index"],
+        "dataset_index": sample["dataset_index"],
+        "true_label_index": sample["true_label_index"],
+        "true_label": classes[sample["true_label_index"]],
+        "original_prediction_index": original_class,
+        "original_prediction": classes[original_class],
+        "original_confidence_before_resize": float(sample["probabilities"][original_class]),
+        "target_class_index": target_class,
+        "target_class": classes[target_class],
+        "target_initial_confidence_before_resize": float(sample["probabilities"][target_class]),
+        "adapter_forward_check": adapter_forward,
+        "classifier_guidance_gradient_check": gradient_check,
+        "input_01_stats": tensor_stats(image_01),
+        "input_256_stats": tensor_stats(image_256),
+        "sample_preview_path": str(preview_path),
+    }
+
+    try:
+        counterfactual_01, generation_settings = run_single_dvce_generation(
+            repo_path=repo_path,
+            adapter=adapter,
+            original_image_01=image_01,
+            target_class=target_class,
+            device=device,
+            timestep_respacing=args.timestep_respacing,
+            skip_timesteps=args.skip_timesteps,
+            model_output_size=args.model_output_size,
+            classifier_guidance_scale=args.classifier_guidance_scale,
+            similarity_guidance_scale=args.similarity_guidance_scale,
+            use_ddim=args.use_ddim,
+            use_fp16=args.diffusion_fp16,
+            seed=args.seed + sample["sample_index"],
+        )
+        original_256 = F.interpolate(
+            image_01,
+            size=(args.model_output_size, args.model_output_size),
+            mode="bilinear",
+            align_corners=False,
+        )
+        counterfactual_prediction = predict_with_adapter(
+            adapter, counterfactual_01.to(device), classes
+        )
+        original_prediction = predict_with_adapter(adapter, original_256.to(device), classes)
+        diff, difference_metadata = compute_difference_stats(
+            original_256.detach().cpu(), counterfactual_01.detach().cpu()
+        )
+
+        counterfactual_path = sample_output_dir / "dvce_counterfactual_candidate.png"
+        diff_path = sample_output_dir / "dvce_absolute_difference.png"
+        visualization_path = sample_output_dir / "dvce_counterfactual_visualization.png"
+        utils.save_image(counterfactual_01.detach().cpu(), counterfactual_path)
+        utils.save_image(diff.detach().cpu(), diff_path)
+
+        valid_counterfactual = (
+            counterfactual_prediction["prediction_index"] == target_class
+        )
+        visualization_title = (
+            f"Target: {classes[original_class]} -> {classes[target_class]}\n"
+            f"Prediction: {original_prediction['prediction']} "
+            f"({original_prediction['confidence']:.2f}) -> "
+            f"{counterfactual_prediction['prediction']} "
+            f"({counterfactual_prediction['confidence']:.2f})\n"
+            f"Valid CF: {'yes' if valid_counterfactual else 'no'}"
+        )
+        save_generation_visualization(
+            original_256.detach().cpu(),
+            counterfactual_01.detach().cpu(),
+            diff,
+            visualization_path,
+            visualization_title,
+        )
+
+        record = {
+            **record_base,
+            "ok": True,
+            "error": None,
+            **generation_settings,
+            "original_prediction_index": original_prediction["prediction_index"],
+            "original_prediction": original_prediction["prediction"],
+            "original_confidence": original_prediction["confidence"],
+            "target_class_index": target_class,
+            "target_class": classes[target_class],
+            "counterfactual_prediction_index": counterfactual_prediction[
+                "prediction_index"
+            ],
+            "counterfactual_prediction": counterfactual_prediction["prediction"],
+            "counterfactual_confidence": counterfactual_prediction["confidence"],
+            "valid_counterfactual": valid_counterfactual,
+            "original_probabilities": original_prediction["probabilities"],
+            "counterfactual_probabilities": counterfactual_prediction[
+                "probabilities"
+            ],
+            "counterfactual_path": str(counterfactual_path),
+            "difference_path": str(diff_path),
+            "visualization_path": str(visualization_path),
+            **difference_metadata,
+        }
+    except Exception as error:
+        record = {
+            **record_base,
+            "ok": False,
+            "error": f"{type(error).__name__}: {error}",
+            "valid_counterfactual": False,
+        }
+
+    with open(sample_output_dir / "metadata.json", "w") as f:
+        json.dump(record, f, indent=4)
+
+    return record
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dvce_repo", type=str, default="external/DVCEs")
@@ -484,6 +695,7 @@ def main():
     parser.add_argument("--use_ddim", action="store_true")
     parser.add_argument("--diffusion_fp16", action="store_true")
     parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument("--num_generation_samples", type=int, default=1)
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
@@ -528,6 +740,75 @@ def main():
             timestep_respacing=args.timestep_respacing,
             model_output_size=args.model_output_size,
         )
+
+    if args.run_generation and args.num_generation_samples > 1:
+        samples = choose_correct_samples(
+            model=model,
+            test_loader=data["test_loader"],
+            device=device,
+            num_samples=args.num_generation_samples,
+        )
+        records = []
+        for current_sample in samples:
+            sample_output_dir = output_dir / f"sample_{current_sample['sample_index']:02d}"
+            print(
+                "Running DVCE sample "
+                f"{current_sample['sample_index'] + 1}/{len(samples)} "
+                f"(dataset index {current_sample['dataset_index']})..."
+            )
+            record = run_generation_for_sample(
+                sample=current_sample,
+                sample_output_dir=sample_output_dir,
+                repo_path=repo_path,
+                adapter=adapter,
+                classes=classes,
+                device=device,
+                args=args,
+            )
+            records.append(record)
+            status_text = "valid" if record.get("valid_counterfactual") else "not valid"
+            print(
+                "Sample result: "
+                f"{status_text}; "
+                f"{record.get('original_prediction')} -> "
+                f"{record.get('counterfactual_prediction', 'generation failed')}"
+            )
+
+        metadata = {
+            "purpose": "DVCE medical multi-sample generation evaluation",
+            "status": "multi_sample_generation_completed",
+            "python": sys.version,
+            "device": str(device),
+            "dvce_repo": str(repo_path),
+            "dvce_checkpoint": str(repo_path / DVCE_CHECKPOINT_RELATIVE_PATH),
+            "runner_settings": {
+                "timestep_respacing": args.timestep_respacing,
+                "skip_timesteps": args.skip_timesteps,
+                "model_output_size": args.model_output_size,
+                "batch_size": args.batch_size,
+                "num_generation_samples": args.num_generation_samples,
+                "classifier_guidance_scale": args.classifier_guidance_scale,
+                "similarity_guidance_scale": args.similarity_guidance_scale,
+                "use_ddim": args.use_ddim,
+                "diffusion_fp16": args.diffusion_fp16,
+                "seed": args.seed,
+            },
+            "classifier_adapter": {
+                "model_path": args.model_path,
+                "dataset_path": args.dataset_path,
+                "classes": classes,
+            },
+            "dvce_core_initialization": diffusion_core,
+            "aggregate_metrics": summarize_generation_records(records),
+            "records": records,
+        }
+        metadata_path = output_dir / "metadata.json"
+        with open(metadata_path, "w") as f:
+            json.dump(metadata, f, indent=4)
+
+        print(f"Saved multi-sample DVCE metadata to {metadata_path}")
+        print(json.dumps(metadata["aggregate_metrics"], indent=4))
+        return
 
     generation_result = {
         "attempted": False,
