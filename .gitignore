@@ -20,6 +20,7 @@ env/
 # Local environment files
 .env
 .env.*
+.codex_project_notes.md
 
 # Datasets and generated dataset splits
 data/
