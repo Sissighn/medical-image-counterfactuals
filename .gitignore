@@ -21,6 +21,14 @@ env/
 .env
 .env.*
 .codex_project_notes.md
+seminar_paper_outline.md
+evaluation_chapter_plan.md
+results/seminar_paper_outline.md
+results/evaluation_chapter_plan.md
+results/dvce_finetuning_plan.md
+results/dvce_feasibility.md
+results/dvce_feasibility/
+results/diffusion_training_setup/
 
 # Datasets and generated dataset splits
 data/
