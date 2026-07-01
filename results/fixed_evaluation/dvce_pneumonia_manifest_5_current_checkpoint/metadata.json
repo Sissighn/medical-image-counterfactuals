@@ -1,0 +1,720 @@
+{
+    "purpose": "DVCE medical multi-sample generation evaluation",
+    "status": "multi_sample_generation_completed",
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:11:29) [Clang 20.1.8 ]",
+    "device": "mps",
+    "dvce_repo": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs",
+    "dvce_checkpoint": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+    "diffusion_checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+    "runner_settings": {
+        "timestep_respacing": "50",
+        "skip_timesteps": 44,
+        "model_output_size": 256,
+        "batch_size": 16,
+        "num_generation_samples": 5,
+        "manifest_path": "results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json",
+        "manifest_max_samples": 5,
+        "classifier_guidance_scale": 300.0,
+        "similarity_guidance_scale": 20.0,
+        "use_ddim": false,
+        "diffusion_fp16": false,
+        "seed": 1,
+        "diffusion_checkpoint_path": null
+    },
+    "classifier_adapter": {
+        "model_path": "models/pneumonia_resnet18_pretrained.pth",
+        "dataset_path": "data/processed/Pneumonia",
+        "classes": [
+            "NORMAL",
+            "PNEUMONIA"
+        ]
+    },
+    "evaluation_manifest": {
+        "path": "results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json",
+        "num_records_available": 20,
+        "num_records_used": 5,
+        "target_strategy": "second_best"
+    },
+    "dvce_core_initialization": {
+        "ok": true,
+        "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+        "checkpoint_exists": true,
+        "model_output_size": 256,
+        "timestep_respacing": "50",
+        "diffusion_num_timesteps": 50,
+        "model_parameter_count": 552814086,
+        "loaded_on_device": "cpu",
+        "elapsed_seconds": 2.026,
+        "note": "This initializes the DVCE/OpenAI diffusion backbone only. No denoising loop or counterfactual image is generated in this step."
+    },
+    "aggregate_metrics": {
+        "num_samples": 5,
+        "successful_generations": 5,
+        "failed_generations": 0,
+        "valid_count": 4,
+        "generation_success_rate": 1.0,
+        "validity": 0.8,
+        "validity_among_successful_generations": 0.8,
+        "mean_counterfactual_confidence": 0.7218565821647644,
+        "mean_runtime_seconds": 9.488,
+        "mean_absolute_difference": 0.03318612985312939,
+        "mean_changed_pixels_threshold_0_05": 0.1653879802674055
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "dataset_index": 0,
+            "manifest_sample_index": 0,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0001-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.6365812420845032,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.36341869831085205,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.5635339021682739,
+                "probabilities": [
+                    0.5635339021682739,
+                    0.43646612763404846
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 0.82904452085495,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -0.6398410797119141,
+                    "max": 0.5465206503868103,
+                    "mean": 3.809128611464985e-05,
+                    "std": 0.03651632368564606
+                },
+                "has_nonzero_gradient": true
+            },
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.047058820724487305,
+                "max": 0.9529411792755127,
+                "mean": 0.5138252973556519,
+                "std": 0.2218317836523056
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.04852940887212753,
+                "max": 0.9455575942993164,
+                "mean": 0.5138214230537415,
+                "std": 0.22115056216716766
+            },
+            "sample_preview_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_00/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 8.678,
+            "steps_seen": 6,
+            "use_ddim": false,
+            "use_fp16": false,
+            "classifier_guidance_scale": 300.0,
+            "similarity_guidance_scale": 20.0,
+            "seed": 1,
+            "original_confidence": 0.5635339021682739,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9999991655349731,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.5635339021682739,
+                0.43646612763404846
+            ],
+            "counterfactual_probabilities": [
+                8.680572136654519e-07,
+                0.9999991655349731
+            ],
+            "counterfactual_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_00/dvce_counterfactual_candidate.png",
+            "difference_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_00/dvce_absolute_difference.png",
+            "visualization_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_00/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.04852940887212753,
+                "max": 0.9455575942993164,
+                "mean": 0.5138214230537415,
+                "std": 0.22115056216716766
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 1.0,
+                "mean": 0.5148131251335144,
+                "std": 0.2476688027381897
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 8.642673492431641e-07,
+                "max": 0.5981394648551941,
+                "mean": 0.09766050428152084,
+                "std": 0.07327497005462646
+            },
+            "changed_pixels_threshold_0_05": 0.6919708251953125,
+            "mean_absolute_difference": 0.09766050428152084
+        },
+        {
+            "sample_index": 1,
+            "dataset_index": 1,
+            "manifest_sample_index": 1,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0003-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.8753835558891296,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.12461639940738678,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.8844572305679321,
+                "probabilities": [
+                    0.8844572305679321,
+                    0.11554272472858429
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 2.1581149101257324,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -1.6489052772521973,
+                    "max": 1.2854132652282715,
+                    "mean": 4.582537803798914e-05,
+                    "std": 0.08972615748643875
+                },
+                "has_nonzero_gradient": true
+            },
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.06666666269302368,
+                "max": 0.9921568632125854,
+                "mean": 0.5587130784988403,
+                "std": 0.23605208098888397
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06960783898830414,
+                "max": 0.9810815453529358,
+                "mean": 0.5586726665496826,
+                "std": 0.2354816049337387
+            },
+            "sample_preview_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_01/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 9.116,
+            "steps_seen": 6,
+            "use_ddim": false,
+            "use_fp16": false,
+            "classifier_guidance_scale": 300.0,
+            "similarity_guidance_scale": 20.0,
+            "seed": 2,
+            "original_confidence": 0.8844572305679321,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5503197312355042,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.8844572305679321,
+                0.11554272472858429
+            ],
+            "counterfactual_probabilities": [
+                0.44968029856681824,
+                0.5503197312355042
+            ],
+            "counterfactual_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_01/dvce_counterfactual_candidate.png",
+            "difference_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_01/dvce_absolute_difference.png",
+            "visualization_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_01/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06960783898830414,
+                "max": 0.9810815453529358,
+                "mean": 0.5586726665496826,
+                "std": 0.2354816049337387
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06755313277244568,
+                "max": 0.9938386678695679,
+                "mean": 0.5593450665473938,
+                "std": 0.23546555638313293
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 5.960464477539063e-08,
+                "max": 0.17590615153312683,
+                "mean": 0.015924323350191116,
+                "std": 0.01425867434591055
+            },
+            "changed_pixels_threshold_0_05": 0.02982584573328495,
+            "mean_absolute_difference": 0.015924323350191116
+        },
+        {
+            "sample_index": 2,
+            "dataset_index": 2,
+            "manifest_sample_index": 2,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0005-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.7860183119773865,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.2139817476272583,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.7092335820198059,
+                "probabilities": [
+                    0.7092335820198059,
+                    0.2907663881778717
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 1.2352352142333984,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -0.49577468633651733,
+                    "max": 0.7018484473228455,
+                    "mean": 2.0746656446135603e-05,
+                    "std": 0.04432463273406029
+                },
+                "has_nonzero_gradient": true
+            },
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.047058820724487305,
+                "max": 0.9411765336990356,
+                "mean": 0.5344192385673523,
+                "std": 0.2149660736322403
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0505974218249321,
+                "max": 0.9377757906913757,
+                "mean": 0.5343913435935974,
+                "std": 0.21424691379070282
+            },
+            "sample_preview_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_02/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 9.424,
+            "steps_seen": 6,
+            "use_ddim": false,
+            "use_fp16": false,
+            "classifier_guidance_scale": 300.0,
+            "similarity_guidance_scale": 20.0,
+            "seed": 3,
+            "original_confidence": 0.7092335820198059,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.602526843547821,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.7092335820198059,
+                0.2907663881778717
+            ],
+            "counterfactual_probabilities": [
+                0.39747315645217896,
+                0.602526843547821
+            ],
+            "counterfactual_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_02/dvce_counterfactual_candidate.png",
+            "difference_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_02/dvce_absolute_difference.png",
+            "visualization_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_02/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0505974218249321,
+                "max": 0.9377757906913757,
+                "mean": 0.5343913435935974,
+                "std": 0.21424691379070282
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.03440845012664795,
+                "max": 0.918634295463562,
+                "mean": 0.534630298614502,
+                "std": 0.21284398436546326
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.043081283569336e-07,
+                "max": 0.2032977044582367,
+                "mean": 0.016886716708540916,
+                "std": 0.014295320957899094
+            },
+            "changed_pixels_threshold_0_05": 0.0321197509765625,
+            "mean_absolute_difference": 0.016886716708540916
+        },
+        {
+            "sample_index": 3,
+            "dataset_index": 3,
+            "manifest_sample_index": 3,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0006-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.572936475276947,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.4270634651184082,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.5549250841140747,
+                "probabilities": [
+                    0.5549250841140747,
+                    0.4450748860836029
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 0.8095126152038574,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -0.6180052757263184,
+                    "max": 1.0524377822875977,
+                    "mean": 2.8787297196686268e-05,
+                    "std": 0.06134900078177452
+                },
+                "has_nonzero_gradient": true
+            },
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0156862735748291,
+                "max": 0.9450980424880981,
+                "mean": 0.5832229256629944,
+                "std": 0.16324013471603394
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.01617646962404251,
+                "max": 0.9337928891181946,
+                "mean": 0.583211362361908,
+                "std": 0.16263651847839355
+            },
+            "sample_preview_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_03/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 10.106,
+            "steps_seen": 6,
+            "use_ddim": false,
+            "use_fp16": false,
+            "classifier_guidance_scale": 300.0,
+            "similarity_guidance_scale": 20.0,
+            "seed": 4,
+            "original_confidence": 0.5549250841140747,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.8875577449798584,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.5549250841140747,
+                0.4450748860836029
+            ],
+            "counterfactual_probabilities": [
+                0.11244229972362518,
+                0.8875577449798584
+            ],
+            "counterfactual_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_03/dvce_counterfactual_candidate.png",
+            "difference_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_03/dvce_absolute_difference.png",
+            "visualization_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_03/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.01617646962404251,
+                "max": 0.9337928891181946,
+                "mean": 0.583211362361908,
+                "std": 0.16263651847839355
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.025251060724258423,
+                "max": 0.8867483139038086,
+                "mean": 0.5833228230476379,
+                "std": 0.1619022637605667
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.1920928955078125e-07,
+                "max": 0.1149318516254425,
+                "mean": 0.01776009425520897,
+                "std": 0.014128945767879486
+            },
+            "changed_pixels_threshold_0_05": 0.0334014892578125,
+            "mean_absolute_difference": 0.01776009425520897
+        },
+        {
+            "sample_index": 4,
+            "dataset_index": 4,
+            "manifest_sample_index": 4,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0007-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.835712194442749,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.16428779065608978,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.783171534538269,
+                "probabilities": [
+                    0.783171534538269,
+                    0.21682845056056976
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 1.5286489725112915,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -0.926282525062561,
+                    "max": 0.7551629543304443,
+                    "mean": 3.406523683224805e-05,
+                    "std": 0.05621670186519623
+                },
+                "has_nonzero_gradient": true
+            },
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0627450942993164,
+                "max": 0.9647059440612793,
+                "mean": 0.5401108860969543,
+                "std": 0.2093123495578766
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06323529034852982,
+                "max": 0.9611213207244873,
+                "mean": 0.5401121377944946,
+                "std": 0.2085568606853485
+            },
+            "sample_preview_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_04/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 10.116,
+            "steps_seen": 6,
+            "use_ddim": false,
+            "use_fp16": false,
+            "classifier_guidance_scale": 300.0,
+            "similarity_guidance_scale": 20.0,
+            "seed": 5,
+            "original_confidence": 0.783171534538269,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.5688794255256653,
+            "valid_counterfactual": false,
+            "original_probabilities": [
+                0.783171534538269,
+                0.21682845056056976
+            ],
+            "counterfactual_probabilities": [
+                0.5688794255256653,
+                0.43112054467201233
+            ],
+            "counterfactual_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_04/dvce_counterfactual_candidate.png",
+            "difference_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_04/dvce_absolute_difference.png",
+            "visualization_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/sample_04/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06323529034852982,
+                "max": 0.9611213207244873,
+                "mean": 0.5401121377944946,
+                "std": 0.2085568606853485
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.07407727837562561,
+                "max": 0.9522807598114014,
+                "mean": 0.5404196977615356,
+                "std": 0.20766955614089966
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.1920928955078125e-07,
+                "max": 0.19873613119125366,
+                "mean": 0.01769901067018509,
+                "std": 0.015015751123428345
+            },
+            "changed_pixels_threshold_0_05": 0.0396219901740551,
+            "mean_absolute_difference": 0.01769901067018509
+        }
+    ]
+}
