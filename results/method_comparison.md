@@ -2,137 +2,88 @@
 
 ## Compared Methods
 
-This comparison summarizes the first quantitative comparison between:
+This project currently compares three counterfactual explanation directions for
+medical image classification:
 
 ```text
-CFProto-inspired prototype-guided optimization
-SEDC-T-inspired targeted segment replacement
-DVCE medical single-image feasibility prototype
+1. Prototype-guided optimization baseline
+2. SEDC-T-style targeted segment replacement
+3. DVCE-style diffusion-guided generation
 ```
 
-CFProto and SEDC-T were tested on 20 correctly classified test samples per dataset.
-DVCE has currently been tested as a single-image generative feasibility prototype.
+All methods are evaluated against trained ResNet18 classifiers for BUSI and
+Pneumonia. The main quantitative criterion is whether the generated
+counterfactual changes the model prediction to a predefined target class.
 
-## Evaluation Setup
+## Fixed Evaluation Setup
 
-Each method was evaluated on 20 correctly classified test samples per dataset.
-
-CFProto settings:
+The final comparison uses fixed evaluation manifests instead of allowing each
+method to choose its own samples.
 
 ```text
-BUSI:
-steps=800, max_delta=0.15, perturbation_resolution=12
-
-Pneumonia:
-steps=600, max_delta=0.10, perturbation_resolution=12
+BUSI:      15 correctly classified test samples, 5 per class
+Pneumonia: 20 correctly classified test samples, 10 per class
+Target:    second_best non-original class
 ```
 
-SEDC-T settings:
+Manifest files:
 
 ```text
-n_segments=80
-compactness=8
-max_segments=12
-replacement_mode=blur
-blur_kernel=31
-
-Pneumonia:
-exclude_border_fraction=0.10
+results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
+results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json
 ```
 
-Improved SEDC-T settings:
-
-```text
-Candidate selection:
-If several candidate segment replacements already reach the target class, choose the
-candidate with the smallest changed pixel fraction.
-
-Pneumonia:
-roi_mode=lung_fields
-roi_min_overlap=0.35
-exclude_border_fraction=0.10
-```
+DVCE is currently evaluated on the first 5 fixed manifest samples per dataset
+because the diffusion sampling step is substantially more expensive than the
+other two methods.
 
 ## Quantitative Results
 
-| Method | Dataset | Validity | Mean L1 | Mean L2 | Mean changed pixel fraction | Mean runtime |
+| Method | Dataset | Samples | Validity | Mean CF confidence | Mean change | Mean runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| CFProto | BUSI | 1.00 | 0.0410 | 0.0514 | 0.5334 | 13.11s |
-| CFProto | Pneumonia | 1.00 | 0.0382 | 0.0458 | 0.5228 | 10.44s |
-| SEDC-T | BUSI | 0.95 | 0.0145 | 0.0508 | 0.1169 | 2.69s |
-| SEDC-T | Pneumonia | 0.85 | 0.0071 | 0.0242 | 0.1115 | 1.60s |
-| SEDC-T improved | BUSI | 0.95 | 0.0133 | 0.0483 | 0.1073 | 2.19s |
-| SEDC-T improved | Pneumonia | 0.85 | 0.0070 | 0.0244 | 0.1085 | 1.02s |
+| Prototype-guided optimization baseline | BUSI | 15 | 1.00 | 0.9978 | 0.0559 changed pixel fraction | 5.24s |
+| Prototype-guided optimization baseline | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 changed pixel fraction | 5.69s |
+| SEDC-T-style segment replacement | BUSI | 15 | 0.80 | 0.6376 | 0.1471 changed pixel fraction | 0.56s |
+| SEDC-T-style segment replacement | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 changed pixel fraction | 0.39s |
+| DVCE-style diffusion-guided generation | BUSI | 5 | 1.00 | 0.7034 | 0.3569 changed pixels above threshold | 8.86s |
+| DVCE-style diffusion-guided generation | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 changed pixels above threshold | 9.49s |
 
-Additional SEDC-T sparsity:
+Detailed fixed-evaluation metadata is stored under:
 
-| Dataset | Mean changed segments | Mean changed segment fraction |
-| --- | ---: | ---: |
-| BUSI SEDC-T | 4.85 | 0.0794 |
-| Pneumonia SEDC-T | 6.85 | 0.0958 |
-| BUSI SEDC-T improved | 4.85 | 0.0794 |
-| Pneumonia SEDC-T improved | 6.90 | 0.0965 |
+```text
+results/fixed_evaluation/
+```
+
+The compact generated summary is:
+
+```text
+results/fixed_evaluation_summary.md
+```
 
 ## Interpretation
 
-CFProto achieved perfect validity on both datasets. However, it changed a large fraction of image pixels. The resulting visual explanations often appear as low-frequency intensity or contrast changes. This makes CFProto useful as a technical baseline, but its medical interpretability is limited.
+The prototype-guided baseline reaches the highest validity on both datasets. It
+is useful as a technical baseline, but the changes are often diffuse intensity or
+texture shifts rather than clearly localized medical changes.
 
-SEDC-T achieved slightly lower validity, especially on Pneumonia, but produced much more localized changes. It changed only about 11 percent of pixels on average and was substantially faster than CFProto. The selected segment overlays are easier to interpret visually because they identify concrete image regions.
+SEDC-T-style segment replacement is less universally valid, especially for
+Pneumonia. Its strength is locality: the method identifies concrete image
+regions, which makes the visual output easier to discuss. The Pneumonia results
+remain harder to interpret because simple geometric lung-field constraints are
+not equivalent to real lung segmentation.
 
-For BUSI, SEDC-T often selects lesion-adjacent regions, which is useful for qualitative interpretation.
-
-For Pneumonia, excluding border segments was important. Without this constraint, SEDC-T could select non-lung border regions. With border exclusion, the selected regions moved into the lung fields, making the results more meaningful.
-
-The improved SEDC-T version keeps the same validity as the previous SEDC-T run but slightly reduces the changed pixel fraction and runtime. The improvement is useful, but it does not fully solve the medical plausibility problem for Pneumonia: some selected segments can still overlap broad anatomical structures instead of clean disease-specific regions. A real lung segmentation mask would be the next major improvement.
+DVCE-style diffusion-guided generation covers the generative method category. It
+can produce valid target-class counterfactuals, but the current checkpoint is
+not medical-domain-specific. The outputs therefore need to be discussed
+carefully: model validity and medical plausibility are separate questions.
 
 ## Current Conclusion
 
-CFProto:
-
 ```text
-Strength: high validity
-Weakness: diffuse, less interpretable intensity changes
-Best role: technical baseline
+Prototype-guided optimization: high validity, limited locality.
+SEDC-T-style replacement: more localized, lower validity.
+DVCE-style generation: generative and promising, but still affected by domain mismatch.
 ```
 
-SEDC-T:
-
-```text
-Strength: localized, sparse, faster, visually easier to interpret
-Weakness: validity is not perfect and segment replacement creates artificial occlusions
-Best role: main interpretable region-based method so far
-```
-
-## Selected Examples
-
-The most useful SEDC-T examples for report and presentation are documented in:
-
-```text
-results/sedc_t_selected_examples.md
-```
-
-The selected BUSI examples are the strongest qualitative results. The Pneumonia examples should be presented more carefully because some selected regions are not clearly disease-specific and may reflect broader anatomical or model-bias effects.
-
-## DVCE Feasibility Status
-
-DVCE was added as the first generative counterfactual method. It is not yet a
-full 20-sample quantitative comparison, but the first single-image generation
-step works.
-
-Current DVCE results:
-
-| Dataset | Target | Valid CF | Counterfactual confidence | Mean absolute difference | Runtime |
-| --- | --- | --- | ---: | ---: | ---: |
-| BUSI | benign -> malignant | yes | 0.4770 | 0.1149 | 16.845s |
-| Pneumonia | NORMAL -> PNEUMONIA | yes | 1.0000 | 0.0979 | 18.722s |
-
-The DVCE candidates are model-valid, but they still show visible high-frequency
-noise and color artifacts. Therefore, DVCE is currently best described as a
-successful feasibility-level generative method, not yet as a fully optimized
-medical explanation method.
-
-Detailed DVCE setup and results are documented in:
-
-```text
-results/dvce_feasibility.md
-```
+No method should be described as clinically causal. The methods explain model
+behavior under controlled perturbations or generations.
