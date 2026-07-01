@@ -1,0 +1,64 @@
+{
+    "rows": [
+        {
+            "metadata_path": "results/fixed_evaluation/prototype_busi_balanced_manifest/metadata.json",
+            "method": "PyTorch prototype-guided optimization baseline",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.997770078976949,
+            "mean_change": 0.05592713585938327,
+            "mean_runtime_seconds": 5.236982949574789
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/prototype_pneumonia_balanced_manifest/metadata.json",
+            "method": "PyTorch prototype-guided optimization baseline",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.9927817285060883,
+            "mean_change": 0.1441814794205129,
+            "mean_runtime_seconds": 5.686196970939636
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/sedc_t_busi_balanced_manifest/metadata.json",
+            "method": "SEDC-T-style targeted segment replacement",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 0.8,
+            "mean_counterfactual_confidence": 0.637592343489329,
+            "mean_change": 0.14714073091745378,
+            "mean_runtime_seconds": 0.5568064053853353
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/sedc_t_pneumonia_balanced_manifest/metadata.json",
+            "method": "SEDC-T-style targeted segment replacement",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 0.45,
+            "mean_counterfactual_confidence": 0.7638695329427719,
+            "mean_change": 0.15097855599597096,
+            "mean_runtime_seconds": 0.3947916626930237
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/dvce_busi_manifest_5_current_checkpoint/metadata.json",
+            "method": "DVCE medical multi-sample generation evaluation",
+            "dataset": "BUSI",
+            "samples": 5,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.7033544898033142,
+            "mean_change": 0.35693358778953554,
+            "mean_runtime_seconds": 8.8606
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/metadata.json",
+            "method": "DVCE medical multi-sample generation evaluation",
+            "dataset": "Pneumonia",
+            "samples": 5,
+            "validity": 0.8,
+            "mean_counterfactual_confidence": 0.7218565821647644,
+            "mean_change": 0.1653879802674055,
+            "mean_runtime_seconds": 9.488
+        }
+    ]
+}
