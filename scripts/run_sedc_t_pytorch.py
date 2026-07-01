@@ -590,7 +590,7 @@ def main():
         records.append(record)
 
     metadata = {
-        "method": "SEDC-T inspired targeted segment replacement",
+        "method": "SEDC-T-style targeted segment replacement",
         "model_path": args.model_path,
         "dataset_path": args.dataset_path,
         "classes": classes,
