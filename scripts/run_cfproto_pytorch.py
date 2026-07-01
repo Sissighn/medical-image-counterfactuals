@@ -543,7 +543,7 @@ def main():
         records.append(record)
 
     metadata = {
-        "method": "PyTorch prototype-guided counterfactual inspired by CFProto",
+        "method": "PyTorch prototype-guided optimization baseline",
         "model_path": args.model_path,
         "dataset_path": args.dataset_path,
         "classes": classes,
