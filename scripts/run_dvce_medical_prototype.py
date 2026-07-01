@@ -4,6 +4,7 @@ import importlib
 import json
 import sys
 import time
+import traceback
 import types
 from pathlib import Path
 
@@ -20,6 +21,11 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.data_utils import create_dataloaders
+from src.evaluation_manifest import (
+    load_image_from_manifest_record,
+    load_manifest_records,
+    manifest_record_metadata,
+)
 
 
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
@@ -68,6 +74,12 @@ def resolve_device(device_name):
     if torch.cuda.is_available():
         return torch.device("cuda")
     return torch.device("cpu")
+
+
+def resolve_diffusion_checkpoint_path(repo_path, checkpoint_path=None):
+    if checkpoint_path:
+        return Path(checkpoint_path).resolve()
+    return Path(repo_path).resolve() / DVCE_CHECKPOINT_RELATIVE_PATH
 
 
 def create_resnet18(num_classes):
@@ -169,6 +181,45 @@ def choose_correct_samples(model, test_loader, device, num_samples):
     return samples
 
 
+def choose_manifest_samples(model, test_dataset, device, manifest_path, max_records=None):
+    manifest, records = load_manifest_records(manifest_path, max_records=max_records)
+    samples = []
+
+    with torch.no_grad():
+        for record in records:
+            image, label, image_path = load_image_from_manifest_record(test_dataset, record)
+            image = image.to(device)
+            logits = model(image)
+            probabilities = F.softmax(logits, dim=1)
+            prediction = int(torch.argmax(probabilities, dim=1).item())
+            expected_prediction = int(record["original_prediction_index"])
+
+            if prediction != expected_prediction:
+                raise ValueError(
+                    "Current model prediction does not match manifest for "
+                    f"manifest sample {record['manifest_sample_index']}: "
+                    f"manifest={expected_prediction}, current={prediction}"
+                )
+
+            samples.append(
+                {
+                    **manifest_record_metadata(record),
+                    "sample_index": len(samples),
+                    "image_normalized": image.detach(),
+                    "true_label_index": int(label),
+                    "prediction_index": prediction,
+                    "probabilities": probabilities[0].detach().cpu().tolist(),
+                    "target_class_index": int(record["target_class_index"]),
+                    "target_class": record["target_class"],
+                    "image_source_path": image_path,
+                }
+            )
+
+    if not samples:
+        raise RuntimeError("No manifest samples loaded.")
+    return manifest, samples
+
+
 def select_target_class(probabilities, original_class):
     ranked_classes = torch.argsort(torch.tensor(probabilities), descending=True).tolist()
     for class_index in ranked_classes:
@@ -242,9 +293,17 @@ def build_dvce_model_config(timestep_respacing, model_output_size, use_fp16=True
     return model_config
 
 
-def run_dvce_core_initialization(repo_path, timestep_respacing, model_output_size):
+def cast_diffusion_numpy_arrays_to_float32(diffusion):
+    for name, value in vars(diffusion).items():
+        if isinstance(value, np.ndarray) and value.dtype == np.float64:
+            setattr(diffusion, name, value.astype(np.float32))
+
+
+def run_dvce_core_initialization(
+    repo_path, timestep_respacing, model_output_size, checkpoint_path=None
+):
     start_time = time.time()
-    checkpoint_path = Path(repo_path).resolve() / DVCE_CHECKPOINT_RELATIVE_PATH
+    checkpoint_path = resolve_diffusion_checkpoint_path(repo_path, checkpoint_path)
 
     script_util = importlib.import_module(
         "blended_diffusion.guided_diffusion.guided_diffusion.script_util"
@@ -253,6 +312,7 @@ def run_dvce_core_initialization(repo_path, timestep_respacing, model_output_siz
         timestep_respacing, model_output_size, use_fp16=True
     )
     model, diffusion = script_util.create_model_and_diffusion(**model_config)
+    cast_diffusion_numpy_arrays_to_float32(diffusion)
     state_dict = torch.load(checkpoint_path, map_location="cpu")
     model.load_state_dict(state_dict)
     model.requires_grad_(False)
@@ -282,9 +342,14 @@ def run_dvce_core_initialization(repo_path, timestep_respacing, model_output_siz
 
 
 def load_dvce_diffusion_backbone(
-    repo_path, device, timestep_respacing, model_output_size, use_fp16=False
+    repo_path,
+    device,
+    timestep_respacing,
+    model_output_size,
+    use_fp16=False,
+    checkpoint_path=None,
 ):
-    checkpoint_path = Path(repo_path).resolve() / DVCE_CHECKPOINT_RELATIVE_PATH
+    checkpoint_path = resolve_diffusion_checkpoint_path(repo_path, checkpoint_path)
     script_util = importlib.import_module(
         "blended_diffusion.guided_diffusion.guided_diffusion.script_util"
     )
@@ -292,6 +357,7 @@ def load_dvce_diffusion_backbone(
         timestep_respacing, model_output_size, use_fp16=use_fp16
     )
     model, diffusion = script_util.create_model_and_diffusion(**model_config)
+    cast_diffusion_numpy_arrays_to_float32(diffusion)
     state_dict = torch.load(checkpoint_path, map_location="cpu")
     model.load_state_dict(state_dict)
     model.requires_grad_(False)
@@ -357,6 +423,7 @@ def run_single_dvce_generation(
     use_ddim,
     use_fp16,
     seed,
+    diffusion_checkpoint_path=None,
 ):
     start_time = time.time()
     diffusion_model, diffusion = load_dvce_diffusion_backbone(
@@ -365,6 +432,7 @@ def run_single_dvce_generation(
         timestep_respacing=timestep_respacing,
         model_output_size=model_output_size,
         use_fp16=use_fp16,
+        checkpoint_path=diffusion_checkpoint_path,
     )
 
     original_256 = F.interpolate(
@@ -547,7 +615,10 @@ def run_generation_for_sample(
     args,
 ):
     original_class = sample["prediction_index"]
-    target_class = select_target_class(sample["probabilities"], original_class)
+    target_class = sample.get(
+        "target_class_index",
+        select_target_class(sample["probabilities"], original_class),
+    )
     image_01 = denormalize(sample["image_normalized"]).to(device)
     image_256 = F.interpolate(
         image_01,
@@ -568,6 +639,14 @@ def run_generation_for_sample(
     record_base = {
         "sample_index": sample["sample_index"],
         "dataset_index": sample["dataset_index"],
+        **{
+            key: sample[key]
+            for key in [
+                "manifest_sample_index",
+                "source_image_path",
+            ]
+            if key in sample
+        },
         "true_label_index": sample["true_label_index"],
         "true_label": classes[sample["true_label_index"]],
         "original_prediction_index": original_class,
@@ -598,6 +677,7 @@ def run_generation_for_sample(
             use_ddim=args.use_ddim,
             use_fp16=args.diffusion_fp16,
             seed=args.seed + sample["sample_index"],
+            diffusion_checkpoint_path=args.diffusion_checkpoint_path,
         )
         original_256 = F.interpolate(
             image_01,
@@ -668,6 +748,7 @@ def run_generation_for_sample(
             **record_base,
             "ok": False,
             "error": f"{type(error).__name__}: {error}",
+            "error_traceback": traceback.format_exc(),
             "valid_counterfactual": False,
         }
 
@@ -680,6 +761,12 @@ def run_generation_for_sample(
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dvce_repo", type=str, default="external/DVCEs")
+    parser.add_argument(
+        "--diffusion_checkpoint_path",
+        type=str,
+        default=None,
+        help="Optional diffusion checkpoint override. Defaults to the DVCE OpenAI checkpoint.",
+    )
     parser.add_argument("--model_path", type=str, required=True)
     parser.add_argument("--dataset_path", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True)
@@ -696,12 +783,27 @@ def main():
     parser.add_argument("--diffusion_fp16", action="store_true")
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--num_generation_samples", type=int, default=1)
+    parser.add_argument(
+        "--manifest_path",
+        type=str,
+        default=None,
+        help="Optional fixed evaluation manifest. If set, samples and targets come from this JSON.",
+    )
+    parser.add_argument(
+        "--manifest_max_samples",
+        type=int,
+        default=None,
+        help="Optional cap for manifest mode. By default all manifest records are used.",
+    )
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     repo_path = Path(args.dvce_repo).resolve()
+    diffusion_checkpoint_path = resolve_diffusion_checkpoint_path(
+        repo_path, args.diffusion_checkpoint_path
+    )
     add_dvce_to_python_path(repo_path)
     apply_dvce_compatibility_patches()
 
@@ -711,10 +813,26 @@ def main():
     data = create_dataloaders(
         args.dataset_path, batch_size=args.batch_size, use_augmentation=False
     )
-    sample = choose_correct_sample(model, data["test_loader"], device)
+    manifest = None
+    manifest_samples = None
+    if args.manifest_path:
+        print(f"Loading fixed evaluation manifest: {args.manifest_path}")
+        manifest, manifest_samples = choose_manifest_samples(
+            model=model,
+            test_dataset=data["test_dataset"],
+            device=device,
+            manifest_path=args.manifest_path,
+            max_records=args.manifest_max_samples,
+        )
+        sample = manifest_samples[0]
+    else:
+        sample = choose_correct_sample(model, data["test_loader"], device)
 
     original_class = sample["prediction_index"]
-    target_class = select_target_class(sample["probabilities"], original_class)
+    target_class = sample.get(
+        "target_class_index",
+        select_target_class(sample["probabilities"], original_class),
+    )
     image_01 = denormalize(sample["image_normalized"]).to(device)
     image_256 = F.interpolate(
         image_01, size=(args.model_output_size, args.model_output_size), mode="bilinear", align_corners=False
@@ -739,15 +857,19 @@ def main():
             repo_path=repo_path,
             timestep_respacing=args.timestep_respacing,
             model_output_size=args.model_output_size,
+            checkpoint_path=args.diffusion_checkpoint_path,
         )
 
-    if args.run_generation and args.num_generation_samples > 1:
-        samples = choose_correct_samples(
-            model=model,
-            test_loader=data["test_loader"],
-            device=device,
-            num_samples=args.num_generation_samples,
-        )
+    if args.run_generation and (args.num_generation_samples > 1 or args.manifest_path):
+        if manifest_samples is not None:
+            samples = manifest_samples
+        else:
+            samples = choose_correct_samples(
+                model=model,
+                test_loader=data["test_loader"],
+                device=device,
+                num_samples=args.num_generation_samples,
+            )
         records = []
         for current_sample in samples:
             sample_output_dir = output_dir / f"sample_{current_sample['sample_index']:02d}"
@@ -781,22 +903,32 @@ def main():
             "device": str(device),
             "dvce_repo": str(repo_path),
             "dvce_checkpoint": str(repo_path / DVCE_CHECKPOINT_RELATIVE_PATH),
+            "diffusion_checkpoint_path": str(diffusion_checkpoint_path),
             "runner_settings": {
                 "timestep_respacing": args.timestep_respacing,
                 "skip_timesteps": args.skip_timesteps,
                 "model_output_size": args.model_output_size,
                 "batch_size": args.batch_size,
                 "num_generation_samples": args.num_generation_samples,
+                "manifest_path": args.manifest_path,
+                "manifest_max_samples": args.manifest_max_samples,
                 "classifier_guidance_scale": args.classifier_guidance_scale,
                 "similarity_guidance_scale": args.similarity_guidance_scale,
                 "use_ddim": args.use_ddim,
                 "diffusion_fp16": args.diffusion_fp16,
                 "seed": args.seed,
+                "diffusion_checkpoint_path": args.diffusion_checkpoint_path,
             },
             "classifier_adapter": {
                 "model_path": args.model_path,
                 "dataset_path": args.dataset_path,
                 "classes": classes,
+            },
+            "evaluation_manifest": {
+                "path": args.manifest_path,
+                "num_records_available": manifest.get("num_samples") if manifest else None,
+                "num_records_used": len(samples) if manifest else None,
+                "target_strategy": manifest.get("target_strategy") if manifest else None,
             },
             "dvce_core_initialization": diffusion_core,
             "aggregate_metrics": summarize_generation_records(records),
@@ -831,6 +963,7 @@ def main():
                 use_ddim=args.use_ddim,
                 use_fp16=args.diffusion_fp16,
                 seed=args.seed,
+                diffusion_checkpoint_path=args.diffusion_checkpoint_path,
             )
             original_256 = F.interpolate(
                 image_01,
@@ -934,6 +1067,7 @@ def main():
         "device": str(device),
         "dvce_repo": str(repo_path),
         "dvce_checkpoint": str(repo_path / DVCE_CHECKPOINT_RELATIVE_PATH),
+        "diffusion_checkpoint_path": str(diffusion_checkpoint_path),
         "runner_settings": {
             "timestep_respacing": args.timestep_respacing,
             "skip_timesteps": args.skip_timesteps,
