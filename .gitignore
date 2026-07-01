@@ -47,6 +47,11 @@ results/sedc_t/*smoke/
 results/dvce_feasibility/**/*.png
 results/dvce_feasibility/**/*.jpg
 results/dvce_feasibility/**/*.jpeg
+results/fixed_evaluation/**/*.png
+results/fixed_evaluation/**/*.jpg
+results/fixed_evaluation/**/*.jpeg
+results/fixed_evaluation_smoke/
+results/diffusion_training_setup/openai_logdir/
 
 # Notebook checkpoints
 .ipynb_checkpoints/
