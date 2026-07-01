@@ -1,5 +1,6 @@
 import argparse
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -9,7 +10,16 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models, utils
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from src.data_utils import create_dataloaders
+from src.evaluation_manifest import (
+    load_image_from_manifest_record,
+    load_manifest_records,
+    manifest_record_metadata,
+)
 from src.train_model import get_device
 
 
@@ -110,6 +120,42 @@ def choose_samples(model, test_loader, device, max_samples):
                         return samples
 
     return samples
+
+
+def choose_manifest_samples(model, test_dataset, device, manifest_path, max_records=None):
+    manifest, records = load_manifest_records(manifest_path, max_records=max_records)
+    samples = []
+
+    with torch.no_grad():
+        for record in records:
+            image, label, image_path = load_image_from_manifest_record(test_dataset, record)
+            image = image.to(device)
+            logits, _ = model(image)
+            probabilities = F.softmax(logits, dim=1)
+            prediction = int(torch.argmax(probabilities, dim=1).item())
+            expected_prediction = int(record["original_prediction_index"])
+
+            if prediction != expected_prediction:
+                raise ValueError(
+                    "Current model prediction does not match manifest for "
+                    f"manifest sample {record['manifest_sample_index']}: "
+                    f"manifest={expected_prediction}, current={prediction}"
+                )
+
+            samples.append(
+                {
+                    **manifest_record_metadata(record),
+                    "image": image.detach(),
+                    "label": label,
+                    "prediction": prediction,
+                    "probabilities": probabilities[0].detach().cpu().tolist(),
+                    "target_class_index": int(record["target_class_index"]),
+                    "target_class": record["target_class"],
+                    "image_source_path": image_path,
+                }
+            )
+
+    return manifest, samples
 
 
 def select_target_class(probabilities, original_class):
@@ -381,6 +427,18 @@ def main():
     parser.add_argument("--dataset_path", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True)
     parser.add_argument("--max_samples", type=int, default=3)
+    parser.add_argument(
+        "--manifest_path",
+        type=str,
+        default=None,
+        help="Optional fixed evaluation manifest. If set, samples and targets come from this JSON.",
+    )
+    parser.add_argument(
+        "--manifest_max_samples",
+        type=int,
+        default=None,
+        help="Optional cap for manifest mode. By default all manifest records are used.",
+    )
     parser.add_argument("--steps", type=int, default=300)
     parser.add_argument("--learning_rate", type=float, default=0.01)
     parser.add_argument("--lambda_l2", type=float, default=5.0)
@@ -412,8 +470,19 @@ def main():
         model, data["train_loader"], num_classes, device
     )
 
-    print("Selecting correctly classified test samples...")
-    samples = choose_samples(model, data["test_loader"], device, args.max_samples)
+    manifest = None
+    if args.manifest_path:
+        print(f"Loading fixed evaluation manifest: {args.manifest_path}")
+        manifest, samples = choose_manifest_samples(
+            model=model,
+            test_dataset=data["test_dataset"],
+            device=device,
+            manifest_path=args.manifest_path,
+            max_records=args.manifest_max_samples,
+        )
+    else:
+        print("Selecting correctly classified test samples...")
+        samples = choose_samples(model, data["test_loader"], device, args.max_samples)
     if not samples:
         raise RuntimeError("No correctly classified test samples found.")
 
@@ -422,9 +491,12 @@ def main():
         image = sample["image"]
         original_class = sample["prediction"]
         original_probabilities = torch.tensor(sample["probabilities"])
-        target_candidates = select_target_classes(
-            original_probabilities, original_class, args.target_strategy
-        )
+        if "target_class_index" in sample:
+            target_candidates = [sample["target_class_index"]]
+        else:
+            target_candidates = select_target_classes(
+                original_probabilities, original_class, args.target_strategy
+            )
         attempted_targets = []
         best_attempt = None
 
@@ -506,6 +578,15 @@ def main():
 
         record = {
             "sample_index": sample_idx,
+            **{
+                key: sample[key]
+                for key in [
+                    "manifest_sample_index",
+                    "dataset_index",
+                    "source_image_path",
+                ]
+                if key in sample
+            },
             "true_label_index": sample["label"],
             "true_label": classes[sample["label"]],
             "original_prediction_index": original_class,
@@ -557,6 +638,14 @@ def main():
             "perturbation_resolution": args.perturbation_resolution,
             "target_strategy": args.target_strategy,
             "force_grayscale": not args.allow_color_changes,
+            "manifest_path": args.manifest_path,
+            "manifest_max_samples": args.manifest_max_samples,
+        },
+        "evaluation_manifest": {
+            "path": args.manifest_path,
+            "num_records_available": manifest.get("num_samples") if manifest else None,
+            "num_records_used": len(samples) if manifest else None,
+            "target_strategy": manifest.get("target_strategy") if manifest else None,
         },
         "records": records,
         "aggregate_metrics": compute_aggregate_metrics(records),
