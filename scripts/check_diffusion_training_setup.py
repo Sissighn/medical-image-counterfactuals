@@ -24,10 +24,11 @@ def build_training_command(
     output_dir,
     batch_size,
     lr,
-    iterations,
+    lr_anneal_steps,
     save_interval,
+    diffusion_training_test,
 ):
-    guided_root = Path(dvce_repo) / "blended_diffusion" / "guided_diffusion"
+    guided_root = (Path(dvce_repo) / "blended_diffusion" / "guided_diffusion").resolve()
     image_train = guided_root / "scripts" / "image_train.py"
 
     model_flags = (
@@ -39,13 +40,14 @@ def build_training_command(
     )
     train_flags = (
         f"--data_dir {data_dir} --batch_size {batch_size} --lr {lr} "
-        f"--iterations {iterations} --save_interval {save_interval} "
+        f"--lr_anneal_steps {lr_anneal_steps} --save_interval {save_interval} "
         f"--resume_checkpoint {checkpoint_path}"
     )
+    test_prefix = "DIFFUSION_TRAINING_TEST=1 " if diffusion_training_test else ""
 
     return (
         f"cd {guided_root}\n"
-        f"OPENAI_LOGDIR={output_dir} "
+        f"{test_prefix}PYTHONPATH={guided_root} OPENAI_LOGDIR={output_dir} "
         f"python scripts/image_train.py {model_flags} {train_flags}"
     ), str(image_train)
 
@@ -73,7 +75,7 @@ def write_markdown_report(report, output_path):
         "",
         "- Use Pneumonia first because it has the largest available medical image set.",
         "- The command resumes from the OpenAI 256x256 unconditional checkpoint.",
-        "- Run a short smoke test first by lowering `--iterations`, then use a stronger GPU for a real run.",
+        "- Run a short smoke test first with `DIFFUSION_TRAINING_TEST=1` and a small `--lr_anneal_steps`, then use a stronger GPU for a real run.",
         "- After training, point the DVCE runner to the new checkpoint and rerun the fixed evaluation manifests.",
     ]
     output_path = Path(output_path)
@@ -101,8 +103,9 @@ def main():
     )
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--lr", type=float, default=1e-5)
-    parser.add_argument("--iterations", type=int, default=1000)
+    parser.add_argument("--lr_anneal_steps", type=int, default=1000)
     parser.add_argument("--save_interval", type=int, default=250)
+    parser.add_argument("--diffusion_training_test", action="store_true")
     args = parser.parse_args()
 
     command, image_train = build_training_command(
@@ -112,8 +115,9 @@ def main():
         output_dir=Path(args.output_dir).resolve() / "openai_logdir",
         batch_size=args.batch_size,
         lr=args.lr,
-        iterations=args.iterations,
+        lr_anneal_steps=args.lr_anneal_steps,
         save_interval=args.save_interval,
+        diffusion_training_test=args.diffusion_training_test,
     )
 
     report = {
@@ -128,8 +132,9 @@ def main():
         "resume_checkpoint_exists": Path(args.resume_checkpoint).exists(),
         "batch_size": args.batch_size,
         "lr": args.lr,
-        "iterations": args.iterations,
+        "lr_anneal_steps": args.lr_anneal_steps,
         "save_interval": args.save_interval,
+        "diffusion_training_test": args.diffusion_training_test,
         "recommended_command": command,
     }
 
