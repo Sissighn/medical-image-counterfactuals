@@ -1,26 +1,43 @@
 # Medical Image Counterfactuals
 
-This repository contains project seminar code for training medical image classifiers and generating prototype-guided counterfactual explanations for medical imaging datasets.
+This repository contains code and experiment summaries for comparing
+counterfactual explanation methods for medical image classification.
 
-The current project focuses on two classification tasks:
+The project focuses on two datasets:
 
-- BUSI breast ultrasound classification
-- Chest X-ray pneumonia classification
+- BUSI breast ultrasound classification with `benign`, `malignant`, and `normal`
+  classes.
+- Chest X-ray pneumonia classification with `NORMAL` and `PNEUMONIA` classes.
 
-The main goal is to build reliable baseline image classifiers and then use them as the basis for counterfactual explanation methods. The first implemented counterfactual approach is a PyTorch prototype-guided method inspired by CFProto.
+The workflow is:
 
-## Project Status
+```text
+prepare datasets -> train ResNet18 classifiers -> generate counterfactuals -> evaluate methods
+```
 
-The current best baseline models are pretrained ResNet18 classifiers trained with data augmentation and class-weighted cross entropy.
+## Current Status
+
+The classification models are pretrained ResNet18 baselines trained with data
+augmentation and class-weighted cross entropy.
 
 | Dataset | Model | Accuracy | Weighted F1 |
 | --- | --- | ---: | ---: |
 | BUSI | ResNet18 pretrained | 0.8390 | 0.8365 |
 | Pneumonia | ResNet18 pretrained | 0.8782 | 0.8732 |
 
-The first prototype-guided counterfactual pipeline works for both datasets and produces valid model counterfactuals. The generated examples are an initial working version and still require further tuning for visual plausibility.
+Three counterfactual directions are currently implemented:
 
-Detailed result files are stored under `results/`.
+| Method | Role |
+| --- | --- |
+| Prototype-guided optimization baseline | High-validity technical baseline |
+| SEDC-T-style segment replacement | Region-based and more localized explanations |
+| DVCE-style diffusion-guided generation | Generative feasibility method |
+
+The fixed evaluation summary is stored in:
+
+```text
+results/fixed_evaluation_summary.md
+```
 
 ## Repository Structure
 
@@ -28,23 +45,28 @@ Detailed result files are stored under `results/`.
 .
 |-- README.md
 |-- requirements.txt
+|-- requirements-dvce.txt
 |-- src/
 |   |-- data_utils.py
+|   |-- evaluation_manifest.py
 |   `-- train_model.py
 |-- scripts/
-|   |-- check_dataset.py
+|   |-- create_evaluation_manifest.py
 |   |-- evaluate_model.py
 |   |-- prepare_busi.py
 |   |-- prepare_pneumonia.py
+|   |-- prepare_diffusion_training_data.py
 |   |-- run_cfproto_pytorch.py
-|   |-- test_data_utils.py
-|   |-- test_dataloaders.py
-|   `-- test_saved_model.py
+|   |-- run_sedc_t_pytorch.py
+|   |-- run_dvce_medical_prototype.py
+|   `-- summarize_counterfactual_evaluation.py
 `-- results/
     |-- baseline_comparison.md
-    |-- pretrained_baseline_update.md
-    |-- cfproto_start.md
-    `-- *.json
+    |-- method_comparison.md
+    |-- fixed_evaluation_summary.md
+    |-- final_method_summary.md
+    |-- evaluation_manifests/
+    `-- fixed_evaluation/
 ```
 
 The following folders are intentionally not tracked by Git:
@@ -52,10 +74,14 @@ The following folders are intentionally not tracked by Git:
 ```text
 data/
 models/
+external/
+checkpoints/
 .venv/
+.venv-dvce/
 ```
 
-This keeps the repository lightweight and avoids committing large datasets, model checkpoints, or environment files.
+This keeps datasets, model checkpoints, external repositories, and generated
+visual artifacts out of the repository.
 
 ## Environment Setup
 
@@ -72,7 +98,12 @@ Install the required packages:
 pip install -r requirements.txt
 ```
 
-The project has been developed locally with PyTorch, torchvision, scikit-learn, Pillow, and matplotlib.
+DVCE-related experiments may require a separate environment and the additional
+dependencies listed in:
+
+```text
+requirements-dvce.txt
+```
 
 ## Data
 
@@ -107,7 +138,7 @@ NORMAL
 PNEUMONIA
 ```
 
-The raw and processed data are not included in this repository.
+The raw and processed datasets are not included in this repository.
 
 ## Training
 
@@ -146,23 +177,13 @@ PYTHONPATH=. python src/train_model.py \
 The training pipeline supports:
 
 - ResNet18 classification
-- Optional ImageNet pretrained weights
-- Training-time data augmentation
-- Class-weighted cross entropy
-- Automatic device selection for MPS, CUDA, or CPU
-- Best-checkpoint saving based on validation F1 score
+- optional ImageNet pretrained weights
+- training-time data augmentation
+- class-weighted cross entropy
+- automatic device selection for MPS, CUDA, or CPU
+- best-checkpoint saving based on validation F1 score
 
-## Pretrained Weights
-
-The pretrained ResNet18 weights may need to be available in the local Torch cache:
-
-```text
-~/.cache/torch/hub/checkpoints/resnet18-f37072fd.pth
-```
-
-In this project, the automatic torchvision download created empty `.partial` files and hung. The weights were therefore downloaded manually once and then loaded from the local cache.
-
-## Evaluation
+## Model Evaluation
 
 Use the evaluation script to compute test metrics:
 
@@ -175,105 +196,121 @@ PYTHONPATH=. python scripts/evaluate_model.py \
 
 The evaluation output includes:
 
-- Accuracy
-- Weighted F1 score
-- Weighted precision
-- Weighted recall
-- Classification report
-- Confusion matrix
+- accuracy
+- weighted F1 score
+- weighted precision
+- weighted recall
+- classification report
+- confusion matrix
 
-The main baseline comparison is documented in:
+Baseline results are summarized in:
 
 ```text
 results/baseline_comparison.md
 ```
 
-## Counterfactual Explanations
+## Fixed Counterfactual Evaluation
 
-The first implemented counterfactual method is:
+The final method comparison uses fixed manifests of correctly classified test
+samples. This prevents each method from silently evaluating on different images.
+
+Current fixed manifests:
 
 ```text
-scripts/run_cfproto_pytorch.py
+results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
+results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json
 ```
 
-This is a PyTorch implementation inspired by CFProto. It is designed to work directly with the trained PyTorch ResNet18 checkpoints.
+The target class is selected with the `second_best` strategy: the target is the
+most likely non-original class according to the classifier.
 
-The method works as follows:
+Create a manifest:
 
-1. Load a trained ResNet18 checkpoint.
-2. Extract penultimate-layer feature vectors.
-3. Compute one feature prototype per class from the training split.
-4. Select correctly classified test samples.
-5. Optimize the input image toward a target class.
-6. Penalize large pixel changes and noisy changes.
-7. Keep counterfactual images grayscale by default.
-8. Save original image, counterfactual image, difference image, predictions, probabilities, runtime, and change metrics.
+```bash
+PYTHONPATH=. python scripts/create_evaluation_manifest.py \
+  --model_path models/busi_resnet18_pretrained.pth \
+  --dataset_path data/processed/BUSI \
+  --output_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
+  --samples_per_class 5 \
+  --target_strategy second_best
+```
 
-Example for BUSI:
+## Counterfactual Methods
+
+### Prototype-Guided Optimization Baseline
 
 ```bash
 PYTHONPATH=. python scripts/run_cfproto_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/cfproto/busi_first \
-  --max_samples 1 \
-  --steps 250
+  --output_dir results/fixed_evaluation/prototype_busi_balanced_manifest \
+  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
 ```
 
-Example for Pneumonia:
+This method computes feature prototypes from the ResNet18 embedding space and
+optimizes an input image toward the target class while penalizing large or noisy
+changes.
+
+### SEDC-T-Style Segment Replacement
 
 ```bash
-PYTHONPATH=. python scripts/run_cfproto_pytorch.py \
-  --model_path models/pneumonia_resnet18_pretrained.pth \
-  --dataset_path data/processed/Pneumonia \
-  --output_dir results/cfproto/pneumonia_first \
-  --max_samples 1 \
-  --steps 250
+PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
+  --model_path models/busi_resnet18_pretrained.pth \
+  --dataset_path data/processed/BUSI \
+  --output_dir results/fixed_evaluation/sedc_t_busi_balanced_manifest \
+  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
 ```
 
-Each run writes:
+This method segments the image and searches for region replacements that change
+the classifier output to the target class.
+
+### DVCE-Style Diffusion-Guided Generation
+
+```bash
+PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
+  --model_path models/busi_resnet18_pretrained.pth \
+  --dataset_path data/processed/BUSI \
+  --output_dir results/fixed_evaluation/dvce_busi_manifest_5_current_checkpoint \
+  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
+  --manifest_max_samples 5 \
+  --run_generation \
+  --timestep_respacing 50 \
+  --skip_timesteps 44
+```
+
+This method adapts a diffusion-guided counterfactual workflow to the medical
+ResNet18 classifiers. It is currently treated as a feasibility-level generative
+method because the diffusion prior is not medical-domain-specific.
+
+## Current Fixed Evaluation Results
+
+| Method | Dataset | Samples | Validity | Mean CF confidence | Mean change | Runtime |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Prototype-guided optimization | BUSI | 15 | 1.00 | 0.9978 | 0.0559 | 5.24s |
+| Prototype-guided optimization | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 | 5.69s |
+| SEDC-T-style segment replacement | BUSI | 15 | 0.80 | 0.6376 | 0.1471 | 0.56s |
+| SEDC-T-style segment replacement | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 | 0.39s |
+| DVCE-style diffusion-guided generation | BUSI | 5 | 1.00 | 0.7034 | 0.3569 | 8.86s |
+| DVCE-style diffusion-guided generation | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 | 9.49s |
+
+Important interpretation:
 
 ```text
-metadata.json
-sample_XX.png
-sample_XX.summary.png
+Validity means that the model prediction changed to the target class.
+It does not imply that the image change is medically plausible.
 ```
 
-The PNG files are ignored by Git because they are generated artifacts. The metadata JSON files are tracked because they are small and useful for documenting experiments.
+## Result Files
 
-## External Methods Considered
-
-Two external repositories were considered for the first counterfactual method:
-
-- `SeldonIO/alibi`
-- `e-delaney/cfe_images_how_people_differ_from_machines`
-
-Alibi contains a CFProto-style method, but its image examples and model integration are mainly oriented toward TensorFlow/Keras workflows. Since this project currently uses PyTorch ResNet18 checkpoints, a local PyTorch implementation was created first.
-
-The Delaney repository is relevant as a reference for counterfactual image explanations, but it is not directly plug-and-play for the current BUSI and Pneumonia PyTorch pipeline.
-
-## Current Documentation
-
-Important project notes are stored in:
+Important public result summaries:
 
 ```text
 results/baseline_comparison.md
-results/pretrained_baseline_update.md
-results/cfproto_start.md
+results/method_comparison.md
+results/fixed_evaluation_summary.md
+results/final_method_summary.md
 ```
 
-These files document the baseline progression, the pretrained model update, and the first counterfactual experiments.
-
-## Next Steps
-
-Planned next steps:
-
-1. Run the prototype-guided counterfactual method on more samples.
-2. Tune regularization parameters to improve visual plausibility.
-3. Compute aggregate counterfactual metrics:
-   - Validity
-   - Proximity
-   - Sparsity
-   - Runtime
-4. Implement a second method such as SEDC-T.
-5. Compare methods across BUSI and Pneumonia.
+Generated PNG/JPG visualizations are ignored by Git. Compact JSON and Markdown
+summaries are kept when they are useful for reproducing or documenting the
+evaluation.
