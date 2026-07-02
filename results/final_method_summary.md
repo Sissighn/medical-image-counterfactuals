@@ -104,12 +104,23 @@ Fixed-evaluation result with the current diffusion checkpoint:
 | BUSI | 5 | 1.00 | 0.7034 | 0.3569 | 8.86s |
 | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 | 9.49s |
 
+Additional Pneumonia fine-tuned diffusion checkpoint result:
+
+| Variant | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixels above threshold | Mean runtime |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Medical checkpoint, original settings | Pneumonia | 5 | 0.20 | 0.7673 | 0.1615 | 9.50s |
+| Medical checkpoint, stronger guidance | Pneumonia | 5 | 0.40 | 0.7236 | 0.1615 | 9.30s |
+| Medical checkpoint, compromise setting | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 | 15.63s |
+| Medical checkpoint, strongest tested setting | Pneumonia | 5 | 1.00 | 0.8527 | 0.4453 | 25.96s |
+
 Interpretation:
 
 ```text
 Generative and capable of target-class flips, but still limited by the
-non-medical diffusion prior. Visual plausibility must be evaluated separately
-from model validity.
+diffusion prior and guidance settings. The Pneumonia fine-tuned checkpoint can
+be integrated successfully, but higher validity requires stronger generation
+changes and can still produce noise-like artifacts. Visual plausibility must be
+evaluated separately from model validity.
 ```
 
 ## Overall Comparison
