@@ -1,0 +1,131 @@
+{
+    "sample_index": 2,
+    "dataset_index": 2,
+    "manifest_sample_index": 2,
+    "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0005-0001.jpeg",
+    "true_label_index": 0,
+    "true_label": "NORMAL",
+    "original_prediction_index": 0,
+    "original_prediction": "NORMAL",
+    "original_confidence_before_resize": 0.7860183119773865,
+    "target_class_index": 1,
+    "target_class": "PNEUMONIA",
+    "target_initial_confidence_before_resize": 0.2139817476272583,
+    "adapter_forward_check": {
+        "logits_shape": [
+            1,
+            2
+        ],
+        "prediction_index": 0,
+        "confidence": 0.7092335820198059,
+        "probabilities": [
+            0.7092335820198059,
+            0.2907663881778717
+        ]
+    },
+    "classifier_guidance_gradient_check": {
+        "target_loss": 1.2352352142333984,
+        "gradient_available": true,
+        "gradient_stats": {
+            "shape": [
+                1,
+                3,
+                256,
+                256
+            ],
+            "min": -0.49577468633651733,
+            "max": 0.7018484473228455,
+            "mean": 2.0746656446135603e-05,
+            "std": 0.04432463273406029
+        },
+        "has_nonzero_gradient": true
+    },
+    "input_01_stats": {
+        "shape": [
+            1,
+            3,
+            224,
+            224
+        ],
+        "min": 0.047058820724487305,
+        "max": 0.9411765336990356,
+        "mean": 0.5344192385673523,
+        "std": 0.2149660736322403
+    },
+    "input_256_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 0.0505974218249321,
+        "max": 0.9377757906913757,
+        "mean": 0.5343913435935974,
+        "std": 0.21424691379070282
+    },
+    "sample_preview_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_medical_checkpoint_guidance200_sim10_skip40/sample_02/dvce_medical_input_256.png",
+    "ok": true,
+    "error": null,
+    "runtime_seconds": 15.245,
+    "steps_seen": 10,
+    "use_ddim": false,
+    "use_fp16": false,
+    "classifier_guidance_scale": 200.0,
+    "similarity_guidance_scale": 10.0,
+    "seed": 3,
+    "original_confidence": 0.7092335820198059,
+    "counterfactual_prediction_index": 1,
+    "counterfactual_prediction": "PNEUMONIA",
+    "counterfactual_confidence": 0.5060974359512329,
+    "valid_counterfactual": true,
+    "original_probabilities": [
+        0.7092335820198059,
+        0.2907663881778717
+    ],
+    "counterfactual_probabilities": [
+        0.4939024746417999,
+        0.5060974359512329
+    ],
+    "counterfactual_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_medical_checkpoint_guidance200_sim10_skip40/sample_02/dvce_counterfactual_candidate.png",
+    "difference_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_medical_checkpoint_guidance200_sim10_skip40/sample_02/dvce_absolute_difference.png",
+    "visualization_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_medical_checkpoint_guidance200_sim10_skip40/sample_02/dvce_counterfactual_visualization.png",
+    "original_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 0.0505974218249321,
+        "max": 0.9377757906913757,
+        "mean": 0.5343913435935974,
+        "std": 0.21424691379070282
+    },
+    "counterfactual_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 0.024861305952072144,
+        "max": 0.9091250896453857,
+        "mean": 0.5348406434059143,
+        "std": 0.21201194822788239
+    },
+    "diff_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 2.384185791015625e-07,
+        "max": 0.358650267124176,
+        "mean": 0.023132527247071266,
+        "std": 0.019659651443362236
+    },
+    "changed_pixels_threshold_0_05": 0.0940144881606102,
+    "mean_absolute_difference": 0.023132527247071266
+}
