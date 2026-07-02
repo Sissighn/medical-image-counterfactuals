@@ -21,6 +21,7 @@ env/
 .env
 .env.*
 .codex_project_notes.md
+paper_drafts/
 seminar_paper_outline.md
 evaluation_chapter_plan.md
 results/seminar_paper_outline.md

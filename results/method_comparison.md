@@ -35,7 +35,8 @@ results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json
 
 DVCE is currently evaluated on the first 5 fixed manifest samples per dataset
 because the diffusion sampling step is substantially more expensive than the
-other two methods.
+other two methods. For Pneumonia, an additional fine-tuned diffusion checkpoint
+is reported separately.
 
 ## Quantitative Results
 
@@ -47,6 +48,7 @@ other two methods.
 | SEDC-T-style segment replacement | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 changed pixel fraction | 0.39s |
 | DVCE-style diffusion-guided generation | BUSI | 5 | 1.00 | 0.7034 | 0.3569 changed pixels above threshold | 8.86s |
 | DVCE-style diffusion-guided generation | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 changed pixels above threshold | 9.49s |
+| DVCE-style with Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 changed pixels above threshold | 15.63s |
 
 Detailed fixed-evaluation metadata is stored under:
 
@@ -74,15 +76,18 @@ not equivalent to real lung segmentation.
 
 DVCE-style diffusion-guided generation covers the generative method category. It
 can produce valid target-class counterfactuals, but the current checkpoint is
-not medical-domain-specific. The outputs therefore need to be discussed
-carefully: model validity and medical plausibility are separate questions.
+not medical-domain-specific. A Pneumonia fine-tuned checkpoint was integrated
+successfully and reaches the same 4/5 validity with a compromise parameter
+setting, but requires stronger changes and longer runtime. The outputs therefore
+need to be discussed carefully: model validity and medical plausibility are
+separate questions.
 
 ## Current Conclusion
 
 ```text
 Prototype-guided optimization: high validity, limited locality.
 SEDC-T-style replacement: more localized, lower validity.
-DVCE-style generation: generative and promising, but still affected by domain mismatch.
+DVCE-style generation: generative and promising, but still sensitive to checkpoint and guidance settings.
 ```
 
 No method should be described as clinically causal. The methods explain model
