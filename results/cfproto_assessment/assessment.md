@@ -1,4 +1,4 @@
-# CFProto Assessment
+# Prototype-Guided Baseline Assessment
 
 ## Goal
 
@@ -41,7 +41,7 @@ For Pneumonia, the counterfactuals are visually cleaner than the BUSI examples. 
 
 ## Conclusion
 
-The current CFProto-inspired method is useful as a first baseline counterfactual method because:
+The current prototype-guided optimization method is useful as a first baseline counterfactual method because:
 
 ```text
 1. It works with the existing PyTorch ResNet18 models.
