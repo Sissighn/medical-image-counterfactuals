@@ -30,13 +30,20 @@ Three counterfactual directions are currently implemented:
 | Method | Role |
 | --- | --- |
 | Prototype-guided optimization baseline | High-validity technical baseline |
-| SEDC-T-style segment replacement | Region-based and more localized explanations |
+| SEDC-T segment replacement | Region-based and more localized explanations |
 | DVCE-style diffusion-guided generation | Generative feasibility method |
 
 The fixed evaluation summary is stored in:
 
 ```text
 results/fixed_evaluation_summary.md
+```
+
+Method variants and project-specific adaptations are documented separately:
+
+```text
+results/method_variant_rationale.md
+results/method_implementation_audit.md
 ```
 
 ## Repository Structure
@@ -251,18 +258,22 @@ This method computes feature prototypes from the ResNet18 embedding space and
 optimizes an input image toward the target class while penalizing large or noisy
 changes.
 
-### SEDC-T-Style Segment Replacement
+### SEDC-T Segment Replacement
 
 ```bash
 PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/fixed_evaluation/sedc_t_busi_balanced_manifest \
-  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
+  --output_dir results/fixed_evaluation/sedc_t_original_style_busi_balanced_manifest \
+  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
+  --search_mode original_best_first \
+  --roi_mode none
 ```
 
 This method segments the image and searches for region replacements that change
-the classifier output to the target class.
+the classifier output to the target class. The `original_best_first` mode follows
+the target-score best-first search more closely. The faster `greedy_minimal`
+mode is kept as a project variant and should be reported separately.
 
 ### DVCE-Style Diffusion-Guided Generation
 
@@ -288,10 +299,13 @@ method because the diffusion prior is not medical-domain-specific.
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | Prototype-guided optimization | BUSI | 15 | 1.00 | 0.9978 | 0.0559 | 5.24s |
 | Prototype-guided optimization | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 | 5.69s |
-| SEDC-T-style segment replacement | BUSI | 15 | 0.80 | 0.6376 | 0.1471 | 0.56s |
-| SEDC-T-style segment replacement | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 | 0.39s |
+| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6674 | 0.1517 | 6.59s |
+| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.7343 | 0.1410 | 13.78s |
+| SEDC-T project variant | BUSI | 15 | 0.80 | 0.6376 | 0.1471 | 0.56s |
+| SEDC-T project variant with lung-field ROI | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 | 0.39s |
 | DVCE-style diffusion-guided generation | BUSI | 5 | 1.00 | 0.7034 | 0.3569 | 8.86s |
 | DVCE-style diffusion-guided generation | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 | 9.49s |
+| DVCE-style with Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 | 15.63s |
 
 Important interpretation:
 
@@ -300,6 +314,10 @@ Validity means that the model prediction changed to the target class.
 It does not imply that the image change is medically plausible.
 ```
 
+Additional SEDC-T tuning results are summarized in
+`results/sedc_t_tuning_summary.md`. They are treated as an ablation, not as a
+replacement for the original-style SEDC-T result.
+
 ## Result Files
 
 Important public result summaries:
@@ -307,6 +325,8 @@ Important public result summaries:
 ```text
 results/baseline_comparison.md
 results/method_comparison.md
+results/method_variant_rationale.md
+results/method_implementation_audit.md
 results/fixed_evaluation_summary.md
 results/final_method_summary.md
 ```
