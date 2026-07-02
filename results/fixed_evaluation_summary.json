@@ -21,6 +21,26 @@
             "mean_runtime_seconds": 5.686196970939636
         },
         {
+            "metadata_path": "results/fixed_evaluation/sedc_t_original_style_busi_balanced_manifest/metadata.json",
+            "method": "SEDC-T original-style best-first segment replacement",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 0.8,
+            "mean_counterfactual_confidence": 0.6673823277155558,
+            "mean_change": 0.15170732339223225,
+            "mean_runtime_seconds": 6.58691242535909
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/sedc_t_original_style_pneumonia_balanced_manifest/metadata.json",
+            "method": "SEDC-T original-style best-first segment replacement",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 0.55,
+            "mean_counterfactual_confidence": 0.7343096941709518,
+            "mean_change": 0.14097277596592903,
+            "mean_runtime_seconds": 13.777848994731903
+        },
+        {
             "metadata_path": "results/fixed_evaluation/sedc_t_busi_balanced_manifest/metadata.json",
             "method": "SEDC-T-style targeted segment replacement",
             "dataset": "BUSI",
@@ -42,7 +62,7 @@
         },
         {
             "metadata_path": "results/fixed_evaluation/dvce_busi_manifest_5_current_checkpoint/metadata.json",
-            "method": "DVCE medical multi-sample generation evaluation",
+            "method": "DVCE medical multi-sample generation evaluation with OpenAI checkpoint",
             "dataset": "BUSI",
             "samples": 5,
             "validity": 1.0,
@@ -52,7 +72,7 @@
         },
         {
             "metadata_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/metadata.json",
-            "method": "DVCE medical multi-sample generation evaluation",
+            "method": "DVCE medical multi-sample generation evaluation with OpenAI checkpoint",
             "dataset": "Pneumonia",
             "samples": 5,
             "validity": 0.8,
