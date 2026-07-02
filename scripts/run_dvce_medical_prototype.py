@@ -1042,8 +1042,8 @@ def main():
         status = "single_image_generation_completed"
         next_step = (
             "Tune guidance and noise settings on a small fixed sample set, then compare "
-            "validity, visual plausibility, changed pixels, and runtime against CFProto "
-            "and SEDC-T."
+            "validity, visual plausibility, changed pixels, and runtime against the "
+            "prototype-guided baseline and SEDC-T."
         )
     elif generation_result.get("attempted"):
         status = "single_image_generation_failed"
