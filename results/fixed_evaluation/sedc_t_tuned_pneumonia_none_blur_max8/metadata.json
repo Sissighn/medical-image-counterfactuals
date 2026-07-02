@@ -1,0 +1,2515 @@
+{
+    "method": "SEDC-T-style targeted segment replacement",
+    "model_path": "models/pneumonia_resnet18_pretrained.pth",
+    "dataset_path": "data/processed/Pneumonia",
+    "classes": [
+        "NORMAL",
+        "PNEUMONIA"
+    ],
+    "parameters": {
+        "n_segments": 40,
+        "compactness": 10.0,
+        "max_segments": 8,
+        "search_mode": "greedy_minimal",
+        "search_timeout_seconds": 30.0,
+        "replacement_mode": "blur",
+        "blur_kernel": 31,
+        "exclude_border_fraction": 0.0,
+        "roi_mode": "none",
+        "roi_min_overlap": 0.5,
+        "target_strategy": "all",
+        "manifest_path": "results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json",
+        "manifest_max_samples": null
+    },
+    "evaluation_manifest": {
+        "path": "results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json",
+        "num_records_available": 20,
+        "num_records_used": 20,
+        "target_strategy": "second_best"
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "manifest_sample_index": 0,
+            "dataset_index": 0,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0001-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.6365812420845032,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.557971179485321,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                24
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        24
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.6365812420845032,
+                0.36341869831085205
+            ],
+            "counterfactual_probabilities": [
+                0.4420287609100342,
+                0.557971179485321
+            ],
+            "runtime_seconds": 0.17790603637695312,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 24,
+                    "selected_segments": [
+                        24
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.557971179485321
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.005707025993615389,
+                "l2_mean": 0.040035080164670944,
+                "linf": 0.5155248641967773,
+                "num_changed_segments": 1,
+                "num_total_segments": 26,
+                "changed_segment_fraction": 0.038461538461538464,
+                "changed_pixel_fraction": 0.03958067670464516
+            },
+            "candidate_segments": {
+                "allowed": 26,
+                "total": 26,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_00.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_00.summary.png"
+        },
+        {
+            "sample_index": 1,
+            "manifest_sample_index": 1,
+            "dataset_index": 1,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0003-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.8753835558891296,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5059304237365723,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                20,
+                29,
+                8
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        20,
+                        29,
+                        8
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.8753835558891296,
+                0.12461639940738678
+            ],
+            "counterfactual_probabilities": [
+                0.49406954646110535,
+                0.5059304237365723
+            ],
+            "runtime_seconds": 0.8567650318145752,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 20,
+                    "selected_segments": [
+                        20
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.2797887325286865
+                },
+                {
+                    "step": 2,
+                    "added_segment": 29,
+                    "selected_segments": [
+                        20,
+                        29
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.47855809330940247
+                },
+                {
+                    "step": 3,
+                    "added_segment": 8,
+                    "selected_segments": [
+                        20,
+                        29,
+                        8
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.5059304237365723
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.007212236523628235,
+                "l2_mean": 0.034051526337862015,
+                "linf": 0.44132161140441895,
+                "num_changed_segments": 3,
+                "num_total_segments": 32,
+                "changed_segment_fraction": 0.09375,
+                "changed_pixel_fraction": 0.1037946417927742
+            },
+            "candidate_segments": {
+                "allowed": 32,
+                "total": 32,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_01.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_01.summary.png"
+        },
+        {
+            "sample_index": 2,
+            "manifest_sample_index": 2,
+            "dataset_index": 2,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0005-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.7860183119773865,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.520906388759613,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                6,
+                25
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        6,
+                        25
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.7860183119773865,
+                0.2139817476272583
+            ],
+            "counterfactual_probabilities": [
+                0.4790935814380646,
+                0.520906388759613
+            ],
+            "runtime_seconds": 0.3982870578765869,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 6,
+                    "selected_segments": [
+                        6
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.4451552927494049
+                },
+                {
+                    "step": 2,
+                    "added_segment": 25,
+                    "selected_segments": [
+                        6,
+                        25
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.520906388759613
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.008809128776192665,
+                "l2_mean": 0.04150646552443504,
+                "linf": 0.44650790095329285,
+                "num_changed_segments": 2,
+                "num_total_segments": 32,
+                "changed_segment_fraction": 0.0625,
+                "changed_pixel_fraction": 0.0697544664144516
+            },
+            "candidate_segments": {
+                "allowed": 32,
+                "total": 32,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_02.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_02.summary.png"
+        },
+        {
+            "sample_index": 3,
+            "manifest_sample_index": 3,
+            "dataset_index": 3,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0006-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.572936475276947,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5248697996139526,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                15
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        15
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.572936475276947,
+                0.4270634651184082
+            ],
+            "counterfactual_probabilities": [
+                0.4751301407814026,
+                0.5248697996139526
+            ],
+            "runtime_seconds": 0.21800708770751953,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 15,
+                    "selected_segments": [
+                        15
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.5248697996139526
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.0011059959651902318,
+                "l2_mean": 0.009724522940814495,
+                "linf": 0.15457341074943542,
+                "num_changed_segments": 1,
+                "num_total_segments": 33,
+                "changed_segment_fraction": 0.030303030303030304,
+                "changed_pixel_fraction": 0.016820790246129036
+            },
+            "candidate_segments": {
+                "allowed": 33,
+                "total": 33,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_03.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_03.summary.png"
+        },
+        {
+            "sample_index": 4,
+            "manifest_sample_index": 4,
+            "dataset_index": 4,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0007-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.835712194442749,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5130484700202942,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                5,
+                25
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        5,
+                        25
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.835712194442749,
+                0.16428779065608978
+            ],
+            "counterfactual_probabilities": [
+                0.4869515299797058,
+                0.5130484700202942
+            ],
+            "runtime_seconds": 0.33811092376708984,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 5,
+                    "selected_segments": [
+                        5
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.3267562985420227
+                },
+                {
+                    "step": 2,
+                    "added_segment": 25,
+                    "selected_segments": [
+                        5,
+                        25
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.5130484700202942
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.011821568012237549,
+                "l2_mean": 0.05014391988515854,
+                "linf": 0.46141889691352844,
+                "num_changed_segments": 2,
+                "num_total_segments": 26,
+                "changed_segment_fraction": 0.07692307692307693,
+                "changed_pixel_fraction": 0.08856824040412903
+            },
+            "candidate_segments": {
+                "allowed": 26,
+                "total": 26,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_04.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_04.summary.png"
+        },
+        {
+            "sample_index": 5,
+            "manifest_sample_index": 5,
+            "dataset_index": 5,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0009-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.956616997718811,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5574663281440735,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                2,
+                25,
+                28
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        2,
+                        25,
+                        28
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.956616997718811,
+                0.04338296130299568
+            ],
+            "counterfactual_probabilities": [
+                0.4425337016582489,
+                0.5574663281440735
+            ],
+            "runtime_seconds": 0.7324960231781006,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 2,
+                    "selected_segments": [
+                        2
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.17505374550819397
+                },
+                {
+                    "step": 2,
+                    "added_segment": 25,
+                    "selected_segments": [
+                        2,
+                        25
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.3804490566253662
+                },
+                {
+                    "step": 3,
+                    "added_segment": 28,
+                    "selected_segments": [
+                        2,
+                        25,
+                        28
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.5574663281440735
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.015454590320587158,
+                "l2_mean": 0.06138189136981964,
+                "linf": 0.5502112507820129,
+                "num_changed_segments": 3,
+                "num_total_segments": 29,
+                "changed_segment_fraction": 0.10344827586206896,
+                "changed_pixel_fraction": 0.11148756742477417
+            },
+            "candidate_segments": {
+                "allowed": 29,
+                "total": 29,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_05.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_05.summary.png"
+        },
+        {
+            "sample_index": 6,
+            "manifest_sample_index": 6,
+            "dataset_index": 6,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0010-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.9521610140800476,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5051950216293335,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                28,
+                31,
+                26,
+                16
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        28,
+                        31,
+                        26,
+                        16
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.9521610140800476,
+                0.047839000821113586
+            ],
+            "counterfactual_probabilities": [
+                0.49480491876602173,
+                0.5051950216293335
+            ],
+            "runtime_seconds": 0.9087376594543457,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 28,
+                    "selected_segments": [
+                        28
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.13027140498161316
+                },
+                {
+                    "step": 2,
+                    "added_segment": 31,
+                    "selected_segments": [
+                        28,
+                        31
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.2951107323169708
+                },
+                {
+                    "step": 3,
+                    "added_segment": 26,
+                    "selected_segments": [
+                        28,
+                        31,
+                        26
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.41418907046318054
+                },
+                {
+                    "step": 4,
+                    "added_segment": 16,
+                    "selected_segments": [
+                        28,
+                        31,
+                        26,
+                        16
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.5051950216293335
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.013447972014546394,
+                "l2_mean": 0.05255682021379471,
+                "linf": 0.4580686092376709,
+                "num_changed_segments": 4,
+                "num_total_segments": 32,
+                "changed_segment_fraction": 0.125,
+                "changed_pixel_fraction": 0.12840799987316132
+            },
+            "candidate_segments": {
+                "allowed": 32,
+                "total": 32,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_06.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_06.summary.png"
+        },
+        {
+            "sample_index": 7,
+            "manifest_sample_index": 7,
+            "dataset_index": 7,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0011-0001-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.7160110473632812,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.6574953198432922,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                26
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        26
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.7160110473632812,
+                0.283988893032074
+            ],
+            "counterfactual_probabilities": [
+                0.34250468015670776,
+                0.6574953198432922
+            ],
+            "runtime_seconds": 0.3022949695587158,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 26,
+                    "selected_segments": [
+                        26
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.6574953198432922
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.0031160456128418446,
+                "l2_mean": 0.025885863229632378,
+                "linf": 0.37618911266326904,
+                "num_changed_segments": 1,
+                "num_total_segments": 30,
+                "changed_segment_fraction": 0.03333333333333333,
+                "changed_pixel_fraction": 0.019212372601032257
+            },
+            "candidate_segments": {
+                "allowed": 30,
+                "total": 30,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_07.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_07.summary.png"
+        },
+        {
+            "sample_index": 8,
+            "manifest_sample_index": 8,
+            "dataset_index": 9,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0011-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.8897689580917358,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.522158145904541,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                30,
+                26
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        30,
+                        26
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.8897689580917358,
+                0.11023102700710297
+            ],
+            "counterfactual_probabilities": [
+                0.47784188389778137,
+                0.522158145904541
+            ],
+            "runtime_seconds": 0.55088210105896,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 30,
+                    "selected_segments": [
+                        30
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.45996809005737305
+                },
+                {
+                    "step": 2,
+                    "added_segment": 26,
+                    "selected_segments": [
+                        30,
+                        26
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.522158145904541
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.005195393692702055,
+                "l2_mean": 0.0322776660323143,
+                "linf": 0.4387381076812744,
+                "num_changed_segments": 2,
+                "num_total_segments": 32,
+                "changed_segment_fraction": 0.0625,
+                "changed_pixel_fraction": 0.047114159911870956
+            },
+            "candidate_segments": {
+                "allowed": 32,
+                "total": 32,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_08.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_08.summary.png"
+        },
+        {
+            "sample_index": 9,
+            "manifest_sample_index": 9,
+            "dataset_index": 10,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0013-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.835533857345581,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5113001465797424,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                7,
+                10
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        7,
+                        10
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.835533857345581,
+                0.16446614265441895
+            ],
+            "counterfactual_probabilities": [
+                0.4886998236179352,
+                0.5113001465797424
+            ],
+            "runtime_seconds": 0.38219308853149414,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 7,
+                    "selected_segments": [
+                        7
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.2839992940425873
+                },
+                {
+                    "step": 2,
+                    "added_segment": 10,
+                    "selected_segments": [
+                        7,
+                        10
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.5113001465797424
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.008755182847380638,
+                "l2_mean": 0.034651726484298706,
+                "linf": 0.42442718148231506,
+                "num_changed_segments": 2,
+                "num_total_segments": 30,
+                "changed_segment_fraction": 0.06666666666666667,
+                "changed_pixel_fraction": 0.09998804330825806
+            },
+            "candidate_segments": {
+                "allowed": 30,
+                "total": 30,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_09.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_09.summary.png"
+        },
+        {
+            "sample_index": 10,
+            "manifest_sample_index": 10,
+            "dataset_index": 234,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_475.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9994043111801147,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.6448659896850586,
+            "valid_counterfactual": false,
+            "selected_segments": [
+                27,
+                19,
+                2,
+                26,
+                3,
+                11,
+                13,
+                5
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": false,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        27,
+                        19,
+                        2,
+                        26,
+                        3,
+                        11,
+                        13,
+                        5
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.0005956409149803221,
+                0.9994043111801147
+            ],
+            "counterfactual_probabilities": [
+                0.3551340401172638,
+                0.6448659896850586
+            ],
+            "runtime_seconds": 1.99009108543396,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 27,
+                    "selected_segments": [
+                        27
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.002712637884542346
+                },
+                {
+                    "step": 2,
+                    "added_segment": 19,
+                    "selected_segments": [
+                        27,
+                        19
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.008578523062169552
+                },
+                {
+                    "step": 3,
+                    "added_segment": 2,
+                    "selected_segments": [
+                        27,
+                        19,
+                        2
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.02532551996409893
+                },
+                {
+                    "step": 4,
+                    "added_segment": 26,
+                    "selected_segments": [
+                        27,
+                        19,
+                        2,
+                        26
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.05601814389228821
+                },
+                {
+                    "step": 5,
+                    "added_segment": 3,
+                    "selected_segments": [
+                        27,
+                        19,
+                        2,
+                        26,
+                        3
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.10440009832382202
+                },
+                {
+                    "step": 6,
+                    "added_segment": 11,
+                    "selected_segments": [
+                        27,
+                        19,
+                        2,
+                        26,
+                        3,
+                        11
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.19280430674552917
+                },
+                {
+                    "step": 7,
+                    "added_segment": 13,
+                    "selected_segments": [
+                        27,
+                        19,
+                        2,
+                        26,
+                        3,
+                        11,
+                        13
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.2724182605743408
+                },
+                {
+                    "step": 8,
+                    "added_segment": 5,
+                    "selected_segments": [
+                        27,
+                        19,
+                        2,
+                        26,
+                        3,
+                        11,
+                        13,
+                        5
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.3551340401172638
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.025235675275325775,
+                "l2_mean": 0.06144219636917114,
+                "linf": 0.5673339366912842,
+                "num_changed_segments": 8,
+                "num_total_segments": 33,
+                "changed_segment_fraction": 0.24242424242424243,
+                "changed_pixel_fraction": 0.2916334569454193
+            },
+            "candidate_segments": {
+                "allowed": 33,
+                "total": 33,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_10.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_10.summary.png"
+        },
+        {
+            "sample_index": 11,
+            "manifest_sample_index": 11,
+            "dataset_index": 235,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_477.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999871253967285,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9891560077667236,
+            "valid_counterfactual": false,
+            "selected_segments": [
+                4,
+                0,
+                11,
+                5,
+                3,
+                2,
+                6,
+                8
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": false,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        4,
+                        0,
+                        11,
+                        5,
+                        3,
+                        2,
+                        6,
+                        8
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                1.2928180694871116e-05,
+                0.9999871253967285
+            ],
+            "counterfactual_probabilities": [
+                0.010843946598470211,
+                0.9891560077667236
+            ],
+            "runtime_seconds": 2.2293171882629395,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 4,
+                    "selected_segments": [
+                        4
+                    ],
+                    "prediction": 1,
+                    "target_probability": 6.835159729234874e-05
+                },
+                {
+                    "step": 2,
+                    "added_segment": 0,
+                    "selected_segments": [
+                        4,
+                        0
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.00029966403963044286
+                },
+                {
+                    "step": 3,
+                    "added_segment": 11,
+                    "selected_segments": [
+                        4,
+                        0,
+                        11
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0005483710556291044
+                },
+                {
+                    "step": 4,
+                    "added_segment": 5,
+                    "selected_segments": [
+                        4,
+                        0,
+                        11,
+                        5
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.000935825752094388
+                },
+                {
+                    "step": 5,
+                    "added_segment": 3,
+                    "selected_segments": [
+                        4,
+                        0,
+                        11,
+                        5,
+                        3
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0017223400063812733
+                },
+                {
+                    "step": 6,
+                    "added_segment": 2,
+                    "selected_segments": [
+                        4,
+                        0,
+                        11,
+                        5,
+                        3,
+                        2
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0065442477352917194
+                },
+                {
+                    "step": 7,
+                    "added_segment": 6,
+                    "selected_segments": [
+                        4,
+                        0,
+                        11,
+                        5,
+                        3,
+                        2,
+                        6
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.008447271771728992
+                },
+                {
+                    "step": 8,
+                    "added_segment": 8,
+                    "selected_segments": [
+                        4,
+                        0,
+                        11,
+                        5,
+                        3,
+                        2,
+                        6,
+                        8
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.010843946598470211
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.013055187650024891,
+                "l2_mean": 0.04017964377999306,
+                "linf": 0.654130756855011,
+                "num_changed_segments": 8,
+                "num_total_segments": 32,
+                "changed_segment_fraction": 0.25,
+                "changed_pixel_fraction": 0.24699059128761292
+            },
+            "candidate_segments": {
+                "allowed": 32,
+                "total": 32,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_11.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_11.summary.png"
+        },
+        {
+            "sample_index": 12,
+            "manifest_sample_index": 12,
+            "dataset_index": 236,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_478.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999337196350098,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9944677352905273,
+            "valid_counterfactual": false,
+            "selected_segments": [
+                5,
+                12,
+                19,
+                23,
+                0,
+                16,
+                1,
+                3
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": false,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        5,
+                        12,
+                        19,
+                        23,
+                        0,
+                        16,
+                        1,
+                        3
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                6.624630623264238e-05,
+                0.9999337196350098
+            ],
+            "counterfactual_probabilities": [
+                0.0055322470143437386,
+                0.9944677352905273
+            ],
+            "runtime_seconds": 2.0992586612701416,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 5,
+                    "selected_segments": [
+                        5
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.00013245093578007072
+                },
+                {
+                    "step": 2,
+                    "added_segment": 12,
+                    "selected_segments": [
+                        5,
+                        12
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0002468119782861322
+                },
+                {
+                    "step": 3,
+                    "added_segment": 19,
+                    "selected_segments": [
+                        5,
+                        12,
+                        19
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0005108925397507846
+                },
+                {
+                    "step": 4,
+                    "added_segment": 23,
+                    "selected_segments": [
+                        5,
+                        12,
+                        19,
+                        23
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.000998890958726406
+                },
+                {
+                    "step": 5,
+                    "added_segment": 0,
+                    "selected_segments": [
+                        5,
+                        12,
+                        19,
+                        23,
+                        0
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.001551268738694489
+                },
+                {
+                    "step": 6,
+                    "added_segment": 16,
+                    "selected_segments": [
+                        5,
+                        12,
+                        19,
+                        23,
+                        0,
+                        16
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0025933687575161457
+                },
+                {
+                    "step": 7,
+                    "added_segment": 1,
+                    "selected_segments": [
+                        5,
+                        12,
+                        19,
+                        23,
+                        0,
+                        16,
+                        1
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0039041650015860796
+                },
+                {
+                    "step": 8,
+                    "added_segment": 3,
+                    "selected_segments": [
+                        5,
+                        12,
+                        19,
+                        23,
+                        0,
+                        16,
+                        1,
+                        3
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0055322470143437386
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.015937434509396553,
+                "l2_mean": 0.04894392564892769,
+                "linf": 0.6181551814079285,
+                "num_changed_segments": 8,
+                "num_total_segments": 31,
+                "changed_segment_fraction": 0.25806451612903225,
+                "changed_pixel_fraction": 0.22819674015045166
+            },
+            "candidate_segments": {
+                "allowed": 31,
+                "total": 31,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_12.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_12.summary.png"
+        },
+        {
+            "sample_index": 13,
+            "manifest_sample_index": 13,
+            "dataset_index": 237,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_479.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999377727508545,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.968289852142334,
+            "valid_counterfactual": false,
+            "selected_segments": [
+                4,
+                3,
+                11,
+                1,
+                23,
+                16,
+                10,
+                19
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": false,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        4,
+                        3,
+                        11,
+                        1,
+                        23,
+                        16,
+                        10,
+                        19
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                6.227861013030633e-05,
+                0.9999377727508545
+            ],
+            "counterfactual_probabilities": [
+                0.031710103154182434,
+                0.968289852142334
+            ],
+            "runtime_seconds": 2.2030069828033447,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 4,
+                    "selected_segments": [
+                        4
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0005404848488979042
+                },
+                {
+                    "step": 2,
+                    "added_segment": 3,
+                    "selected_segments": [
+                        4,
+                        3
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0012188572436571121
+                },
+                {
+                    "step": 3,
+                    "added_segment": 11,
+                    "selected_segments": [
+                        4,
+                        3,
+                        11
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0028231607284396887
+                },
+                {
+                    "step": 4,
+                    "added_segment": 1,
+                    "selected_segments": [
+                        4,
+                        3,
+                        11,
+                        1
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.005607709288597107
+                },
+                {
+                    "step": 5,
+                    "added_segment": 23,
+                    "selected_segments": [
+                        4,
+                        3,
+                        11,
+                        1,
+                        23
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.01005419623106718
+                },
+                {
+                    "step": 6,
+                    "added_segment": 16,
+                    "selected_segments": [
+                        4,
+                        3,
+                        11,
+                        1,
+                        23,
+                        16
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.014931774698197842
+                },
+                {
+                    "step": 7,
+                    "added_segment": 10,
+                    "selected_segments": [
+                        4,
+                        3,
+                        11,
+                        1,
+                        23,
+                        16,
+                        10
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.023391325026750565
+                },
+                {
+                    "step": 8,
+                    "added_segment": 19,
+                    "selected_segments": [
+                        4,
+                        3,
+                        11,
+                        1,
+                        23,
+                        16,
+                        10,
+                        19
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.031710103154182434
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.013678881339728832,
+                "l2_mean": 0.03965786099433899,
+                "linf": 0.5786701440811157,
+                "num_changed_segments": 8,
+                "num_total_segments": 33,
+                "changed_segment_fraction": 0.24242424242424243,
+                "changed_pixel_fraction": 0.22215799987316132
+            },
+            "candidate_segments": {
+                "allowed": 33,
+                "total": 33,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_13.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_13.summary.png"
+        },
+        {
+            "sample_index": 14,
+            "manifest_sample_index": 14,
+            "dataset_index": 238,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_480.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999281167984009,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9983769655227661,
+            "valid_counterfactual": false,
+            "selected_segments": [
+                1,
+                28,
+                13,
+                17,
+                21,
+                14,
+                9,
+                24
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": false,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        1,
+                        28,
+                        13,
+                        17,
+                        21,
+                        14,
+                        9,
+                        24
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                7.182032277341932e-05,
+                0.9999281167984009
+            ],
+            "counterfactual_probabilities": [
+                0.001623033545911312,
+                0.9983769655227661
+            ],
+            "runtime_seconds": 2.084873914718628,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 1,
+                    "selected_segments": [
+                        1
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.00016025736113078892
+                },
+                {
+                    "step": 2,
+                    "added_segment": 28,
+                    "selected_segments": [
+                        1,
+                        28
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0002766501856967807
+                },
+                {
+                    "step": 3,
+                    "added_segment": 13,
+                    "selected_segments": [
+                        1,
+                        28,
+                        13
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0004609347088262439
+                },
+                {
+                    "step": 4,
+                    "added_segment": 17,
+                    "selected_segments": [
+                        1,
+                        28,
+                        13,
+                        17
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0007026855018921196
+                },
+                {
+                    "step": 5,
+                    "added_segment": 21,
+                    "selected_segments": [
+                        1,
+                        28,
+                        13,
+                        17,
+                        21
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0008864752599038184
+                },
+                {
+                    "step": 6,
+                    "added_segment": 14,
+                    "selected_segments": [
+                        1,
+                        28,
+                        13,
+                        17,
+                        21,
+                        14
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.001130559598095715
+                },
+                {
+                    "step": 7,
+                    "added_segment": 9,
+                    "selected_segments": [
+                        1,
+                        28,
+                        13,
+                        17,
+                        21,
+                        14,
+                        9
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0013827420771121979
+                },
+                {
+                    "step": 8,
+                    "added_segment": 24,
+                    "selected_segments": [
+                        1,
+                        28,
+                        13,
+                        17,
+                        21,
+                        14,
+                        9,
+                        24
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.001623033545911312
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.009007773362100124,
+                "l2_mean": 0.028073452413082123,
+                "linf": 0.37519747018814087,
+                "num_changed_segments": 8,
+                "num_total_segments": 32,
+                "changed_segment_fraction": 0.25,
+                "changed_pixel_fraction": 0.2039022594690323
+            },
+            "candidate_segments": {
+                "allowed": 32,
+                "total": 32,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_14.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_14.summary.png"
+        },
+        {
+            "sample_index": 15,
+            "manifest_sample_index": 15,
+            "dataset_index": 239,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_481.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999768733978271,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9707762598991394,
+            "valid_counterfactual": false,
+            "selected_segments": [
+                4,
+                15,
+                26,
+                10,
+                16,
+                5,
+                1,
+                2
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": false,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        4,
+                        15,
+                        26,
+                        10,
+                        16,
+                        5,
+                        1,
+                        2
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                2.310423951712437e-05,
+                0.9999768733978271
+            ],
+            "counterfactual_probabilities": [
+                0.02922375313937664,
+                0.9707762598991394
+            ],
+            "runtime_seconds": 1.7748289108276367,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 4,
+                    "selected_segments": [
+                        4
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.00026804982917383313
+                },
+                {
+                    "step": 2,
+                    "added_segment": 15,
+                    "selected_segments": [
+                        4,
+                        15
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0005579742137342691
+                },
+                {
+                    "step": 3,
+                    "added_segment": 26,
+                    "selected_segments": [
+                        4,
+                        15,
+                        26
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.001065477728843689
+                },
+                {
+                    "step": 4,
+                    "added_segment": 10,
+                    "selected_segments": [
+                        4,
+                        15,
+                        26,
+                        10
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.002496583154425025
+                },
+                {
+                    "step": 5,
+                    "added_segment": 16,
+                    "selected_segments": [
+                        4,
+                        15,
+                        26,
+                        10,
+                        16
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.006537870969623327
+                },
+                {
+                    "step": 6,
+                    "added_segment": 5,
+                    "selected_segments": [
+                        4,
+                        15,
+                        26,
+                        10,
+                        16,
+                        5
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.009552603587508202
+                },
+                {
+                    "step": 7,
+                    "added_segment": 1,
+                    "selected_segments": [
+                        4,
+                        15,
+                        26,
+                        10,
+                        16,
+                        5,
+                        1
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.013188770040869713
+                },
+                {
+                    "step": 8,
+                    "added_segment": 2,
+                    "selected_segments": [
+                        4,
+                        15,
+                        26,
+                        10,
+                        16,
+                        5,
+                        1,
+                        2
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.02922375313937664
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.01863330788910389,
+                "l2_mean": 0.04838388040661812,
+                "linf": 0.49994492530822754,
+                "num_changed_segments": 8,
+                "num_total_segments": 30,
+                "changed_segment_fraction": 0.26666666666666666,
+                "changed_pixel_fraction": 0.29683515429496765
+            },
+            "candidate_segments": {
+                "allowed": 30,
+                "total": 30,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_15.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_15.summary.png"
+        },
+        {
+            "sample_index": 16,
+            "manifest_sample_index": 16,
+            "dataset_index": 240,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_482.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999990463256836,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9939928650856018,
+            "valid_counterfactual": false,
+            "selected_segments": [
+                0,
+                25,
+                20,
+                5,
+                7,
+                8,
+                13,
+                17
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": false,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        0,
+                        25,
+                        20,
+                        5,
+                        7,
+                        8,
+                        13,
+                        17
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                9.080284826268326e-07,
+                0.9999990463256836
+            ],
+            "counterfactual_probabilities": [
+                0.006007148418575525,
+                0.9939928650856018
+            ],
+            "runtime_seconds": 2.1566929817199707,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 0,
+                    "selected_segments": [
+                        0
+                    ],
+                    "prediction": 1,
+                    "target_probability": 3.709948259711382e-06
+                },
+                {
+                    "step": 2,
+                    "added_segment": 25,
+                    "selected_segments": [
+                        0,
+                        25
+                    ],
+                    "prediction": 1,
+                    "target_probability": 1.0219220712315291e-05
+                },
+                {
+                    "step": 3,
+                    "added_segment": 20,
+                    "selected_segments": [
+                        0,
+                        25,
+                        20
+                    ],
+                    "prediction": 1,
+                    "target_probability": 3.977536107413471e-05
+                },
+                {
+                    "step": 4,
+                    "added_segment": 5,
+                    "selected_segments": [
+                        0,
+                        25,
+                        20,
+                        5
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0001036417088471353
+                },
+                {
+                    "step": 5,
+                    "added_segment": 7,
+                    "selected_segments": [
+                        0,
+                        25,
+                        20,
+                        5,
+                        7
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0005878544761799276
+                },
+                {
+                    "step": 6,
+                    "added_segment": 8,
+                    "selected_segments": [
+                        0,
+                        25,
+                        20,
+                        5,
+                        7,
+                        8
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0012678963830694556
+                },
+                {
+                    "step": 7,
+                    "added_segment": 13,
+                    "selected_segments": [
+                        0,
+                        25,
+                        20,
+                        5,
+                        7,
+                        8,
+                        13
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.002224453492090106
+                },
+                {
+                    "step": 8,
+                    "added_segment": 17,
+                    "selected_segments": [
+                        0,
+                        25,
+                        20,
+                        5,
+                        7,
+                        8,
+                        13,
+                        17
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.006007148418575525
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.017320184037089348,
+                "l2_mean": 0.05352122336626053,
+                "linf": 0.6228071451187134,
+                "num_changed_segments": 8,
+                "num_total_segments": 32,
+                "changed_segment_fraction": 0.25,
+                "changed_pixel_fraction": 0.2741350531578064
+            },
+            "candidate_segments": {
+                "allowed": 32,
+                "total": 32,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_16.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_16.summary.png"
+        },
+        {
+            "sample_index": 17,
+            "manifest_sample_index": 17,
+            "dataset_index": 241,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_483.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9969015121459961,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.6100119352340698,
+            "valid_counterfactual": false,
+            "selected_segments": [
+                0,
+                2,
+                9,
+                5,
+                4,
+                24,
+                18,
+                26
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": false,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "selected_segments": [
+                        0,
+                        2,
+                        9,
+                        5,
+                        4,
+                        24,
+                        18,
+                        26
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.0030984668992459774,
+                0.9969015121459961
+            ],
+            "counterfactual_probabilities": [
+                0.3899880349636078,
+                0.6100119352340698
+            ],
+            "runtime_seconds": 2.1767780780792236,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 0,
+                    "selected_segments": [
+                        0
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.015721313655376434
+                },
+                {
+                    "step": 2,
+                    "added_segment": 2,
+                    "selected_segments": [
+                        0,
+                        2
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0430300235748291
+                },
+                {
+                    "step": 3,
+                    "added_segment": 9,
+                    "selected_segments": [
+                        0,
+                        2,
+                        9
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0845266729593277
+                },
+                {
+                    "step": 4,
+                    "added_segment": 5,
+                    "selected_segments": [
+                        0,
+                        2,
+                        9,
+                        5
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.1661912500858307
+                },
+                {
+                    "step": 5,
+                    "added_segment": 4,
+                    "selected_segments": [
+                        0,
+                        2,
+                        9,
+                        5,
+                        4
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.22981424629688263
+                },
+                {
+                    "step": 6,
+                    "added_segment": 24,
+                    "selected_segments": [
+                        0,
+                        2,
+                        9,
+                        5,
+                        4,
+                        24
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.2838042080402374
+                },
+                {
+                    "step": 7,
+                    "added_segment": 18,
+                    "selected_segments": [
+                        0,
+                        2,
+                        9,
+                        5,
+                        4,
+                        24,
+                        18
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.35564136505126953
+                },
+                {
+                    "step": 8,
+                    "added_segment": 26,
+                    "selected_segments": [
+                        0,
+                        2,
+                        9,
+                        5,
+                        4,
+                        24,
+                        18,
+                        26
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.3899880349636078
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.019248954951763153,
+                "l2_mean": 0.058866746723651886,
+                "linf": 0.6631898880004883,
+                "num_changed_segments": 8,
+                "num_total_segments": 31,
+                "changed_segment_fraction": 0.25806451612903225,
+                "changed_pixel_fraction": 0.28846460580825806
+            },
+            "candidate_segments": {
+                "allowed": 31,
+                "total": 31,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_17.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_17.summary.png"
+        },
+        {
+            "sample_index": 18,
+            "manifest_sample_index": 18,
+            "dataset_index": 242,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_484.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9987896084785461,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.5078120827674866,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                0,
+                1,
+                4,
+                3,
+                19,
+                7,
+                28
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "selected_segments": [
+                        0,
+                        1,
+                        4,
+                        3,
+                        19,
+                        7,
+                        28
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.0012104345951229334,
+                0.9987896084785461
+            ],
+            "counterfactual_probabilities": [
+                0.5078120827674866,
+                0.4921879470348358
+            ],
+            "runtime_seconds": 1.8292250633239746,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 0,
+                    "selected_segments": [
+                        0
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.01417025551199913
+                },
+                {
+                    "step": 2,
+                    "added_segment": 1,
+                    "selected_segments": [
+                        0,
+                        1
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.03881263732910156
+                },
+                {
+                    "step": 3,
+                    "added_segment": 4,
+                    "selected_segments": [
+                        0,
+                        1,
+                        4
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.09250327944755554
+                },
+                {
+                    "step": 4,
+                    "added_segment": 3,
+                    "selected_segments": [
+                        0,
+                        1,
+                        4,
+                        3
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.20013709366321564
+                },
+                {
+                    "step": 5,
+                    "added_segment": 19,
+                    "selected_segments": [
+                        0,
+                        1,
+                        4,
+                        3,
+                        19
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.3090689182281494
+                },
+                {
+                    "step": 6,
+                    "added_segment": 7,
+                    "selected_segments": [
+                        0,
+                        1,
+                        4,
+                        3,
+                        19,
+                        7
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.4313873052597046
+                },
+                {
+                    "step": 7,
+                    "added_segment": 28,
+                    "selected_segments": [
+                        0,
+                        1,
+                        4,
+                        3,
+                        19,
+                        7,
+                        28
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.5078120827674866
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.019437693059444427,
+                "l2_mean": 0.0623491033911705,
+                "linf": 0.5502111911773682,
+                "num_changed_segments": 7,
+                "num_total_segments": 31,
+                "changed_segment_fraction": 0.22580645161290322,
+                "changed_pixel_fraction": 0.18803811073303223
+            },
+            "candidate_segments": {
+                "allowed": 31,
+                "total": 31,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_18.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_18.summary.png"
+        },
+        {
+            "sample_index": 19,
+            "manifest_sample_index": 19,
+            "dataset_index": 243,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_485.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9865959286689758,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.5456574559211731,
+            "valid_counterfactual": true,
+            "selected_segments": [
+                0,
+                1,
+                3,
+                2
+            ],
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "selected_segments": [
+                        0,
+                        1,
+                        3,
+                        2
+                    ]
+                }
+            ],
+            "original_probabilities": [
+                0.013404082506895065,
+                0.9865959286689758
+            ],
+            "counterfactual_probabilities": [
+                0.5456574559211731,
+                0.4543425738811493
+            ],
+            "runtime_seconds": 0.7280547618865967,
+            "search_history": [
+                {
+                    "step": 1,
+                    "added_segment": 0,
+                    "selected_segments": [
+                        0
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.0400463230907917
+                },
+                {
+                    "step": 2,
+                    "added_segment": 1,
+                    "selected_segments": [
+                        0,
+                        1
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.11696440726518631
+                },
+                {
+                    "step": 3,
+                    "added_segment": 3,
+                    "selected_segments": [
+                        0,
+                        1,
+                        3
+                    ],
+                    "prediction": 1,
+                    "target_probability": 0.2050047218799591
+                },
+                {
+                    "step": 4,
+                    "added_segment": 2,
+                    "selected_segments": [
+                        0,
+                        1,
+                        3,
+                        2
+                    ],
+                    "prediction": 0,
+                    "target_probability": 0.5456574559211731
+                }
+            ],
+            "search_diagnostics": null,
+            "change_metrics": {
+                "l1_mean": 0.008721894584596157,
+                "l2_mean": 0.031153526157140732,
+                "linf": 0.6198241710662842,
+                "num_changed_segments": 4,
+                "num_total_segments": 29,
+                "changed_segment_fraction": 0.13793103448275862,
+                "changed_pixel_fraction": 0.13932955265045166
+            },
+            "candidate_segments": {
+                "allowed": 29,
+                "total": 29,
+                "roi_pixel_fraction": 1.0
+            },
+            "image_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_19.png",
+            "summary_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/sample_19.summary.png"
+        }
+    ],
+    "aggregate_metrics": {
+        "num_samples": 20,
+        "valid_count": 12,
+        "validity": 0.6,
+        "l1_mean": {
+            "mean": 0.012045106320874766,
+            "min": 0.0011059959651902318,
+            "max": 0.025235675275325775
+        },
+        "l2_mean": {
+            "mean": 0.04273935207165778,
+            "min": 0.009724522940814495,
+            "max": 0.0623491033911705
+        },
+        "linf": {
+            "mean": 0.5008222877979278,
+            "min": 0.15457341074943542,
+            "max": 0.6631898880004883
+        },
+        "num_changed_segments": {
+            "mean": 4.8,
+            "min": 1,
+            "max": 8
+        },
+        "changed_segment_fraction": {
+            "mean": 0.15371337957092962,
+            "min": 0.030303030303030304,
+            "max": 0.26666666666666666
+        },
+        "changed_pixel_fraction": {
+            "mean": 0.15522062415257096,
+            "min": 0.016820790246129036,
+            "max": 0.29683515429496765
+        },
+        "runtime_seconds": {
+            "mean": 1.206890380382538,
+            "min": 0.17790603637695312,
+            "max": 2.2293171882629395
+        }
+    }
+}
