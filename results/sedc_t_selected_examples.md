@@ -59,7 +59,7 @@ For the main report, use BUSI samples 00, 04, and 10 as strong examples. They sh
 
 For Pneumonia, use one or two examples only and explicitly describe the limitation: the method can flip the model prediction with sparse region changes, but the selected regions are not always medically convincing. This is a good argument for a future improvement using lung segmentation or a region-of-interest mask.
 
-The comparison with CFProto should emphasize the trade-off:
+The comparison with the prototype-guided optimization baseline should emphasize the trade-off:
 
-- CFProto reached higher validity in the 20-sample test, but changed broad image areas and was harder to interpret.
+- The prototype-guided optimization baseline reached higher validity in the fixed test, but changed broad image areas and was harder to interpret.
 - SEDC-T reached slightly lower validity, especially on Pneumonia, but produced much more localized and presentation-friendly explanations.
