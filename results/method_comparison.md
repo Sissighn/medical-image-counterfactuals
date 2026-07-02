@@ -7,7 +7,7 @@ medical image classification:
 
 ```text
 1. Prototype-guided optimization baseline
-2. SEDC-T-style targeted segment replacement
+2. SEDC-T original-style / SEDC-T-style targeted segment replacement
 3. DVCE-style diffusion-guided generation
 ```
 
@@ -44,8 +44,10 @@ is reported separately.
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | Prototype-guided optimization baseline | BUSI | 15 | 1.00 | 0.9978 | 0.0559 changed pixel fraction | 5.24s |
 | Prototype-guided optimization baseline | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 changed pixel fraction | 5.69s |
-| SEDC-T-style segment replacement | BUSI | 15 | 0.80 | 0.6376 | 0.1471 changed pixel fraction | 0.56s |
-| SEDC-T-style segment replacement | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 changed pixel fraction | 0.39s |
+| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6674 | 0.1517 changed pixel fraction | 6.59s |
+| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.7343 | 0.1410 changed pixel fraction | 13.78s |
+| SEDC-T project variant | BUSI | 15 | 0.80 | 0.6376 | 0.1471 changed pixel fraction | 0.56s |
+| SEDC-T project variant with lung-field ROI | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 changed pixel fraction | 0.39s |
 | DVCE-style diffusion-guided generation | BUSI | 5 | 1.00 | 0.7034 | 0.3569 changed pixels above threshold | 8.86s |
 | DVCE-style diffusion-guided generation | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 changed pixels above threshold | 9.49s |
 | DVCE-style with Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 changed pixels above threshold | 15.63s |
@@ -62,17 +64,43 @@ The compact generated summary is:
 results/fixed_evaluation_summary.md
 ```
 
+Additional SEDC-T tuning details are documented in:
+
+```text
+results/sedc_t_tuning_summary.md
+```
+
+The rationale for why multiple variants are reported is documented in:
+
+```text
+results/method_variant_rationale.md
+```
+
 ## Interpretation
 
 The prototype-guided baseline reaches the highest validity on both datasets. It
 is useful as a technical baseline, but the changes are often diffuse intensity or
 texture shifts rather than clearly localized medical changes.
 
-SEDC-T-style segment replacement is less universally valid, especially for
-Pneumonia. Its strength is locality: the method identifies concrete image
-regions, which makes the visual output easier to discuss. The Pneumonia results
-remain harder to interpret because simple geometric lung-field constraints are
-not equivalent to real lung segmentation.
+The SEDC-T original-style best-first run is the safer method-faithfulness
+baseline. It follows the target-score best-first search more closely and uses no
+ROI restriction. It reaches 12/15 valid counterfactuals on BUSI and 11/20 on
+Pneumonia, but is substantially slower than the project variant.
+
+The SEDC-T project variant is a practical implementation variant. It keeps the
+same targeted segment-replacement idea, but uses a greedier search and selects
+valid candidates by smaller changed area. On Pneumonia, the reported project
+variant also uses a simple `lung_fields` ROI. This ROI makes the candidate
+regions easier to justify anatomically, but it is not an original SEDC-T
+mechanism and should be described as a project-specific constraint.
+
+A small SEDC-T tuning ablation did not fundamentally change this conclusion. On
+Pneumonia, increasing the allowed segment budget improved the best project
+variant only to 12/20 valid counterfactuals (validity 0.60). Larger budgets or
+mean replacement increased the amount of changed image area without producing a
+substantial validity improvement. This suggests that the low Pneumonia validity
+is not just a parameter issue, but reflects a limitation of segment replacement
+for this classifier/dataset combination.
 
 DVCE-style diffusion-guided generation covers the generative method category. It
 can produce valid target-class counterfactuals, but the current checkpoint is
@@ -86,7 +114,8 @@ separate questions.
 
 ```text
 Prototype-guided optimization: high validity, limited locality.
-SEDC-T-style replacement: more localized, lower validity.
+SEDC-T original-style: method-faithful, localized, slower, moderate validity.
+SEDC-T project variant: faster and constrained, but includes adaptations.
 DVCE-style generation: generative and promising, but still sensitive to checkpoint and guidance settings.
 ```
 
