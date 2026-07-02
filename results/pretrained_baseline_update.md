@@ -66,7 +66,7 @@ For Pneumonia, the weighted F1 score increased from 0.7679 in the original basel
 The pretrained models are now the best available baselines and should be used for the next project phase:
 
 ```text
-1. Start with CFProto / prototype-based counterfactuals.
+1. Start with prototype-guided / prototype-based counterfactual baselines.
 2. Use the pretrained BUSI and Pneumonia checkpoints.
 3. Generate first counterfactual examples.
 4. Save original image, counterfactual image, original prediction, new prediction, and runtime.
