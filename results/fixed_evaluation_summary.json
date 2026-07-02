@@ -59,6 +59,16 @@
             "mean_counterfactual_confidence": 0.7218565821647644,
             "mean_change": 0.1653879802674055,
             "mean_runtime_seconds": 9.488
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_medical_checkpoint_guidance200_sim10_skip40/metadata.json",
+            "method": "DVCE medical multi-sample generation evaluation with Pneumonia fine-tuned checkpoint",
+            "dataset": "Pneumonia",
+            "samples": 5,
+            "validity": 0.8,
+            "mean_counterfactual_confidence": 0.6937237501144409,
+            "mean_change": 0.24688110798597335,
+            "mean_runtime_seconds": 15.629
         }
     ]
 }
