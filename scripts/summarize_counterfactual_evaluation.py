@@ -60,6 +60,18 @@ def summarize_metadata(path):
     records = metadata.get("records", [])
 
     method = metadata.get("method") or metadata.get("purpose") or "unknown"
+    diffusion_checkpoint_path = str(metadata.get("diffusion_checkpoint_path") or "")
+    if method == "DVCE medical multi-sample generation evaluation":
+        if "ema_0.9999_005000" in diffusion_checkpoint_path:
+            method = (
+                "DVCE medical multi-sample generation evaluation "
+                "with Pneumonia fine-tuned checkpoint"
+            )
+        elif "256x256_diffusion_uncond" in diffusion_checkpoint_path:
+            method = (
+                "DVCE medical multi-sample generation evaluation "
+                "with OpenAI checkpoint"
+            )
     dataset = infer_dataset_name(metadata)
     samples = aggregate.get("num_samples") or len(records)
     validity = aggregate.get("validity")
