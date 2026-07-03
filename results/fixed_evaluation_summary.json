@@ -41,6 +41,26 @@
             "mean_runtime_seconds": 4.762204480171204
         },
         {
+            "metadata_path": "results/fixed_evaluation/retrieval_nun_busi_balanced_manifest/metadata.json",
+            "method": "Retrieval-based nearest-unlike-neighbor baseline",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.8190803925196329,
+            "mean_change": 0.8516010125478108,
+            "mean_runtime_seconds": 0.007244014739990234
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/metadata.json",
+            "method": "Retrieval-based nearest-unlike-neighbor baseline",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.6496214509010315,
+            "mean_change": 0.8741051316261291,
+            "mean_runtime_seconds": 0.00964205265045166
+        },
+        {
             "metadata_path": "results/fixed_evaluation/sedc_t_original_style_busi_balanced_manifest/metadata.json",
             "method": "SEDC-T original-style best-first segment replacement",
             "dataset": "BUSI",
@@ -79,6 +99,26 @@
             "mean_counterfactual_confidence": 0.7638695329427719,
             "mean_change": 0.15097855599597096,
             "mean_runtime_seconds": 0.3947916626930237
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/sedc_t_tuned_busi_none_blur_max10/metadata.json",
+            "method": "SEDC-T tuned project variant (none, max 10)",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 0.8,
+            "mean_counterfactual_confidence": 0.6050315022468566,
+            "mean_change": 0.16983019759257634,
+            "mean_runtime_seconds": 1.0000335375467937
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_lung_roi_blur_max10/metadata.json",
+            "method": "SEDC-T tuned project variant (lung_fields, max 10)",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 0.5,
+            "mean_counterfactual_confidence": 0.765269523859024,
+            "mean_change": 0.21308294804766775,
+            "mean_runtime_seconds": 0.7086531043052673
         },
         {
             "metadata_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/metadata.json",
