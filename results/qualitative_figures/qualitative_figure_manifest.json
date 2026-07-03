@@ -10,12 +10,9 @@
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
-        "Low-plausibility valid case",
-        "Failure case"
+        "Low-plausibility valid case"
       ],
-      "warnings": [
-        "BUSI / Prototype-guided optimization baseline / Failure case: no selected example available."
-      ]
+      "warnings": []
     },
     {
       "type": "per_method",
@@ -25,12 +22,9 @@
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
-        "Low-plausibility valid case",
-        "Failure case"
+        "Low-plausibility valid case"
       ],
-      "warnings": [
-        "BUSI / Prototype-guided plausibility ablation / Failure case: no selected example available."
-      ]
+      "warnings": []
     },
     {
       "type": "per_method",
@@ -53,12 +47,9 @@
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
-        "Low-plausibility valid case",
-        "Failure case"
+        "Low-plausibility valid case"
       ],
-      "warnings": [
-        "BUSI / DVCE-style, OpenAI checkpoint / Failure case: no selected example available."
-      ]
+      "warnings": []
     },
     {
       "type": "per_method",
@@ -68,12 +59,9 @@
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
-        "Low-plausibility valid case",
-        "Failure case"
+        "Low-plausibility valid case"
       ],
-      "warnings": [
-        "Pneumonia / Prototype-guided optimization baseline / Failure case: no selected example available."
-      ]
+      "warnings": []
     },
     {
       "type": "per_method",
@@ -83,12 +71,9 @@
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
-        "Low-plausibility valid case",
-        "Failure case"
+        "Low-plausibility valid case"
       ],
-      "warnings": [
-        "Pneumonia / Prototype-guided plausibility ablation / Failure case: no selected example available."
-      ]
+      "warnings": []
     },
     {
       "type": "per_method",

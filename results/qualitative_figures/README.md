@@ -2,7 +2,7 @@
 
 This folder contains paper-friendly qualitative comparison figures for the counterfactual methods evaluated in this project.
 
-The main figures are stored in `per_method/`. Each figure contains one method on one dataset. Rows correspond to qualitative case types:
+The main figures are stored in `per_method/`. Each figure contains one method on one dataset. Rows correspond to the qualitative case types available for that method:
 
 - Most balanced valid case
 - Highest-confidence valid case
@@ -13,7 +13,9 @@ The figures are composed from the existing per-example visualizations referenced
 
 - `results/meeting_paul_tuesday/selected_examples.json`
 
-The comparison script does not recompute, stretch, or per-image normalize the embedded difference maps. Source plots are displayed as saved, and image data is only converted to the standard display range `[0, 1]`.
+The comparison script does not recompute, stretch, or per-image normalize the embedded difference maps. Source plots are displayed as saved, and image data is only converted to the standard display range `[0, 1]`. Long white bands inside source plots are compacted for readability, but the image panels and color values are not changed.
+
+This is intentional: very dark difference maps indicate genuinely small absolute changes on a fixed scale, not a plotting error. Stronger colors would only be appropriate with an explicitly labelled alternate scale, because otherwise tiny differences could appear misleadingly large.
 
 Generated per-method figures:
 
@@ -28,12 +30,4 @@ Generated per-method figures:
 - `results/qualitative_figures/per_method/pneumonia__dvce_style_openai_checkpoint.png`
 - `results/qualitative_figures/per_method/pneumonia__dvce_style_pneumonia_fine_tuned_checkpoint.png`
 
-Warnings emitted during generation: 5
-
-## Warnings
-
-- BUSI / Prototype-guided optimization baseline / Failure case: no selected example available.
-- BUSI / Prototype-guided plausibility ablation / Failure case: no selected example available.
-- BUSI / DVCE-style, OpenAI checkpoint / Failure case: no selected example available.
-- Pneumonia / Prototype-guided optimization baseline / Failure case: no selected example available.
-- Pneumonia / Prototype-guided plausibility ablation / Failure case: no selected example available.
+Warnings emitted during generation: 0
