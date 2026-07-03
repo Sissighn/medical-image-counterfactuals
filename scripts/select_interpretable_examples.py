@@ -79,12 +79,52 @@ def record_change(record):
     return None
 
 
+def record_primary_change(record, method):
+    change_metrics = record.get("change_metrics") or {}
+    if method.startswith("Prototype-guided"):
+        if "l1_mean" in change_metrics:
+            return float(change_metrics["l1_mean"])
+        if "mean_absolute_difference" in record:
+            return float(record["mean_absolute_difference"])
+    return record_change(record)
+
+
 def record_l1(record):
     change_metrics = record.get("change_metrics") or {}
     if "l1_mean" in change_metrics:
         return float(change_metrics["l1_mean"])
     if "mean_absolute_difference" in record:
         return float(record["mean_absolute_difference"])
+    return None
+
+
+def record_l2(record):
+    change_metrics = record.get("change_metrics") or {}
+    if "l2_mean" in change_metrics:
+        return float(change_metrics["l2_mean"])
+    return None
+
+
+def record_linf(record):
+    change_metrics = record.get("change_metrics") or {}
+    if "linf" in change_metrics:
+        return float(change_metrics["linf"])
+    diff_stats = record.get("diff_stats") or {}
+    if "max" in diff_stats:
+        return float(diff_stats["max"])
+    image_debug_stats = record.get("image_debug_stats") or {}
+    diff_debug = image_debug_stats.get("diff") or {}
+    if "max" in diff_debug:
+        return float(diff_debug["max"])
+    return None
+
+
+def record_threshold(record):
+    change_metrics = record.get("change_metrics") or {}
+    if "sparsity_threshold" in change_metrics:
+        return float(change_metrics["sparsity_threshold"])
+    if "changed_pixels_threshold_0_05" in record:
+        return 0.05
     return None
 
 
@@ -119,15 +159,20 @@ def fmt(value, digits=4):
 
 
 def normalize_record(metadata_path, metadata, record):
+    method = infer_method(metadata)
     confidence = safe_float(record.get("counterfactual_confidence"))
-    change = record_change(record)
+    changed_pixel_fraction = record_change(record)
+    change = record_primary_change(record, method)
     l1 = record_l1(record)
+    l2 = record_l2(record)
+    linf = record_linf(record)
+    threshold = record_threshold(record)
     num_segments = record_segments(record)
     image_path = record_image_path(record)
 
     return {
         "metadata_path": str(metadata_path),
-        "method": infer_method(metadata),
+        "method": method,
         "raw_method": metadata.get("method") or metadata.get("purpose") or "unknown",
         "dataset": infer_dataset(metadata),
         "sample_index": record.get("sample_index"),
@@ -139,7 +184,12 @@ def normalize_record(metadata_path, metadata, record):
         "valid_counterfactual": bool(record.get("valid_counterfactual")),
         "counterfactual_confidence": confidence,
         "change": change,
+        "change_metric": "l1_mean" if method.startswith("Prototype-guided") else "changed_pixel_fraction",
+        "changed_pixel_fraction": changed_pixel_fraction,
+        "sparsity_threshold": threshold,
         "l1": l1,
+        "l2": l2,
+        "linf": linf,
         "num_changed_segments": num_segments,
         "runtime_seconds": safe_float(record.get("runtime_seconds")),
         "image_path": image_path,
@@ -314,8 +364,8 @@ def write_selected_examples(selections, output_dir, copy_assets):
         "",
         "Examples are selected from existing fixed-evaluation metadata. They are not new methods.",
         "",
-        "| Method | Dataset | Category | Sample | Valid | Prediction | Target | CF prediction | CF confidence | Change | L1/MAD | Segments | Plot | Rationale |",
-        "| --- | --- | --- | ---: | --- | --- | --- | --- | ---: | ---: | ---: | ---: | --- | --- |",
+        "| Method | Dataset | Category | Sample | Valid | Prediction | Target | CF prediction | CF confidence | Primary change | Changed pixels | L1/MAD | L∞ | Segments | Plot | Rationale |",
+        "| --- | --- | --- | ---: | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
     ]
     manifest = []
     for group_key in sorted(selections):
@@ -334,7 +384,9 @@ def write_selected_examples(selections, output_dir, copy_assets):
                 f"{record.get('counterfactual_prediction') or ''} | "
                 f"{fmt(record.get('counterfactual_confidence'))} | "
                 f"{fmt(record.get('change'))} | "
+                f"{fmt(record.get('changed_pixel_fraction'))} | "
                 f"{fmt(record.get('l1'))} | "
+                f"{fmt(record.get('linf'))} | "
                 f"{record.get('num_changed_segments') if record.get('num_changed_segments') is not None else ''} | "
                 f"{markdown_link(plot_path)} | "
                 f"{rationale} |"
