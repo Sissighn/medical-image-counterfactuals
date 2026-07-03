@@ -30,6 +30,7 @@ results/dvce_finetuning_plan.md
 results/dvce_feasibility.md
 results/dvce_feasibility/
 results/diffusion_training_setup/
+qualitative_results_interpretation.md
 
 # Datasets and generated dataset splits
 data/
@@ -70,3 +71,5 @@ results/diffusion_training_setup/openai_logdir/
 
 # Notebook checkpoints
 .ipynb_checkpoints/
+results/project_structure_diagram.png
+results/method_implementation_audit.md
