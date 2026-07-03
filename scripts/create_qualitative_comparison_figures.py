@@ -185,10 +185,14 @@ def format_cell_note(example: dict[str, Any]) -> str:
     pred = example.get("counterfactual_prediction", "n/a")
     target = example.get("target_class", "n/a")
     confidence = format_float(example.get("counterfactual_confidence"), 2)
-    change = format_float(example.get("change"), 3)
+    l1 = format_float(example.get("l1"), 4)
+    linf = format_float(example.get("linf"), 4)
+    changed_fraction = format_float(example.get("changed_pixel_fraction"), 4)
+    threshold = example.get("sparsity_threshold")
+    threshold_label = f">{float(threshold):.2f}" if threshold is not None else ""
     return (
         f"sample {sample} | target {target} | CF {pred} ({confidence})\n"
-        f"valid {valid} | change {change}"
+        f"valid {valid} | MAD {l1} | L_inf {linf} | changed{threshold_label} {changed_fraction}"
     )
 
 
