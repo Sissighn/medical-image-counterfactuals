@@ -299,6 +299,8 @@ method because the diffusion prior is not medical-domain-specific.
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | Prototype-guided optimization | BUSI | 15 | 1.00 | 0.9978 | 0.0559 | 5.24s |
 | Prototype-guided optimization | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 | 5.69s |
+| Prototype-guided plausibility ablation | BUSI | 15 | 1.00 | 0.9953 | 0.0315 | 4.78s |
+| Prototype-guided plausibility ablation | Pneumonia | 20 | 1.00 | 0.9814 | 0.0934 | 4.76s |
 | SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6674 | 0.1517 | 6.59s |
 | SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.7343 | 0.1410 | 13.78s |
 | SEDC-T project variant | BUSI | 15 | 0.80 | 0.6376 | 0.1471 | 0.56s |
@@ -318,6 +320,10 @@ Additional SEDC-T tuning results are summarized in
 `results/sedc_t_tuning_summary.md`. They are treated as an ablation, not as a
 replacement for the original-style SEDC-T result.
 
+The stronger-regularized prototype-guided results are summarized in
+`results/prototype_plausibility_ablation.md`. They are also an ablation, not a
+new method.
+
 ## Result Files
 
 Important public result summaries:
@@ -327,6 +333,7 @@ results/baseline_comparison.md
 results/method_comparison.md
 results/method_variant_rationale.md
 results/method_implementation_audit.md
+results/prototype_plausibility_ablation.md
 results/fixed_evaluation_summary.md
 results/final_method_summary.md
 ```
