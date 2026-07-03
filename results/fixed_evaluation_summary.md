@@ -6,10 +6,13 @@ This table is generated from method `metadata.json` files.
 | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | PyTorch prototype-guided optimization baseline | BUSI | 15 | 1.0000 | 0.9978 | 0.0559 | 5.24 | `results/fixed_evaluation/prototype_busi_balanced_manifest/metadata.json` |
 | PyTorch prototype-guided optimization baseline | Pneumonia | 20 | 1.0000 | 0.9928 | 0.1442 | 5.69 | `results/fixed_evaluation/prototype_pneumonia_balanced_manifest/metadata.json` |
+| PyTorch prototype-guided plausibility ablation | BUSI | 15 | 1.0000 | 0.9953 | 0.0315 | 4.78 | `results/fixed_evaluation/prototype_plausibility_busi_l2_20_tv_0_5_delta_0_08/metadata.json` |
+| PyTorch prototype-guided plausibility ablation | Pneumonia | 20 | 1.0000 | 0.9814 | 0.0934 | 4.76 | `results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/metadata.json` |
 | SEDC-T original-style best-first segment replacement | BUSI | 15 | 0.8000 | 0.6674 | 0.1517 | 6.59 | `results/fixed_evaluation/sedc_t_original_style_busi_balanced_manifest/metadata.json` |
 | SEDC-T original-style best-first segment replacement | Pneumonia | 20 | 0.5500 | 0.7343 | 0.1410 | 13.78 | `results/fixed_evaluation/sedc_t_original_style_pneumonia_balanced_manifest/metadata.json` |
-| SEDC-T-style targeted segment replacement | BUSI | 15 | 0.8000 | 0.6376 | 0.1471 | 0.56 | `results/fixed_evaluation/sedc_t_busi_balanced_manifest/metadata.json` |
-| SEDC-T-style targeted segment replacement | Pneumonia | 20 | 0.4500 | 0.7639 | 0.1510 | 0.39 | `results/fixed_evaluation/sedc_t_pneumonia_balanced_manifest/metadata.json` |
+| SEDC-T project variant | BUSI | 15 | 0.8000 | 0.6376 | 0.1471 | 0.56 | `results/fixed_evaluation/sedc_t_busi_balanced_manifest/metadata.json` |
+| SEDC-T project variant (lung_fields) | Pneumonia | 20 | 0.4500 | 0.7639 | 0.1510 | 0.39 | `results/fixed_evaluation/sedc_t_pneumonia_balanced_manifest/metadata.json` |
+| SEDC-T tuned project variant (none, max 8) | Pneumonia | 20 | 0.6000 | 0.6800 | 0.1552 | 1.21 | `results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/metadata.json` |
 | DVCE medical multi-sample generation evaluation with OpenAI checkpoint | BUSI | 5 | 1.0000 | 0.7034 | 0.3569 | 8.86 | `results/fixed_evaluation/dvce_busi_manifest_5_current_checkpoint/metadata.json` |
 | DVCE medical multi-sample generation evaluation with OpenAI checkpoint | Pneumonia | 5 | 0.8000 | 0.7219 | 0.1654 | 9.49 | `results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/metadata.json` |
 | DVCE medical multi-sample generation evaluation with Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.8000 | 0.6937 | 0.2469 | 15.63 | `results/fixed_evaluation/dvce_pneumonia_manifest_5_medical_checkpoint_guidance200_sim10_skip40/metadata.json` |

@@ -21,6 +21,26 @@
             "mean_runtime_seconds": 5.686196970939636
         },
         {
+            "metadata_path": "results/fixed_evaluation/prototype_plausibility_busi_l2_20_tv_0_5_delta_0_08/metadata.json",
+            "method": "PyTorch prototype-guided plausibility ablation",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.9952911853790283,
+            "mean_change": 0.03153300277444941,
+            "mean_runtime_seconds": 4.783790493011475
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/metadata.json",
+            "method": "PyTorch prototype-guided plausibility ablation",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.9813584476709366,
+            "mean_change": 0.09339624476851896,
+            "mean_runtime_seconds": 4.762204480171204
+        },
+        {
             "metadata_path": "results/fixed_evaluation/sedc_t_original_style_busi_balanced_manifest/metadata.json",
             "method": "SEDC-T original-style best-first segment replacement",
             "dataset": "BUSI",
@@ -42,7 +62,7 @@
         },
         {
             "metadata_path": "results/fixed_evaluation/sedc_t_busi_balanced_manifest/metadata.json",
-            "method": "SEDC-T-style targeted segment replacement",
+            "method": "SEDC-T project variant",
             "dataset": "BUSI",
             "samples": 15,
             "validity": 0.8,
@@ -52,13 +72,23 @@
         },
         {
             "metadata_path": "results/fixed_evaluation/sedc_t_pneumonia_balanced_manifest/metadata.json",
-            "method": "SEDC-T-style targeted segment replacement",
+            "method": "SEDC-T project variant (lung_fields)",
             "dataset": "Pneumonia",
             "samples": 20,
             "validity": 0.45,
             "mean_counterfactual_confidence": 0.7638695329427719,
             "mean_change": 0.15097855599597096,
             "mean_runtime_seconds": 0.3947916626930237
+        },
+        {
+            "metadata_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/metadata.json",
+            "method": "SEDC-T tuned project variant (none, max 8)",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 0.6,
+            "mean_counterfactual_confidence": 0.6799874186515809,
+            "mean_change": 0.15522062415257096,
+            "mean_runtime_seconds": 1.206890380382538
         },
         {
             "metadata_path": "results/fixed_evaluation/dvce_busi_manifest_5_current_checkpoint/metadata.json",
