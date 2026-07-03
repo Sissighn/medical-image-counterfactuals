@@ -62,16 +62,19 @@ Prototype-guided optimization baseline
 
 Fixed-evaluation result:
 
-| Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean runtime |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| BUSI | 15 | 1.00 | 0.9978 | 0.0559 | 5.24s |
-| Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 | 5.69s |
+| Variant | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean runtime |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Baseline | BUSI | 15 | 1.00 | 0.9978 | 0.0559 | 5.24s |
+| Baseline | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 | 5.69s |
+| Plausibility ablation | BUSI | 15 | 1.00 | 0.9953 | 0.0315 | 4.78s |
+| Plausibility ablation | Pneumonia | 20 | 1.00 | 0.9814 | 0.0934 | 4.76s |
 
 Interpretation:
 
 ```text
 High model validity, but changes can be diffuse and medically hard to localize.
-Best role: technical baseline.
+The plausibility ablation reduces changed area without changing the method
+core, but the method's best role remains a technical baseline.
 ```
 
 ## Method 2: SEDC-T Segment Replacement

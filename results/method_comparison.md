@@ -44,6 +44,8 @@ is reported separately.
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | Prototype-guided optimization baseline | BUSI | 15 | 1.00 | 0.9978 | 0.0559 changed pixel fraction | 5.24s |
 | Prototype-guided optimization baseline | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 changed pixel fraction | 5.69s |
+| Prototype-guided plausibility ablation | BUSI | 15 | 1.00 | 0.9953 | 0.0315 changed pixel fraction | 4.78s |
+| Prototype-guided plausibility ablation | Pneumonia | 20 | 1.00 | 0.9814 | 0.0934 changed pixel fraction | 4.76s |
 | SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6674 | 0.1517 changed pixel fraction | 6.59s |
 | SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.7343 | 0.1410 changed pixel fraction | 13.78s |
 | SEDC-T project variant | BUSI | 15 | 0.80 | 0.6376 | 0.1471 changed pixel fraction | 0.56s |
@@ -81,6 +83,13 @@ results/method_variant_rationale.md
 The prototype-guided baseline reaches the highest validity on both datasets. It
 is useful as a technical baseline, but the changes are often diffuse intensity or
 texture shifts rather than clearly localized medical changes.
+
+A conservative prototype-guided plausibility ablation keeps the same method
+core but increases regularization and lowers the maximum perturbation. It keeps
+validity at 1.00 on both datasets while reducing changed pixel fraction from
+0.0559 to 0.0315 on BUSI and from 0.1442 to 0.0934 on Pneumonia. This provides
+better presentation candidates, but does not change the method's role as a
+technical baseline with limited locality.
 
 The SEDC-T original-style best-first run is the safer method-faithfulness
 baseline. It follows the target-score best-first search more closely and uses no
