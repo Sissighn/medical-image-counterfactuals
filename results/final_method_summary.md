@@ -6,12 +6,13 @@ This file summarizes the implemented counterfactual methods and the current
 fixed-evaluation results. It is intended as a compact public project summary for
 report writing and presentation preparation.
 
-The current project compares three implemented counterfactual directions:
+The current project compares four implemented counterfactual directions:
 
 ```text
 1. Prototype-guided optimization baseline
-2. SEDC-T segment replacement
-3. DVCE-style diffusion-guided generation
+2. Retrieval-based nearest-unlike-neighbor baseline
+3. SEDC-T segment replacement
+4. DVCE-style diffusion-guided generation
 ```
 
 The wording is intentionally careful. The implementations are adaptations to a
@@ -77,7 +78,41 @@ The plausibility ablation reduces changed area without changing the method
 core, but the method's best role remains a technical baseline.
 ```
 
-## Method 2: SEDC-T Segment Replacement
+## Method 2: Retrieval-Based Nearest-Unlike-Neighbor Baseline
+
+The retrieval-based nearest-unlike-neighbor baseline retrieves the nearest real
+training image from the manifest target class using cosine distance in the
+trained ResNet18 penultimate embedding space. Candidate neighbors are restricted
+to training images whose true label and model prediction both match the target
+class.
+
+This method does not generate or edit the original image. It is a case-based
+counterfactual baseline: it answers which real target-class example is closest
+to the original image in model feature space.
+
+Recommended wording:
+
+```text
+Retrieval-based nearest-unlike-neighbor baseline
+```
+
+Fixed-evaluation result:
+
+| Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean embedding distance | Mean runtime |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| BUSI | 15 | 1.00 | 0.8191 | 0.8516 | 0.2953 | 0.01s |
+| Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 | 0.2493 | 0.01s |
+
+Interpretation:
+
+```text
+Retrieval-NUN is visually intuitive because it uses real target-class images and
+does not introduce generated artifacts. Its limitation is that it is not a
+minimal edit: differences can reflect patient, anatomy, acquisition, or dataset
+variation rather than causal evidence for the class change.
+```
+
+## Method 3: SEDC-T Segment Replacement
 
 The SEDC-T method segments an image and searches for region replacements that
 change the classifier prediction to the target class. The project now reports an
@@ -118,7 +153,7 @@ just a parameter issue, but reflects a limitation of segment replacement for
 diffuse chest X-ray cues.
 ```
 
-## Method 3: DVCE-Style Diffusion-Guided Generation
+## Method 4: DVCE-Style Diffusion-Guided Generation
 
 The DVCE-style prototype uses a diffusion-guided generation process together
 with the medical ResNet18 classifier adapter. It covers the generative
@@ -162,13 +197,13 @@ evaluated separately from model validity.
 
 ## Overall Comparison
 
-| Criterion | Prototype-guided baseline | SEDC-T | DVCE-style |
-| --- | --- | --- | --- |
-| Validity | strongest | lower, especially on Pneumonia | promising on small fixed subset |
-| Locality | weak to moderate | strongest | weak to moderate |
-| Runtime | moderate | original-style slower, project variant fastest | slowest |
-| Visual interpretability | limited by diffuse changes | strongest | limited by artifacts/domain mismatch |
-| Best role | technical baseline | main region-based method | generative feasibility method |
+| Criterion | Prototype-guided baseline | Retrieval-NUN | SEDC-T | DVCE-style |
+| --- | --- | --- | --- | --- |
+| Validity | strongest | strongest by construction | lower, especially on Pneumonia | promising on small fixed subset |
+| Locality | weak to moderate | not an edit | strongest | weak to moderate |
+| Runtime | moderate | fastest after database construction | original-style slower, project variant fastest | slowest |
+| Visual interpretability | limited by diffuse changes | intuitive real-case comparison | strongest localized edit | limited by artifacts/domain mismatch |
+| Best role | technical baseline | case-based baseline | main region-based method | generative feasibility method |
 
 ## Main Takeaway
 
@@ -176,6 +211,7 @@ The methods show a trade-off between validity and interpretability.
 
 ```text
 Prototype-guided optimization is highly valid but less localized.
+Retrieval-NUN is interpretable as a nearest real target-class case but not a minimal edit.
 SEDC-T replacement is localized but not always valid; the original-style run is safer for method fidelity.
 DVCE-style generation is generative but currently limited by domain mismatch.
 ```
