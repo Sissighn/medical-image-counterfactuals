@@ -25,11 +25,12 @@ augmentation and class-weighted cross entropy.
 | BUSI | ResNet18 pretrained | 0.8390 | 0.8365 |
 | Pneumonia | ResNet18 pretrained | 0.8782 | 0.8732 |
 
-Three counterfactual directions are currently implemented:
+Four counterfactual directions are currently implemented:
 
 | Method | Role |
 | --- | --- |
 | Prototype-guided optimization baseline | High-validity technical baseline |
+| Retrieval-based nearest-unlike-neighbor baseline | Case-based real target-class comparison |
 | SEDC-T segment replacement | Region-based and more localized explanations |
 | DVCE-style diffusion-guided generation | Generative feasibility method |
 
@@ -258,6 +259,20 @@ This method computes feature prototypes from the ResNet18 embedding space and
 optimizes an input image toward the target class while penalizing large or noisy
 changes.
 
+### Retrieval-Based Nearest-Unlike-Neighbor Baseline
+
+```bash
+PYTHONPATH=. python scripts/run_retrieval_nun_pytorch.py \
+  --model_path models/busi_resnet18_pretrained.pth \
+  --dataset_path data/processed/BUSI \
+  --output_dir results/fixed_evaluation/retrieval_nun_busi_balanced_manifest \
+  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
+```
+
+This method retrieves the nearest real training image from the target class in
+the ResNet18 penultimate embedding space. It is a case-based baseline, not a
+minimal image edit.
+
 ### SEDC-T Segment Replacement
 
 ```bash
@@ -301,6 +316,8 @@ method because the diffusion prior is not medical-domain-specific.
 | Prototype-guided optimization | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 | 5.69s |
 | Prototype-guided plausibility ablation | BUSI | 15 | 1.00 | 0.9953 | 0.0315 | 4.78s |
 | Prototype-guided plausibility ablation | Pneumonia | 20 | 1.00 | 0.9814 | 0.0934 | 4.76s |
+| Retrieval-based nearest-unlike-neighbor | BUSI | 15 | 1.00 | 0.8191 | 0.8516 | 0.01s |
+| Retrieval-based nearest-unlike-neighbor | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 | 0.01s |
 | SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6674 | 0.1517 | 6.59s |
 | SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.7343 | 0.1410 | 13.78s |
 | SEDC-T project variant | BUSI | 15 | 0.80 | 0.6376 | 0.1471 | 0.56s |
