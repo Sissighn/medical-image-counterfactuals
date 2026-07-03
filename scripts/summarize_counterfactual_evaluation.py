@@ -60,6 +60,24 @@ def summarize_metadata(path):
     records = metadata.get("records", [])
 
     method = metadata.get("method") or metadata.get("purpose") or "unknown"
+    parameters = metadata.get("parameters", {})
+    if method == "PyTorch prototype-guided optimization baseline":
+        if (
+            parameters.get("lambda_l2", 0) > 5.0
+            or parameters.get("lambda_tv", 0) > 0.2
+            or parameters.get("max_delta", 1.0) < 0.12
+        ):
+            method = "PyTorch prototype-guided plausibility ablation"
+    if method == "SEDC-T-style targeted segment replacement":
+        search_mode = parameters.get("search_mode")
+        roi_mode = parameters.get("roi_mode") or "none"
+        max_segments = parameters.get("max_segments")
+        if search_mode == "greedy_minimal" and max_segments and max_segments > 6:
+            method = f"SEDC-T tuned project variant ({roi_mode}, max {max_segments})"
+        elif roi_mode != "none":
+            method = f"SEDC-T project variant ({roi_mode})"
+        else:
+            method = "SEDC-T project variant"
     diffusion_checkpoint_path = str(metadata.get("diffusion_checkpoint_path") or "")
     if method == "DVCE medical multi-sample generation evaluation":
         if "ema_0.9999_005000" in diffusion_checkpoint_path:
