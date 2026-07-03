@@ -301,7 +301,7 @@ def save_counterfactual_visualization(
     valid_counterfactual,
 ):
     diff = torch.abs(cf_pixels - original_pixels)
-    grid = torch.cat([original_pixels, cf_pixels, diff / diff.max().clamp_min(1e-8)], dim=0)
+    grid = torch.cat([original_pixels, cf_pixels, diff.clamp(0.0, 1.0)], dim=0)
     utils.save_image(grid, output_path, nrow=3)
 
     figure_path = output_path.with_suffix(".summary.png")
