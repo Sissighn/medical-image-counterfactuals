@@ -29,8 +29,33 @@
     {
       "type": "per_method",
       "dataset": "BUSI",
+      "method": "Retrieval-based nearest-unlike-neighbor baseline",
+      "figure_path": "results/qualitative_figures/per_method/busi__retrieval_based_nearest_unlike_neighbor_baseline.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
       "method": "SEDC-T original-style best-first",
       "figure_path": "results/qualitative_figures/per_method/busi__sedc_t_original_style_best_first.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "SEDC-T tuned project variant (none, max 10)",
+      "figure_path": "results/qualitative_figures/per_method/busi__sedc_t_tuned_project_variant_none_max_10.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -68,6 +93,18 @@
       "dataset": "Pneumonia",
       "method": "Prototype-guided plausibility ablation",
       "figure_path": "results/qualitative_figures/per_method/pneumonia__prototype_guided_plausibility_ablation.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "Retrieval-based nearest-unlike-neighbor baseline",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia__retrieval_based_nearest_unlike_neighbor_baseline.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
