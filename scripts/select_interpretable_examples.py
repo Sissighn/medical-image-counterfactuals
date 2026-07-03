@@ -152,51 +152,78 @@ def row_sort_value(record, key, default):
     return default if value is None else value
 
 
+def record_identity(record):
+    return (record.get("metadata_path"), record.get("sample_index"))
+
+
+def choose_prefer_new(candidates, key, used_identities, prefer="min"):
+    ordered = sorted(candidates, key=key, reverse=(prefer == "max"))
+    for record in ordered:
+        if record_identity(record) not in used_identities:
+            return record
+    return ordered[0] if ordered else None
+
+
 def select_examples(records):
     valid = [record for record in records if record["valid_counterfactual"]]
     invalid = [record for record in records if not record["valid_counterfactual"]]
     selected = []
+    used_identities = set()
 
     if valid:
+        best_balanced = choose_prefer_new(
+            valid,
+            key=lambda record: (
+                row_sort_value(record, "change", 1e9),
+                -row_sort_value(record, "counterfactual_confidence", -1e9),
+            ),
+            used_identities=used_identities,
+            prefer="min",
+        )
         selected.append(
             (
                 "best_valid_balanced",
-                min(
-                    valid,
-                    key=lambda record: (
-                        row_sort_value(record, "change", 1e9),
-                        -row_sort_value(record, "counterfactual_confidence", -1e9),
-                    ),
-                ),
+                best_balanced,
                 "Valid CF with the smallest available changed area.",
             )
+        )
+        used_identities.add(record_identity(best_balanced))
+
+        highest_confidence = choose_prefer_new(
+            valid,
+            key=lambda record: (
+                row_sort_value(record, "counterfactual_confidence", -1e9),
+                -row_sort_value(record, "change", 1e9),
+            ),
+            used_identities=used_identities,
+            prefer="max",
         )
         selected.append(
             (
                 "highest_confidence_valid",
-                max(
-                    valid,
-                    key=lambda record: (
-                        row_sort_value(record, "counterfactual_confidence", -1e9),
-                        -row_sort_value(record, "change", 1e9),
-                    ),
-                ),
+                highest_confidence,
                 "Valid CF with the strongest target-class confidence.",
             )
+        )
+        used_identities.add(record_identity(highest_confidence))
+
+        questionable = choose_prefer_new(
+            valid,
+            key=lambda record: (
+                row_sort_value(record, "change", -1e9),
+                row_sort_value(record, "l1", -1e9),
+            ),
+            used_identities=used_identities,
+            prefer="max",
         )
         selected.append(
             (
                 "visually_questionable_valid",
-                max(
-                    valid,
-                    key=lambda record: (
-                        row_sort_value(record, "change", -1e9),
-                        row_sort_value(record, "l1", -1e9),
-                    ),
-                ),
+                questionable,
                 "Valid CF with a large change; useful to discuss model validity versus plausibility.",
             )
         )
+        used_identities.add(record_identity(questionable))
 
     if invalid:
         selected.append(
