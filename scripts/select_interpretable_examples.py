@@ -46,6 +46,9 @@ def infer_method(metadata):
     if method == "SEDC-T original-style best-first segment replacement":
         return "SEDC-T original-style best-first"
 
+    if method == "Retrieval-based nearest-unlike-neighbor baseline":
+        return "Retrieval-based nearest-unlike-neighbor baseline"
+
     if "prototype-guided" in method.lower():
         parameters = metadata.get("parameters", {})
         if (
@@ -81,6 +84,9 @@ def record_change(record):
 
 def record_primary_change(record, method):
     change_metrics = record.get("change_metrics") or {}
+    if method.startswith("Retrieval-based"):
+        if "embedding_distance" in record:
+            return float(record["embedding_distance"])
     if method.startswith("Prototype-guided"):
         if "l1_mean" in change_metrics:
             return float(change_metrics["l1_mean"])
@@ -169,6 +175,7 @@ def normalize_record(metadata_path, metadata, record):
     threshold = record_threshold(record)
     num_segments = record_segments(record)
     image_path = record_image_path(record)
+    embedding_distance = safe_float(record.get("embedding_distance"))
 
     return {
         "metadata_path": str(metadata_path),
@@ -184,7 +191,14 @@ def normalize_record(metadata_path, metadata, record):
         "valid_counterfactual": bool(record.get("valid_counterfactual")),
         "counterfactual_confidence": confidence,
         "change": change,
-        "change_metric": "l1_mean" if method.startswith("Prototype-guided") else "changed_pixel_fraction",
+        "change_metric": (
+            "embedding_distance"
+            if method.startswith("Retrieval-based")
+            else "l1_mean"
+            if method.startswith("Prototype-guided")
+            else "changed_pixel_fraction"
+        ),
+        "embedding_distance": embedding_distance,
         "changed_pixel_fraction": changed_pixel_fraction,
         "sparsity_threshold": threshold,
         "l1": l1,
@@ -215,6 +229,7 @@ def choose_prefer_new(candidates, key, used_identities, prefer="min"):
 
 
 def select_examples(records):
+    method = records[0]["method"] if records else ""
     valid = [record for record in records if record["valid_counterfactual"]]
     invalid = [record for record in records if not record["valid_counterfactual"]]
     selected = []
@@ -234,7 +249,11 @@ def select_examples(records):
             (
                 "best_valid_balanced",
                 best_balanced,
-                "Valid CF with the smallest available changed area.",
+                (
+                    "Valid retrieval with the smallest embedding distance."
+                    if method.startswith("Retrieval-based")
+                    else "Valid CF with the smallest available changed area."
+                ),
             )
         )
         used_identities.add(record_identity(best_balanced))
@@ -270,7 +289,11 @@ def select_examples(records):
             (
                 "visually_questionable_valid",
                 questionable,
-                "Valid CF with a large change; useful to discuss model validity versus plausibility.",
+                (
+                    "Valid retrieval with a large embedding distance; useful to discuss nearest-case limitations."
+                    if method.startswith("Retrieval-based")
+                    else "Valid CF with a large change; useful to discuss model validity versus plausibility."
+                ),
             )
         )
         used_identities.add(record_identity(questionable))
@@ -364,8 +387,8 @@ def write_selected_examples(selections, output_dir, copy_assets):
         "",
         "Examples are selected from existing fixed-evaluation metadata. They are not new methods.",
         "",
-        "| Method | Dataset | Category | Sample | Valid | Prediction | Target | CF prediction | CF confidence | Primary change | Changed pixels | L1/MAD | L∞ | Segments | Plot | Rationale |",
-        "| --- | --- | --- | ---: | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
+        "| Method | Dataset | Category | Sample | Valid | Prediction | Target | CF prediction | CF confidence | Primary change | Embedding dist | Changed pixels | L1/MAD | L∞ | Segments | Plot | Rationale |",
+        "| --- | --- | --- | ---: | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
     ]
     manifest = []
     for group_key in sorted(selections):
@@ -384,6 +407,7 @@ def write_selected_examples(selections, output_dir, copy_assets):
                 f"{record.get('counterfactual_prediction') or ''} | "
                 f"{fmt(record.get('counterfactual_confidence'))} | "
                 f"{fmt(record.get('change'))} | "
+                f"{fmt(record.get('embedding_distance'))} | "
                 f"{fmt(record.get('changed_pixel_fraction'))} | "
                 f"{fmt(record.get('l1'))} | "
                 f"{fmt(record.get('linf'))} | "
@@ -415,6 +439,8 @@ def write_tradeoff_table(summaries, output_dir):
             note = "Ablation; same validity with stronger regularization and less changed area."
         elif "Prototype" in method:
             note = "High validity; often diffuse, best treated as technical baseline."
+        elif "Retrieval-based" in method:
+            note = "Real target-class examples; intuitive case baseline but not a minimal edit."
         elif "SEDC-T original" in method:
             note = "Localized and method-faithful; moderate validity and slower runtime."
         elif "SEDC-T tuned" in method:
@@ -446,6 +472,7 @@ def write_readme(output_dir):
         "",
         "- The prototype-guided optimization baseline has the highest model validity, but its changes are often diffuse.",
         "- The prototype-guided plausibility ablation keeps validity high while reducing changed area.",
+        "- Retrieval-NUN retrieves real target-class cases and is visually intuitive, but it is not a minimal image edit.",
         "- SEDC-T provides localized region changes and is the clearest region-based method, but validity is lower, especially on Pneumonia.",
         "- SEDC-T tuning improves Pneumonia only slightly, suggesting a method/data limitation rather than a simple parameter issue.",
         "- DVCE covers the generative method category, but outputs remain sensitive to checkpoint and guidance settings.",

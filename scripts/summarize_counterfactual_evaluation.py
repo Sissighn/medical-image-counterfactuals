@@ -78,6 +78,8 @@ def summarize_metadata(path):
             method = f"SEDC-T project variant ({roi_mode})"
         else:
             method = "SEDC-T project variant"
+    if method == "Retrieval-based nearest-unlike-neighbor baseline":
+        method = "Retrieval-based nearest-unlike-neighbor baseline"
     diffusion_checkpoint_path = str(metadata.get("diffusion_checkpoint_path") or "")
     if method == "DVCE medical multi-sample generation evaluation":
         if "ema_0.9999_005000" in diffusion_checkpoint_path:
