@@ -13,6 +13,7 @@ scripts below.
 | `evaluate_model.py` | Evaluate a saved classifier on the full test split and write metrics to JSON. |
 | `create_evaluation_manifest.py` | Create fixed correctly classified evaluation samples for counterfactual comparison. |
 | `run_cfproto_pytorch.py` | Run the prototype-guided optimization baseline. |
+| `run_retrieval_nun_pytorch.py` | Run the retrieval-based nearest-unlike-neighbor case baseline. |
 | `run_sedc_t_pytorch.py` | Run SEDC-T original-style or the faster project variant via `--search_mode`. |
 | `run_dvce_medical_prototype.py` | Run the DVCE-style diffusion-guided counterfactual prototype. |
 | `summarize_counterfactual_evaluation.py` | Generate compact summary tables from method metadata files. |
