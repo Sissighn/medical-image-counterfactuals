@@ -128,6 +128,48 @@ def normalize_image_for_display(image: np.ndarray) -> np.ndarray:
     return np.clip(image, 0.0, 1.0)
 
 
+def compact_vertical_whitespace(
+    image: np.ndarray,
+    white_threshold: float = 0.985,
+    white_fraction_threshold: float = 0.995,
+    min_blank_run: int = 28,
+    keep_blank_rows: int = 18,
+) -> np.ndarray:
+    """Remove excessive white rows from embedded source plots.
+
+    Some source visualizations reserve a large title area. This function only
+    compresses long near-white horizontal bands; image content and color scales
+    are left unchanged.
+    """
+    if image.ndim < 2 or image.shape[0] < min_blank_run:
+        return image
+
+    rgb = image[..., :3] if image.ndim == 3 else image[..., None]
+    white_fraction = np.mean(rgb > white_threshold, axis=tuple(range(1, rgb.ndim)))
+    blank_rows = white_fraction >= white_fraction_threshold
+
+    keep_mask = np.ones(image.shape[0], dtype=bool)
+    start = None
+    for index, is_blank in enumerate(np.r_[blank_rows, False]):
+        if is_blank and start is None:
+            start = index
+        elif not is_blank and start is not None:
+            end = index
+            run_length = end - start
+            if run_length > min_blank_run:
+                keep_top = keep_blank_rows // 2
+                keep_bottom = keep_blank_rows - keep_top
+                remove_start = start + keep_top
+                remove_end = end - keep_bottom
+                if remove_end > remove_start:
+                    keep_mask[remove_start:remove_end] = False
+            start = None
+
+    if keep_mask.all():
+        return image
+    return image[keep_mask]
+
+
 def format_float(value: Any, digits: int = 3) -> str:
     if value is None:
         return "n/a"
@@ -148,6 +190,15 @@ def format_cell_note(example: dict[str, Any]) -> str:
         f"sample {sample} | target {target} | CF {pred} ({confidence})\n"
         f"valid {valid} | change {change}"
     )
+
+
+def available_categories(examples_by_category: dict[str, dict[str, Any]]) -> list[tuple[str, str]]:
+    """Return ordered qualitative categories that actually exist for a method."""
+    return [
+        (category, label)
+        for category, label in CATEGORY_ORDER
+        if category in examples_by_category
+    ]
 
 
 def draw_missing_cell(ax: plt.Axes, message: str) -> None:
@@ -245,7 +296,9 @@ def create_dataset_figure(
                 continue
 
             try:
-                image = normalize_image_for_display(mpimg.imread(image_path))
+                image = compact_vertical_whitespace(
+                    normalize_image_for_display(mpimg.imread(image_path))
+                )
             except Exception as exc:  # pragma: no cover - defensive for broken image files.
                 draw_missing_cell(ax, "Could not read image")
                 warnings.append(f"{image_path}: could not be read ({exc}).")
@@ -285,11 +338,23 @@ def create_method_figure(
     dpi: int,
 ) -> dict[str, Any]:
     warnings: list[str] = []
-    n_rows = len(CATEGORY_ORDER)
+    categories = available_categories(examples_by_category)
+    if not categories:
+        warnings.append(f"{dataset} / {method}: no selected examples available.")
+        return {
+            "type": "per_method",
+            "dataset": dataset,
+            "method": method,
+            "figure_path": None,
+            "categories": [],
+            "warnings": warnings,
+        }
+
+    n_rows = len(categories)
     fig, axes = plt.subplots(
         n_rows,
         1,
-        figsize=(12.5, 3.25 * n_rows),
+        figsize=(12.5, 3.05 * n_rows),
         squeeze=False,
         constrained_layout=True,
     )
@@ -299,7 +364,7 @@ def create_method_figure(
         fontweight="bold",
     )
 
-    for row, (category, label) in enumerate(CATEGORY_ORDER):
+    for row, (category, label) in enumerate(categories):
         ax = axes[row, 0]
         ax.set_xticks([])
         ax.set_yticks([])
@@ -329,7 +394,9 @@ def create_method_figure(
             continue
 
         try:
-            image = normalize_image_for_display(mpimg.imread(image_path))
+            image = compact_vertical_whitespace(
+                normalize_image_for_display(mpimg.imread(image_path))
+            )
         except Exception as exc:  # pragma: no cover - defensive for broken image files.
             draw_missing_cell(ax, "Could not read image")
             warnings.append(f"{image_path}: could not be read ({exc}).")
@@ -357,7 +424,7 @@ def create_method_figure(
         "dataset": dataset,
         "method": method,
         "figure_path": str(figure_path),
-        "categories": [label for _, label in CATEGORY_ORDER],
+        "categories": [label for _, label in categories],
         "warnings": warnings,
     }
 
@@ -403,7 +470,8 @@ def write_readme(
         "the counterfactual methods evaluated in this project.",
         "",
         "The main figures are stored in `per_method/`. Each figure contains one "
-        "method on one dataset. Rows correspond to qualitative case types:",
+        "method on one dataset. Rows correspond to the qualitative case types "
+        "available for that method:",
         "",
     ]
     for _, label in CATEGORY_ORDER:
@@ -418,7 +486,15 @@ def write_readme(
             "",
             "The comparison script does not recompute, stretch, or per-image normalize "
             "the embedded difference maps. Source plots are displayed as saved, and "
-            "image data is only converted to the standard display range `[0, 1]`.",
+            "image data is only converted to the standard display range `[0, 1]`. "
+            "Long white bands inside source plots are compacted for readability, "
+            "but the image panels and color values are not changed.",
+            "",
+            "This is intentional: very dark difference maps indicate genuinely small "
+            "absolute changes on a fixed scale, not a plotting error. Stronger "
+            "colors would only be appropriate with an explicitly labelled alternate "
+            "scale, because otherwise tiny differences could appear misleadingly "
+            "large.",
             "",
             "Generated per-method figures:",
             "",
