@@ -1,0 +1,1358 @@
+{
+    "method": "Retrieval-based nearest-unlike-neighbor baseline",
+    "model_path": "models/pneumonia_resnet18_pretrained.pth",
+    "dataset_path": "data/processed/Pneumonia",
+    "classes": [
+        "NORMAL",
+        "PNEUMONIA"
+    ],
+    "parameters": {
+        "retrieval_split": "train",
+        "candidate_filter": "candidate true label equals target class and model prediction equals target class",
+        "distance_metric": "cosine distance",
+        "embedding": "ResNet18 penultimate layer, L2-normalized",
+        "batch_size": 32,
+        "change_threshold": 0.03,
+        "manifest_path": "results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json",
+        "manifest_max_samples": null
+    },
+    "evaluation_manifest": {
+        "path": "results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json",
+        "purpose": "fixed correctly classified test sample set for counterfactual evaluation",
+        "num_manifest_records": 20,
+        "num_used_records": 20,
+        "target_strategy": "second_best"
+    },
+    "candidate_database": {
+        "split": "train",
+        "correctly_classified_candidates_by_class": {
+            "NORMAL": 1339,
+            "PNEUMONIA": 3793
+        },
+        "total_correctly_classified_candidates": 5132
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "manifest_sample_index": 0,
+            "dataset_index": 0,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0001-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.6365812420845032,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5842921733856201,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1722,
+            "retrieved_image_path": "data/processed/Pneumonia/train/PNEUMONIA/person1199_bacteria_3149.jpeg",
+            "retrieved_true_label_index": 1,
+            "retrieved_true_label": "PNEUMONIA",
+            "embedding_distance": 0.1363886594772339,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 3793,
+            "original_probabilities": [
+                0.6365812420845032,
+                0.36341869831085205
+            ],
+            "counterfactual_probabilities": [
+                0.41570785641670227,
+                0.5842921733856201
+            ],
+            "runtime_seconds": 0.011163949966430664,
+            "change_metrics": {
+                "l1_mean": 0.1533447802066803,
+                "l2_mean": 0.20096229016780853,
+                "linf": 0.7960784435272217,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8681042790412903
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.047058820724487305,
+                    "max": 0.9529411792755127,
+                    "mean": 0.5138251781463623
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9725490808486938,
+                    "mean": 0.4917786121368408
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7960784435272217,
+                    "mean": 0.1533447802066803,
+                    "std": 0.12988969683647156
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_00.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_00.summary.png"
+        },
+        {
+            "sample_index": 1,
+            "manifest_sample_index": 1,
+            "dataset_index": 1,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0003-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.8753835558891296,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5587996244430542,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 2342,
+            "retrieved_image_path": "data/processed/Pneumonia/train/PNEUMONIA/person1469_virus_2547.jpeg",
+            "retrieved_true_label_index": 1,
+            "retrieved_true_label": "PNEUMONIA",
+            "embedding_distance": 0.0871511697769165,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 3793,
+            "original_probabilities": [
+                0.8753835558891296,
+                0.12461639940738678
+            ],
+            "counterfactual_probabilities": [
+                0.4412004351615906,
+                0.5587996244430542
+            ],
+            "runtime_seconds": 0.010627985000610352,
+            "change_metrics": {
+                "l1_mean": 0.17147725820541382,
+                "l2_mean": 0.20281384885311127,
+                "linf": 0.9019608497619629,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.9317402839660645
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.06666666269302368,
+                    "max": 0.9921568632125854,
+                    "mean": 0.5587130188941956
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9647059440612793,
+                    "mean": 0.4260353446006775
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.9019608497619629,
+                    "mean": 0.17147725820541382,
+                    "std": 0.10830088704824448
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_01.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_01.summary.png"
+        },
+        {
+            "sample_index": 2,
+            "manifest_sample_index": 2,
+            "dataset_index": 2,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0005-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.7860183119773865,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5176844000816345,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1650,
+            "retrieved_image_path": "data/processed/Pneumonia/train/PNEUMONIA/person1164_virus_1958.jpeg",
+            "retrieved_true_label_index": 1,
+            "retrieved_true_label": "PNEUMONIA",
+            "embedding_distance": 0.1321406364440918,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 3793,
+            "original_probabilities": [
+                0.7860183119773865,
+                0.2139817476272583
+            ],
+            "counterfactual_probabilities": [
+                0.4823155701160431,
+                0.5176844000816345
+            ],
+            "runtime_seconds": 0.011526823043823242,
+            "change_metrics": {
+                "l1_mean": 0.17019455134868622,
+                "l2_mean": 0.2290937602519989,
+                "linf": 0.843137264251709,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8906050324440002
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.047058820724487305,
+                    "max": 0.9411765336990356,
+                    "mean": 0.5344192385673523
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9019608497619629,
+                    "mean": 0.4342661201953888
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.843137264251709,
+                    "mean": 0.17019455134868622,
+                    "std": 0.15335553884506226
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_02.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_02.summary.png"
+        },
+        {
+            "sample_index": 3,
+            "manifest_sample_index": 3,
+            "dataset_index": 3,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0006-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.572936475276947,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5587996244430542,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 2342,
+            "retrieved_image_path": "data/processed/Pneumonia/train/PNEUMONIA/person1469_virus_2547.jpeg",
+            "retrieved_true_label_index": 1,
+            "retrieved_true_label": "PNEUMONIA",
+            "embedding_distance": 0.06836181879043579,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 3793,
+            "original_probabilities": [
+                0.572936475276947,
+                0.4270634651184082
+            ],
+            "counterfactual_probabilities": [
+                0.4412004351615906,
+                0.5587996244430542
+            ],
+            "runtime_seconds": 0.011226892471313477,
+            "change_metrics": {
+                "l1_mean": 0.19695831835269928,
+                "l2_mean": 0.26280099153518677,
+                "linf": 0.772549033164978,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8942322731018066
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0156862735748291,
+                    "max": 0.9450980424880981,
+                    "mean": 0.5832229256629944
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9647059440612793,
+                    "mean": 0.4260353446006775
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.772549033164978,
+                    "mean": 0.19695831835269928,
+                    "std": 0.173988476395607
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_03.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_03.summary.png"
+        },
+        {
+            "sample_index": 4,
+            "manifest_sample_index": 4,
+            "dataset_index": 4,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0007-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.835712194442749,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5842921733856201,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1722,
+            "retrieved_image_path": "data/processed/Pneumonia/train/PNEUMONIA/person1199_bacteria_3149.jpeg",
+            "retrieved_true_label_index": 1,
+            "retrieved_true_label": "PNEUMONIA",
+            "embedding_distance": 0.1582840085029602,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 3793,
+            "original_probabilities": [
+                0.835712194442749,
+                0.16428779065608978
+            ],
+            "counterfactual_probabilities": [
+                0.41570785641670227,
+                0.5842921733856201
+            ],
+            "runtime_seconds": 0.010650873184204102,
+            "change_metrics": {
+                "l1_mean": 0.16167733073234558,
+                "l2_mean": 0.20646783709526062,
+                "linf": 0.7882353067398071,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8757573366165161
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0627450942993164,
+                    "max": 0.9647059440612793,
+                    "mean": 0.5401108860969543
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9725490808486938,
+                    "mean": 0.4917786121368408
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7882353067398071,
+                    "mean": 0.16167733073234558,
+                    "std": 0.12841153144836426
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_04.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_04.summary.png"
+        },
+        {
+            "sample_index": 5,
+            "manifest_sample_index": 5,
+            "dataset_index": 5,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0009-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.956616997718811,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5176844000816345,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1650,
+            "retrieved_image_path": "data/processed/Pneumonia/train/PNEUMONIA/person1164_virus_1958.jpeg",
+            "retrieved_true_label_index": 1,
+            "retrieved_true_label": "PNEUMONIA",
+            "embedding_distance": 0.16628599166870117,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 3793,
+            "original_probabilities": [
+                0.956616997718811,
+                0.04338296130299568
+            ],
+            "counterfactual_probabilities": [
+                0.4823155701160431,
+                0.5176844000816345
+            ],
+            "runtime_seconds": 0.011198997497558594,
+            "change_metrics": {
+                "l1_mean": 0.15971021354198456,
+                "l2_mean": 0.20561818778514862,
+                "linf": 0.8509804010391235,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8953284025192261
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.09411764144897461,
+                    "max": 0.9607843160629272,
+                    "mean": 0.5636793971061707
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9019608497619629,
+                    "mean": 0.4342661201953888
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.8509804010391235,
+                    "mean": 0.15971021354198456,
+                    "std": 0.1295052170753479
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_05.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_05.summary.png"
+        },
+        {
+            "sample_index": 6,
+            "manifest_sample_index": 6,
+            "dataset_index": 6,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0010-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.9521610140800476,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5233334302902222,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 2514,
+            "retrieved_image_path": "data/processed/Pneumonia/train/PNEUMONIA/person1537_virus_2674.jpeg",
+            "retrieved_true_label_index": 1,
+            "retrieved_true_label": "PNEUMONIA",
+            "embedding_distance": 0.17608767747879028,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 3793,
+            "original_probabilities": [
+                0.9521610140800476,
+                0.047839000821113586
+            ],
+            "counterfactual_probabilities": [
+                0.4766665995121002,
+                0.5233334302902222
+            ],
+            "runtime_seconds": 0.010510683059692383,
+            "change_metrics": {
+                "l1_mean": 0.15897975862026215,
+                "l2_mean": 0.2164623886346817,
+                "linf": 0.9647059440612793,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8425542116165161
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9372549057006836,
+                    "mean": 0.5201249122619629
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9764705896377563,
+                    "mean": 0.593795895576477
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.9647059440612793,
+                    "mean": 0.15897975862026215,
+                    "std": 0.14690658450126648
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_06.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_06.summary.png"
+        },
+        {
+            "sample_index": 7,
+            "manifest_sample_index": 7,
+            "dataset_index": 7,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0011-0001-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.7160110473632812,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5842921733856201,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1722,
+            "retrieved_image_path": "data/processed/Pneumonia/train/PNEUMONIA/person1199_bacteria_3149.jpeg",
+            "retrieved_true_label_index": 1,
+            "retrieved_true_label": "PNEUMONIA",
+            "embedding_distance": 0.11672317981719971,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 3793,
+            "original_probabilities": [
+                0.7160110473632812,
+                0.283988893032074
+            ],
+            "counterfactual_probabilities": [
+                0.41570785641670227,
+                0.5842921733856201
+            ],
+            "runtime_seconds": 0.011270761489868164,
+            "change_metrics": {
+                "l1_mean": 0.1530126929283142,
+                "l2_mean": 0.20650723576545715,
+                "linf": 0.8666666746139526,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8462412357330322
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.003921538591384888,
+                    "max": 0.9254902601242065,
+                    "mean": 0.5376198291778564
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9725490808486938,
+                    "mean": 0.4917786121368408
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.8666666746139526,
+                    "mean": 0.1530126929283142,
+                    "std": 0.13868123292922974
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_07.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_07.summary.png"
+        },
+        {
+            "sample_index": 8,
+            "manifest_sample_index": 8,
+            "dataset_index": 9,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0011-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.8897689580917358,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5176844000816345,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1650,
+            "retrieved_image_path": "data/processed/Pneumonia/train/PNEUMONIA/person1164_virus_1958.jpeg",
+            "retrieved_true_label_index": 1,
+            "retrieved_true_label": "PNEUMONIA",
+            "embedding_distance": 0.1553490161895752,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 3793,
+            "original_probabilities": [
+                0.8897689580917358,
+                0.11023102700710297
+            ],
+            "counterfactual_probabilities": [
+                0.4823155701160431,
+                0.5176844000816345
+            ],
+            "runtime_seconds": 0.010915279388427734,
+            "change_metrics": {
+                "l1_mean": 0.1618098020553589,
+                "l2_mean": 0.22040940821170807,
+                "linf": 0.7607843279838562,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8599529266357422
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.011764705181121826,
+                    "max": 0.8784314393997192,
+                    "mean": 0.4950323700904846
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9019608497619629,
+                    "mean": 0.4342661201953888
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7607843279838562,
+                    "mean": 0.1618098020553589,
+                    "std": 0.14965976774692535
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_08.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_08.summary.png"
+        },
+        {
+            "sample_index": 9,
+            "manifest_sample_index": 9,
+            "dataset_index": 10,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0013-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.835533857345581,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.5842921733856201,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1722,
+            "retrieved_image_path": "data/processed/Pneumonia/train/PNEUMONIA/person1199_bacteria_3149.jpeg",
+            "retrieved_true_label_index": 1,
+            "retrieved_true_label": "PNEUMONIA",
+            "embedding_distance": 0.15539610385894775,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 3793,
+            "original_probabilities": [
+                0.835533857345581,
+                0.16446614265441895
+            ],
+            "counterfactual_probabilities": [
+                0.41570785641670227,
+                0.5842921733856201
+            ],
+            "runtime_seconds": 0.010852813720703125,
+            "change_metrics": {
+                "l1_mean": 0.16858072578907013,
+                "l2_mean": 0.2188456654548645,
+                "linf": 0.8980392813682556,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8834502100944519
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9411765336990356,
+                    "mean": 0.5336176753044128
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9725490808486938,
+                    "mean": 0.4917786121368408
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.8980392813682556,
+                    "mean": 0.16858072578907013,
+                    "std": 0.1395496279001236
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_09.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_09.summary.png"
+        },
+        {
+            "sample_index": 10,
+            "manifest_sample_index": 10,
+            "dataset_index": 234,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_475.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9994043111801147,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.7460851669311523,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 233,
+            "retrieved_image_path": "data/processed/Pneumonia/train/NORMAL/IM-0435-0001.jpeg",
+            "retrieved_true_label_index": 0,
+            "retrieved_true_label": "NORMAL",
+            "embedding_distance": 0.44022083282470703,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 1339,
+            "original_probabilities": [
+                0.0005956409149803221,
+                0.9994043111801147
+            ],
+            "counterfactual_probabilities": [
+                0.7460851669311523,
+                0.25391480326652527
+            ],
+            "runtime_seconds": 0.008054018020629883,
+            "change_metrics": {
+                "l1_mean": 0.11683555692434311,
+                "l2_mean": 0.1587287038564682,
+                "linf": 0.6745097637176514,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.7707070708274841
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9647059440612793,
+                    "mean": 0.4336337447166443
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9450980424880981,
+                    "mean": 0.49150633811950684
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.6745097637176514,
+                    "mean": 0.11683555692434311,
+                    "std": 0.10744453221559525
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_10.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_10.summary.png"
+        },
+        {
+            "sample_index": 11,
+            "manifest_sample_index": 11,
+            "dataset_index": 235,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_477.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999871253967285,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.6454077363014221,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 228,
+            "retrieved_image_path": "data/processed/Pneumonia/train/NORMAL/IM-0431-0001.jpeg",
+            "retrieved_true_label_index": 0,
+            "retrieved_true_label": "NORMAL",
+            "embedding_distance": 0.4091731905937195,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 1339,
+            "original_probabilities": [
+                1.2928180694871116e-05,
+                0.9999871253967285
+            ],
+            "counterfactual_probabilities": [
+                0.6454077363014221,
+                0.35459229350090027
+            ],
+            "runtime_seconds": 0.013736963272094727,
+            "change_metrics": {
+                "l1_mean": 0.23861604928970337,
+                "l2_mean": 0.2866041362285614,
+                "linf": 0.9450980424880981,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.9426418542861938
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.8196078538894653,
+                    "mean": 0.2863876223564148
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9960784912109375,
+                    "mean": 0.4935591220855713
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.9450980424880981,
+                    "mean": 0.23861604928970337,
+                    "std": 0.15875913202762604
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_11.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_11.summary.png"
+        },
+        {
+            "sample_index": 12,
+            "manifest_sample_index": 12,
+            "dataset_index": 236,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_478.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999337196350098,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.7455765604972839,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1324,
+            "retrieved_image_path": "data/processed/Pneumonia/train/NORMAL/NORMAL2-IM-1356-0001.jpeg",
+            "retrieved_true_label_index": 0,
+            "retrieved_true_label": "NORMAL",
+            "embedding_distance": 0.35145437717437744,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 1339,
+            "original_probabilities": [
+                6.624630623264238e-05,
+                0.9999337196350098
+            ],
+            "counterfactual_probabilities": [
+                0.7455765604972839,
+                0.25442343950271606
+            ],
+            "runtime_seconds": 0.006499052047729492,
+            "change_metrics": {
+                "l1_mean": 0.198471799492836,
+                "l2_mean": 0.2815646827220917,
+                "linf": 0.921568751335144,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8191764950752258
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9254902601242065,
+                    "mean": 0.5305048227310181
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9803922176361084,
+                    "mean": 0.5086730122566223
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.921568751335144,
+                    "mean": 0.198471799492836,
+                    "std": 0.19971951842308044
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_12.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_12.summary.png"
+        },
+        {
+            "sample_index": 13,
+            "manifest_sample_index": 13,
+            "dataset_index": 237,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_479.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999377727508545,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.7455765604972839,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1324,
+            "retrieved_image_path": "data/processed/Pneumonia/train/NORMAL/NORMAL2-IM-1356-0001.jpeg",
+            "retrieved_true_label_index": 0,
+            "retrieved_true_label": "NORMAL",
+            "embedding_distance": 0.36956262588500977,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 1339,
+            "original_probabilities": [
+                6.227861013030633e-05,
+                0.9999377727508545
+            ],
+            "counterfactual_probabilities": [
+                0.7455765604972839,
+                0.25442343950271606
+            ],
+            "runtime_seconds": 0.00637507438659668,
+            "change_metrics": {
+                "l1_mean": 0.13826967775821686,
+                "l2_mean": 0.17131905257701874,
+                "linf": 0.7372549176216125,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8892896771430969
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.8745098114013672,
+                    "mean": 0.4403727352619171
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9803922176361084,
+                    "mean": 0.5086730122566223
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7372549176216125,
+                    "mean": 0.13826967775821686,
+                    "std": 0.10115224868059158
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_13.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_13.summary.png"
+        },
+        {
+            "sample_index": 14,
+            "manifest_sample_index": 14,
+            "dataset_index": 238,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_480.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999281167984009,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.7455765604972839,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1324,
+            "retrieved_image_path": "data/processed/Pneumonia/train/NORMAL/NORMAL2-IM-1356-0001.jpeg",
+            "retrieved_true_label_index": 0,
+            "retrieved_true_label": "NORMAL",
+            "embedding_distance": 0.31939321756362915,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 1339,
+            "original_probabilities": [
+                7.182032277341932e-05,
+                0.9999281167984009
+            ],
+            "counterfactual_probabilities": [
+                0.7455765604972839,
+                0.25442343950271606
+            ],
+            "runtime_seconds": 0.0058078765869140625,
+            "change_metrics": {
+                "l1_mean": 0.13124577701091766,
+                "l2_mean": 0.17095372080802917,
+                "linf": 0.8352941870689392,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8777104616165161
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9333333969116211,
+                    "mean": 0.4485655128955841
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9803922176361084,
+                    "mean": 0.5086730122566223
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.8352941870689392,
+                    "mean": 0.13124577701091766,
+                    "std": 0.1095435842871666
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_14.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_14.summary.png"
+        },
+        {
+            "sample_index": 15,
+            "manifest_sample_index": 15,
+            "dataset_index": 239,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_481.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999768733978271,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.7455765604972839,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1324,
+            "retrieved_image_path": "data/processed/Pneumonia/train/NORMAL/NORMAL2-IM-1356-0001.jpeg",
+            "retrieved_true_label_index": 0,
+            "retrieved_true_label": "NORMAL",
+            "embedding_distance": 0.35289430618286133,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 1339,
+            "original_probabilities": [
+                2.310423951712437e-05,
+                0.9999768733978271
+            ],
+            "counterfactual_probabilities": [
+                0.7455765604972839,
+                0.25442343950271606
+            ],
+            "runtime_seconds": 0.00526118278503418,
+            "change_metrics": {
+                "l1_mean": 0.14665545523166656,
+                "l2_mean": 0.18262767791748047,
+                "linf": 0.7450980544090271,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.912507951259613
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.7960784435272217,
+                    "mean": 0.4237474203109741
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9803922176361084,
+                    "mean": 0.5086730122566223
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7450980544090271,
+                    "mean": 0.14665545523166656,
+                    "std": 0.10883530974388123
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_15.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_15.summary.png"
+        },
+        {
+            "sample_index": 16,
+            "manifest_sample_index": 16,
+            "dataset_index": 240,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_482.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999990463256836,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.7455765604972839,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 1324,
+            "retrieved_image_path": "data/processed/Pneumonia/train/NORMAL/NORMAL2-IM-1356-0001.jpeg",
+            "retrieved_true_label_index": 0,
+            "retrieved_true_label": "NORMAL",
+            "embedding_distance": 0.4079461693763733,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 1339,
+            "original_probabilities": [
+                9.080284826268326e-07,
+                0.9999990463256836
+            ],
+            "counterfactual_probabilities": [
+                0.7455765604972839,
+                0.25442343950271606
+            ],
+            "runtime_seconds": 0.005936861038208008,
+            "change_metrics": {
+                "l1_mean": 0.1586511880159378,
+                "l2_mean": 0.20041309297084808,
+                "linf": 0.8235294818878174,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.9131457209587097
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.886274516582489,
+                    "mean": 0.41767415404319763
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9803922176361084,
+                    "mean": 0.5086730122566223
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.8235294818878174,
+                    "mean": 0.1586511880159378,
+                    "std": 0.12245530635118484
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_16.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_16.summary.png"
+        },
+        {
+            "sample_index": 17,
+            "manifest_sample_index": 17,
+            "dataset_index": 241,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_483.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9969015121459961,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.8539965152740479,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 840,
+            "retrieved_image_path": "data/processed/Pneumonia/train/NORMAL/NORMAL2-IM-0723-0001.jpeg",
+            "retrieved_true_label_index": 0,
+            "retrieved_true_label": "NORMAL",
+            "embedding_distance": 0.32737863063812256,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 1339,
+            "original_probabilities": [
+                0.0030984668992459774,
+                0.9969015121459961
+            ],
+            "counterfactual_probabilities": [
+                0.8539965152740479,
+                0.14600348472595215
+            ],
+            "runtime_seconds": 0.007925033569335938,
+            "change_metrics": {
+                "l1_mean": 0.14630047976970673,
+                "l2_mean": 0.1939309686422348,
+                "linf": 0.7215686440467834,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8244578838348389
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.00784313678741455,
+                    "max": 0.8392156958580017,
+                    "mean": 0.6121208667755127
+                },
+                "counterfactual": {
+                    "min": 0.003921538591384888,
+                    "max": 0.8666666746139526,
+                    "mean": 0.48953816294670105
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7215686440467834,
+                    "mean": 0.14630047976970673,
+                    "std": 0.12730082869529724
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_17.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_17.summary.png"
+        },
+        {
+            "sample_index": 18,
+            "manifest_sample_index": 18,
+            "dataset_index": 242,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_484.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9987896084785461,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.6454077363014221,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 228,
+            "retrieved_image_path": "data/processed/Pneumonia/train/NORMAL/IM-0431-0001.jpeg",
+            "retrieved_true_label_index": 0,
+            "retrieved_true_label": "NORMAL",
+            "embedding_distance": 0.37245821952819824,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 1339,
+            "original_probabilities": [
+                0.0012104345951229334,
+                0.9987896084785461
+            ],
+            "counterfactual_probabilities": [
+                0.6454077363014221,
+                0.35459229350090027
+            ],
+            "runtime_seconds": 0.014405965805053711,
+            "change_metrics": {
+                "l1_mean": 0.14583896100521088,
+                "l2_mean": 0.19527679681777954,
+                "linf": 0.8117647171020508,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.8336455225944519
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.8392156958580017,
+                    "mean": 0.5592045783996582
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9960784912109375,
+                    "mean": 0.4935591220855713
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.8117647171020508,
+                    "mean": 0.14583896100521088,
+                    "std": 0.1298619955778122
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_18.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_18.summary.png"
+        },
+        {
+            "sample_index": 19,
+            "manifest_sample_index": 19,
+            "dataset_index": 243,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_485.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9865959286689758,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.8424944877624512,
+            "valid_counterfactual": true,
+            "retrieved_split": "train",
+            "retrieved_dataset_index": 769,
+            "retrieved_image_path": "data/processed/Pneumonia/train/NORMAL/NORMAL2-IM-0611-0001.jpeg",
+            "retrieved_true_label_index": 0,
+            "retrieved_true_label": "NORMAL",
+            "embedding_distance": 0.2836316227912903,
+            "distance_metric": "cosine_distance_on_normalized_penultimate_resnet18_embeddings",
+            "candidate_pool_size": 1339,
+            "original_probabilities": [
+                0.013404082506895065,
+                0.9865959286689758
+            ],
+            "counterfactual_probabilities": [
+                0.8424944877624512,
+                0.15750551223754883
+            ],
+            "runtime_seconds": 0.008893966674804688,
+            "change_metrics": {
+                "l1_mean": 0.14017990231513977,
+                "l2_mean": 0.1687324345111847,
+                "linf": 0.5882353186607361,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.9108538031578064
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - retrieved_neighbor_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.8274509906768799,
+                    "mean": 0.4449092745780945
+                },
+                "counterfactual": {
+                    "min": 0.003921538591384888,
+                    "max": 0.8392156958580017,
+                    "mean": 0.5214326977729797
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.5882353186607361,
+                    "mean": 0.14017990231513977,
+                    "std": 0.0939163938164711
+                }
+            },
+            "image_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_19.png",
+            "summary_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/sample_19.summary.png"
+        }
+    ],
+    "aggregate_metrics": {
+        "num_samples": 20,
+        "valid_count": 20,
+        "validity": 1.0,
+        "l1_mean": {
+            "mean": 0.1608405139297247,
+            "min": 0.11683555692434311,
+            "max": 0.23861604928970337
+        },
+        "l2_mean": {
+            "mean": 0.20900664404034613,
+            "min": 0.1587287038564682,
+            "max": 0.2866041362285614
+        },
+        "linf": {
+            "mean": 0.8123529702425003,
+            "min": 0.5882353186607361,
+            "max": 0.9647059440612793
+        },
+        "changed_pixel_fraction": {
+            "mean": 0.8741051316261291,
+            "min": 0.7707070708274841,
+            "max": 0.9426418542861938
+        },
+        "runtime_seconds": {
+            "mean": 0.00964205265045166,
+            "min": 0.00526118278503418,
+            "max": 0.014405965805053711
+        },
+        "embedding_distance": {
+            "mean": 0.24931407272815703,
+            "min": 0.06836181879043579,
+            "max": 0.44022083282470703
+        },
+        "counterfactual_confidence": {
+            "mean": 0.6496214509010315,
+            "min": 0.5176844000816345,
+            "max": 0.8539965152740479
+        },
+        "mean_counterfactual_confidence": 0.6496214509010315
+    },
+    "interpretation_note": "This method retrieves a real training image from the target class. It is interpretable as a nearest unlike case, but it is not a minimal edit of the original image."
+}
