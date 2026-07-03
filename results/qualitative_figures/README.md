@@ -17,14 +17,21 @@ The comparison script does not recompute, stretch, or per-image normalize the em
 
 This is intentional: very dark difference maps indicate genuinely small absolute changes on a fixed scale, not a plotting error. Stronger colors would only be appropriate with an explicitly labelled alternate scale, because otherwise tiny differences could appear misleadingly large.
 
+For method-level interpretation and the trade-offs between Prototype-guided optimization, Retrieval-NUN, SEDC-T, and DVCE, see:
+
+- `results/qualitative_figures/qualitative_results_interpretation.md`
+
 Generated per-method figures:
 
 - `results/qualitative_figures/per_method/busi__prototype_guided_optimization_baseline.png`
 - `results/qualitative_figures/per_method/busi__prototype_guided_plausibility_ablation.png`
+- `results/qualitative_figures/per_method/busi__retrieval_based_nearest_unlike_neighbor_baseline.png`
 - `results/qualitative_figures/per_method/busi__sedc_t_original_style_best_first.png`
+- `results/qualitative_figures/per_method/busi__sedc_t_tuned_project_variant_none_max_10.png`
 - `results/qualitative_figures/per_method/busi__dvce_style_openai_checkpoint.png`
 - `results/qualitative_figures/per_method/pneumonia__prototype_guided_optimization_baseline.png`
 - `results/qualitative_figures/per_method/pneumonia__prototype_guided_plausibility_ablation.png`
+- `results/qualitative_figures/per_method/pneumonia__retrieval_based_nearest_unlike_neighbor_baseline.png`
 - `results/qualitative_figures/per_method/pneumonia__sedc_t_original_style_best_first.png`
 - `results/qualitative_figures/per_method/pneumonia__sedc_t_tuned_project_variant_none_max_8.png`
 - `results/qualitative_figures/per_method/pneumonia__dvce_style_openai_checkpoint.png`
