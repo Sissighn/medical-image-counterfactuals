@@ -1,0 +1,1400 @@
+{
+    "method": "PyTorch prototype-guided optimization baseline",
+    "model_path": "models/pneumonia_resnet18_pretrained.pth",
+    "dataset_path": "data/processed/Pneumonia",
+    "classes": [
+        "NORMAL",
+        "PNEUMONIA"
+    ],
+    "parameters": {
+        "steps": 300,
+        "learning_rate": 0.01,
+        "lambda_l2": 20.0,
+        "lambda_tv": 0.5,
+        "lambda_proto": 0.05,
+        "max_delta": 0.08,
+        "perturbation_resolution": 28,
+        "target_strategy": "all",
+        "force_grayscale": true,
+        "manifest_path": "results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json",
+        "manifest_max_samples": null
+    },
+    "evaluation_manifest": {
+        "path": "results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json",
+        "num_records_available": 20,
+        "num_records_used": 20,
+        "target_strategy": "second_best"
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "manifest_sample_index": 0,
+            "dataset_index": 0,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0001-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.6365812420845032,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9984815716743469,
+            "valid_counterfactual": true,
+            "true_class": "NORMAL",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.6365812420845032,
+                0.36341869831085205
+            ],
+            "counterfactual_probabilities": [
+                0.0015184228541329503,
+                0.9984815716743469
+            ],
+            "runtime_seconds": 4.889014005661011,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.01066353265196085,
+                "l2_mean": 0.01394334901124239,
+                "linf": 0.057475149631500244,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.041214924305677414
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.047058820724487305,
+                    "max": 0.9529411792755127,
+                    "mean": 0.5138251781463623
+                },
+                "counterfactual": {
+                    "min": 0.03548646718263626,
+                    "max": 0.9602980613708496,
+                    "mean": 0.513285219669342
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.057475149631500244,
+                    "mean": 0.01066353265196085,
+                    "std": 0.008983686566352844
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_00.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_00.summary.png"
+        },
+        {
+            "sample_index": 1,
+            "manifest_sample_index": 1,
+            "dataset_index": 1,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0003-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.8753835558891296,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.998205304145813,
+            "valid_counterfactual": true,
+            "true_class": "NORMAL",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.8753835558891296,
+                0.12461639940738678
+            ],
+            "counterfactual_probabilities": [
+                0.0017947452142834663,
+                0.998205304145813
+            ],
+            "runtime_seconds": 4.837248086929321,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.010566179640591145,
+                "l2_mean": 0.012875827960669994,
+                "linf": 0.04262042045593262,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.013352997601032257
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.06666666269302368,
+                    "max": 0.9921568632125854,
+                    "mean": 0.5587130188941956
+                },
+                "counterfactual": {
+                    "min": 0.05937774479389191,
+                    "max": 0.9897798895835876,
+                    "mean": 0.556908369064331
+                },
+                "diff": {
+                    "min": 1.7881393432617188e-07,
+                    "max": 0.04262042045593262,
+                    "mean": 0.010566179640591145,
+                    "std": 0.007358204573392868
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_01.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_01.summary.png"
+        },
+        {
+            "sample_index": 2,
+            "manifest_sample_index": 2,
+            "dataset_index": 2,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0005-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.7860183119773865,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9971892237663269,
+            "valid_counterfactual": true,
+            "true_class": "NORMAL",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.7860183119773865,
+                0.2139817476272583
+            ],
+            "counterfactual_probabilities": [
+                0.002810840029269457,
+                0.9971892237663269
+            ],
+            "runtime_seconds": 4.740363836288452,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.013613119721412659,
+                "l2_mean": 0.0165150947868824,
+                "linf": 0.05142197012901306,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.05843431130051613
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.047058820724487305,
+                    "max": 0.9411765336990356,
+                    "mean": 0.5344192385673523
+                },
+                "counterfactual": {
+                    "min": 0.032380811870098114,
+                    "max": 0.9726414680480957,
+                    "mean": 0.5336124300956726
+                },
+                "diff": {
+                    "min": 7.450580596923828e-07,
+                    "max": 0.05142197012901306,
+                    "mean": 0.013613119721412659,
+                    "std": 0.009350504726171494
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_02.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_02.summary.png"
+        },
+        {
+            "sample_index": 3,
+            "manifest_sample_index": 3,
+            "dataset_index": 3,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0006-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.572936475276947,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9989307522773743,
+            "valid_counterfactual": true,
+            "true_class": "NORMAL",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.572936475276947,
+                0.4270634651184082
+            ],
+            "counterfactual_probabilities": [
+                0.0010691842762753367,
+                0.9989307522773743
+            ],
+            "runtime_seconds": 4.730914115905762,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.006824558135122061,
+                "l2_mean": 0.009005658328533173,
+                "linf": 0.040283024311065674,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.0015943876933306456
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0156862735748291,
+                    "max": 0.9450980424880981,
+                    "mean": 0.5832229256629944
+                },
+                "counterfactual": {
+                    "min": 0.004825163632631302,
+                    "max": 0.9439952373504639,
+                    "mean": 0.5825261473655701
+                },
+                "diff": {
+                    "min": 1.7881393432617188e-07,
+                    "max": 0.040283024311065674,
+                    "mean": 0.006824558135122061,
+                    "std": 0.005876012612134218
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_03.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_03.summary.png"
+        },
+        {
+            "sample_index": 4,
+            "manifest_sample_index": 4,
+            "dataset_index": 4,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0007-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.835712194442749,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9980577826499939,
+            "valid_counterfactual": true,
+            "true_class": "NORMAL",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.835712194442749,
+                0.16428779065608978
+            ],
+            "counterfactual_probabilities": [
+                0.0019421559991315007,
+                0.9980577826499939
+            ],
+            "runtime_seconds": 4.732818841934204,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.012041468173265457,
+                "l2_mean": 0.015017809346318245,
+                "linf": 0.05729898810386658,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.04406489059329033
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0627450942993164,
+                    "max": 0.9647059440612793,
+                    "mean": 0.5401108860969543
+                },
+                "counterfactual": {
+                    "min": 0.04164298623800278,
+                    "max": 0.9939153790473938,
+                    "mean": 0.5394873023033142
+                },
+                "diff": {
+                    "min": 1.7881393432617188e-07,
+                    "max": 0.05729898810386658,
+                    "mean": 0.012041468173265457,
+                    "std": 0.008974307216703892
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_04.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_04.summary.png"
+        },
+        {
+            "sample_index": 5,
+            "manifest_sample_index": 5,
+            "dataset_index": 5,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0009-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.956616997718811,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9970545768737793,
+            "valid_counterfactual": true,
+            "true_class": "NORMAL",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.956616997718811,
+                0.04338296130299568
+            ],
+            "counterfactual_probabilities": [
+                0.002945421729236841,
+                0.9970545768737793
+            ],
+            "runtime_seconds": 4.792195796966553,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.014809208922088146,
+                "l2_mean": 0.017810752615332603,
+                "linf": 0.0565943717956543,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.07513552159070969
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.09411764144897461,
+                    "max": 0.9607843160629272,
+                    "mean": 0.5636793971061707
+                },
+                "counterfactual": {
+                    "min": 0.0863545835018158,
+                    "max": 0.9629863500595093,
+                    "mean": 0.5621376037597656
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.0565943717956543,
+                    "mean": 0.014809208922088146,
+                    "std": 0.009894992224872112
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_05.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_05.summary.png"
+        },
+        {
+            "sample_index": 6,
+            "manifest_sample_index": 6,
+            "dataset_index": 6,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0010-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.9521610140800476,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9984678626060486,
+            "valid_counterfactual": true,
+            "true_class": "NORMAL",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.9521610140800476,
+                0.047839000821113586
+            ],
+            "counterfactual_probabilities": [
+                0.001532131340354681,
+                0.9984678626060486
+            ],
+            "runtime_seconds": 4.791413068771362,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.014622548595070839,
+                "l2_mean": 0.017710763961076736,
+                "linf": 0.053820639848709106,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.0862165167927742
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9372549057006836,
+                    "mean": 0.5201249122619629
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9638733267784119,
+                    "mean": 0.5198240280151367
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.053820639848709106,
+                    "mean": 0.014622548595070839,
+                    "std": 0.009992643259465694
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_06.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_06.summary.png"
+        },
+        {
+            "sample_index": 7,
+            "manifest_sample_index": 7,
+            "dataset_index": 7,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0011-0001-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.7160110473632812,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9982855916023254,
+            "valid_counterfactual": true,
+            "true_class": "NORMAL",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.7160110473632812,
+                0.283988893032074
+            ],
+            "counterfactual_probabilities": [
+                0.0017143255099654198,
+                0.9982855916023254
+            ],
+            "runtime_seconds": 4.739850997924805,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.00911545380949974,
+                "l2_mean": 0.011599711142480373,
+                "linf": 0.038645148277282715,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.005141900386661291
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.003921538591384888,
+                    "max": 0.9254902601242065,
+                    "mean": 0.5376198291778564
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9281680583953857,
+                    "mean": 0.5372774600982666
+                },
+                "diff": {
+                    "min": 2.384185791015625e-07,
+                    "max": 0.038645148277282715,
+                    "mean": 0.00911545380949974,
+                    "std": 0.007173710502684116
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_07.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_07.summary.png"
+        },
+        {
+            "sample_index": 8,
+            "manifest_sample_index": 8,
+            "dataset_index": 9,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0011-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.8897689580917358,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.997859537601471,
+            "valid_counterfactual": true,
+            "true_class": "NORMAL",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.8897689580917358,
+                0.11023102700710297
+            ],
+            "counterfactual_probabilities": [
+                0.002140515251085162,
+                0.997859537601471
+            ],
+            "runtime_seconds": 4.737316131591797,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.010161902755498886,
+                "l2_mean": 0.01255224272608757,
+                "linf": 0.04612371325492859,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.010782047174870968
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.011764705181121826,
+                    "max": 0.8784314393997192,
+                    "mean": 0.4950323700904846
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.8984473943710327,
+                    "mean": 0.4946664869785309
+                },
+                "diff": {
+                    "min": 5.960464477539063e-08,
+                    "max": 0.04612371325492859,
+                    "mean": 0.010161902755498886,
+                    "std": 0.0073685054667294025
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_08.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_08.summary.png"
+        },
+        {
+            "sample_index": 9,
+            "manifest_sample_index": 9,
+            "dataset_index": 10,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0013-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence": 0.835533857345581,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9964610934257507,
+            "valid_counterfactual": true,
+            "true_class": "NORMAL",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "PNEUMONIA",
+                    "valid": true,
+                    "counterfactual_prediction": "PNEUMONIA",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.835533857345581,
+                0.16446614265441895
+            ],
+            "counterfactual_probabilities": [
+                0.003538931952789426,
+                0.9964610934257507
+            ],
+            "runtime_seconds": 4.750962734222412,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.013845868408679962,
+                "l2_mean": 0.01686245948076248,
+                "linf": 0.058937788009643555,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.06383530050516129
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9411765336990356,
+                    "mean": 0.5336176753044128
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9467257261276245,
+                    "mean": 0.5331465601921082
+                },
+                "diff": {
+                    "min": 2.980232238769531e-07,
+                    "max": 0.058937788009643555,
+                    "mean": 0.013845868408679962,
+                    "std": 0.00962471216917038
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_09.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_09.summary.png"
+        },
+        {
+            "sample_index": 10,
+            "manifest_sample_index": 10,
+            "dataset_index": 234,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_475.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9994043111801147,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9413154721260071,
+            "valid_counterfactual": true,
+            "true_class": "PNEUMONIA",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.0005956409149803221,
+                0.9994043111801147
+            ],
+            "counterfactual_probabilities": [
+                0.9413154721260071,
+                0.058684561401605606
+            ],
+            "runtime_seconds": 4.743203163146973,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.0206716600805521,
+                "l2_mean": 0.025205036625266075,
+                "linf": 0.06839114427566528,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.26343271136283875
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9647059440612793,
+                    "mean": 0.4336337447166443
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9912983179092407,
+                    "mean": 0.43569645285606384
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.06839114427566528,
+                    "mean": 0.0206716600805521,
+                    "std": 0.01442143227905035
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_10.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_10.summary.png"
+        },
+        {
+            "sample_index": 11,
+            "manifest_sample_index": 11,
+            "dataset_index": 235,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_477.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999871253967285,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9653536081314087,
+            "valid_counterfactual": true,
+            "true_class": "PNEUMONIA",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                1.2928180694871116e-05,
+                0.9999871253967285
+            ],
+            "counterfactual_probabilities": [
+                0.9653536081314087,
+                0.0346464142203331
+            ],
+            "runtime_seconds": 4.737039089202881,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.01775399036705494,
+                "l2_mean": 0.021511226892471313,
+                "linf": 0.059976041316986084,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.18006616830825806
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.8196078538894653,
+                    "mean": 0.2863876223564148
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.8484218120574951,
+                    "mean": 0.28856024146080017
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.059976041316986084,
+                    "mean": 0.01775399036705494,
+                    "std": 0.012146181426942348
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_11.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_11.summary.png"
+        },
+        {
+            "sample_index": 12,
+            "manifest_sample_index": 12,
+            "dataset_index": 236,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_478.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999337196350098,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9577845931053162,
+            "valid_counterfactual": true,
+            "true_class": "PNEUMONIA",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                6.624630623264238e-05,
+                0.9999337196350098
+            ],
+            "counterfactual_probabilities": [
+                0.9577845931053162,
+                0.04221542924642563
+            ],
+            "runtime_seconds": 4.789092063903809,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.016256611794233322,
+                "l2_mean": 0.01986677199602127,
+                "linf": 0.06032198667526245,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.1423588991165161
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9254902601242065,
+                    "mean": 0.5305048227310181
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9362636804580688,
+                    "mean": 0.53182452917099
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.06032198667526245,
+                    "mean": 0.016256611794233322,
+                    "std": 0.0114198112860322
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_12.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_12.summary.png"
+        },
+        {
+            "sample_index": 13,
+            "manifest_sample_index": 13,
+            "dataset_index": 237,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_479.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999377727508545,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9557515978813171,
+            "valid_counterfactual": true,
+            "true_class": "PNEUMONIA",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                6.227861013030633e-05,
+                0.9999377727508545
+            ],
+            "counterfactual_probabilities": [
+                0.9557515978813171,
+                0.04424841329455376
+            ],
+            "runtime_seconds": 4.730093002319336,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.018460359424352646,
+                "l2_mean": 0.022507550194859505,
+                "linf": 0.06260424852371216,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.19933833181858063
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.8745098114013672,
+                    "mean": 0.4403727352619171
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.8696703314781189,
+                    "mean": 0.4424469470977783
+                },
+                "diff": {
+                    "min": 2.9802322387695312e-08,
+                    "max": 0.06260424852371216,
+                    "mean": 0.018460359424352646,
+                    "std": 0.012876572087407112
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_13.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_13.summary.png"
+        },
+        {
+            "sample_index": 14,
+            "manifest_sample_index": 14,
+            "dataset_index": 238,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_480.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999281167984009,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9401253461837769,
+            "valid_counterfactual": true,
+            "true_class": "PNEUMONIA",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                7.182032277341932e-05,
+                0.9999281167984009
+            ],
+            "counterfactual_probabilities": [
+                0.9401253461837769,
+                0.059874579310417175
+            ],
+            "runtime_seconds": 4.739749193191528,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.018464623019099236,
+                "l2_mean": 0.022365476936101913,
+                "linf": 0.05950742959976196,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.2003348171710968
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9333333969116211,
+                    "mean": 0.4485655128955841
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.8824756741523743,
+                    "mean": 0.45056799054145813
+                },
+                "diff": {
+                    "min": 5.066394805908203e-07,
+                    "max": 0.05950742959976196,
+                    "mean": 0.018464623019099236,
+                    "std": 0.012620353139936924
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_14.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_14.summary.png"
+        },
+        {
+            "sample_index": 15,
+            "manifest_sample_index": 15,
+            "dataset_index": 239,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_481.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999768733978271,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9723215699195862,
+            "valid_counterfactual": true,
+            "true_class": "PNEUMONIA",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                2.310423951712437e-05,
+                0.9999768733978271
+            ],
+            "counterfactual_probabilities": [
+                0.9723215699195862,
+                0.02767840586602688
+            ],
+            "runtime_seconds": 4.733129978179932,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.015371053479611874,
+                "l2_mean": 0.01863190531730652,
+                "linf": 0.052975088357925415,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.10642538219690323
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.7960784435272217,
+                    "mean": 0.4237474203109741
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.7823807001113892,
+                    "mean": 0.4251479506492615
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.052975088357925415,
+                    "mean": 0.015371053479611874,
+                    "std": 0.010529928840696812
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_15.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_15.summary.png"
+        },
+        {
+            "sample_index": 16,
+            "manifest_sample_index": 16,
+            "dataset_index": 240,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_482.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9999990463256836,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.946708619594574,
+            "valid_counterfactual": true,
+            "true_class": "PNEUMONIA",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                9.080284826268326e-07,
+                0.9999990463256836
+            ],
+            "counterfactual_probabilities": [
+                0.946708619594574,
+                0.053291428834199905
+            ],
+            "runtime_seconds": 4.784066677093506,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.018673542886972427,
+                "l2_mean": 0.02270195446908474,
+                "linf": 0.06311990320682526,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.20161032676696777
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.886274516582489,
+                    "mean": 0.41767415404319763
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9147633910179138,
+                    "mean": 0.4197239279747009
+                },
+                "diff": {
+                    "min": 8.121132850646973e-07,
+                    "max": 0.06311990320682526,
+                    "mean": 0.018673542886972427,
+                    "std": 0.012910410761833191
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_16.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_16.summary.png"
+        },
+        {
+            "sample_index": 17,
+            "manifest_sample_index": 17,
+            "dataset_index": 241,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_483.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9969015121459961,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9892793297767639,
+            "valid_counterfactual": true,
+            "true_class": "PNEUMONIA",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.0030984668992459774,
+                0.9969015121459961
+            ],
+            "counterfactual_probabilities": [
+                0.9892793297767639,
+                0.010720678605139256
+            ],
+            "runtime_seconds": 4.7563698291778564,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.011249413713812828,
+                "l2_mean": 0.013896000571548939,
+                "linf": 0.049848198890686035,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.02774234674870968
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.00784313678741455,
+                    "max": 0.8392156958580017,
+                    "mean": 0.6121208667755127
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.8498296737670898,
+                    "mean": 0.6125351190567017
+                },
+                "diff": {
+                    "min": 1.1920928955078125e-07,
+                    "max": 0.049848198890686035,
+                    "mean": 0.011249413713812828,
+                    "std": 0.008157814852893353
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_17.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_17.summary.png"
+        },
+        {
+            "sample_index": 18,
+            "manifest_sample_index": 18,
+            "dataset_index": 242,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_484.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9987896084785461,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9880920648574829,
+            "valid_counterfactual": true,
+            "true_class": "PNEUMONIA",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.0012104345951229334,
+                0.9987896084785461
+            ],
+            "counterfactual_probabilities": [
+                0.9880920648574829,
+                0.011907905340194702
+            ],
+            "runtime_seconds": 4.75250506401062,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.016324082389473915,
+                "l2_mean": 0.019667387008666992,
+                "linf": 0.05563771724700928,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.1342075914144516
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.8392156958580017,
+                    "mean": 0.5592045783996582
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.8653861284255981,
+                    "mean": 0.5618405342102051
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.05563771724700928,
+                    "mean": 0.016324082389473915,
+                    "std": 0.010969558730721474
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_18.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_18.summary.png"
+        },
+        {
+            "sample_index": 19,
+            "manifest_sample_index": 19,
+            "dataset_index": 243,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_485.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence": 0.9865959286689758,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9914434552192688,
+            "valid_counterfactual": true,
+            "true_class": "PNEUMONIA",
+            "valid": true,
+            "attempted_targets": [
+                {
+                    "target_class": "NORMAL",
+                    "valid": true,
+                    "counterfactual_prediction": "NORMAL",
+                    "best_step": 300
+                }
+            ],
+            "original_probabilities": [
+                0.013404082506895065,
+                0.9865959286689758
+            ],
+            "counterfactual_probabilities": [
+                0.9914434552192688,
+                0.00855649821460247
+            ],
+            "runtime_seconds": 4.736743927001953,
+            "best_step": 300,
+            "change_metrics": {
+                "l1_mean": 0.011031102389097214,
+                "l2_mean": 0.013436898589134216,
+                "linf": 0.048144757747650146,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.012635522522032261
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.8274509906768799,
+                    "mean": 0.4449092745780945
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.8331066966056824,
+                    "mean": 0.4465489089488983
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.048144757747650146,
+                    "mean": 0.011031102389097214,
+                    "std": 0.007672381587326527
+                }
+            },
+            "image_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_19.png",
+            "summary_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/sample_19.summary.png"
+        }
+    ],
+    "aggregate_metrics": {
+        "num_samples": 20,
+        "valid_count": 20,
+        "validity": 1.0,
+        "l1_mean": {
+            "mean": 0.014026014017872512,
+            "min": 0.006824558135122061,
+            "max": 0.0206716600805521
+        },
+        "l2_mean": {
+            "mean": 0.017184193897992372,
+            "min": 0.009005658328533173,
+            "max": 0.025205036625266075
+        },
+        "linf": {
+            "mean": 0.05418738648295403,
+            "min": 0.038645148277282715,
+            "max": 0.06839114427566528
+        },
+        "changed_pixel_fraction": {
+            "mean": 0.09339624476851896,
+            "min": 0.0015943876933306456,
+            "max": 0.26343271136283875
+        },
+        "runtime_seconds": {
+            "mean": 4.762204480171204,
+            "min": 4.730093002319336,
+            "max": 4.889014005661011
+        }
+    }
+}

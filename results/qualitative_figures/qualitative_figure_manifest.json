@@ -1,0 +1,147 @@
+{
+  "selected_examples_path": "results/meeting_paul_tuesday/selected_examples.json",
+  "dpi": 300,
+  "per_method_figures": [
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "Prototype-guided optimization baseline",
+      "figure_path": "results/qualitative_figures/per_method/busi__prototype_guided_optimization_baseline.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": [
+        "BUSI / Prototype-guided optimization baseline / Failure case: no selected example available."
+      ]
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "Prototype-guided plausibility ablation",
+      "figure_path": "results/qualitative_figures/per_method/busi__prototype_guided_plausibility_ablation.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": [
+        "BUSI / Prototype-guided plausibility ablation / Failure case: no selected example available."
+      ]
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "SEDC-T original-style best-first",
+      "figure_path": "results/qualitative_figures/per_method/busi__sedc_t_original_style_best_first.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "DVCE-style, OpenAI checkpoint",
+      "figure_path": "results/qualitative_figures/per_method/busi__dvce_style_openai_checkpoint.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": [
+        "BUSI / DVCE-style, OpenAI checkpoint / Failure case: no selected example available."
+      ]
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "Prototype-guided optimization baseline",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia__prototype_guided_optimization_baseline.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": [
+        "Pneumonia / Prototype-guided optimization baseline / Failure case: no selected example available."
+      ]
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "Prototype-guided plausibility ablation",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia__prototype_guided_plausibility_ablation.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": [
+        "Pneumonia / Prototype-guided plausibility ablation / Failure case: no selected example available."
+      ]
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "SEDC-T original-style best-first",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia__sedc_t_original_style_best_first.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "SEDC-T tuned project variant (none, max 8)",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia__sedc_t_tuned_project_variant_none_max_8.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "DVCE-style, OpenAI checkpoint",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia__dvce_style_openai_checkpoint.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "DVCE-style, Pneumonia fine-tuned checkpoint",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia__dvce_style_pneumonia_fine_tuned_checkpoint.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    }
+  ],
+  "dataset_overview_figures": []
+}
