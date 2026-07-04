@@ -25,6 +25,7 @@ without being visually or medically plausible.
 | Method family | Main role in this project | Primary result | Additional states | Why additional states exist |
 | --- | --- | --- | --- | --- |
 | Prototype-guided optimization | Technical high-validity baseline | Fixed BUSI/Pneumonia runs | Method audit and plausibility ablation | To avoid claiming full Alibi CFProto reproduction and to test stronger regularization |
+| Retrieval-NUN | Case-based nearest unlike baseline | Fixed BUSI/Pneumonia runs | none | To add an interpretable non-generative baseline using real target-class images |
 | SEDC-T | Region-based/localized counterfactuals | Original-style best-first and project variant | Tuning ablation | To separate method fidelity from practical constraints |
 | DVCE | Generative counterfactual feasibility | OpenAI checkpoint fixed 5-sample runs | Pneumonia fine-tuned checkpoint and guidance study | To test whether a medical diffusion prior improves outputs |
 
@@ -85,6 +86,49 @@ Use the stronger-regularized run as:
 ```text
 prototype-guided plausibility ablation
 ```
+
+## Retrieval-Based Nearest-Unlike-Neighbor Baseline
+
+### Why This Is A Separate Baseline
+
+Retrieval-NUN does not optimize, replace segments, or generate a new image. For
+each fixed evaluation sample it uses the manifest target class and retrieves the
+nearest real training image from that class in the trained ResNet18 penultimate
+embedding space. Candidate images are filtered so that their true label and
+model prediction both equal the target class.
+
+This makes the method useful as a simple, stable, case-based baseline. It is
+closest to the "retrieval-based prototype counterfactual" direction discussed
+for the project, but it should be described precisely as nearest unlike
+neighbor retrieval rather than as an edited counterfactual.
+
+### Why It Is Useful
+
+It is useful because it:
+
+- uses real medical images instead of generated artifacts,
+- supports BUSI and Pneumonia without additional training,
+- reaches 1.00 validity by construction on the fixed manifests,
+- gives a visually intuitive comparison case for the target class.
+
+### Main Limitation
+
+It is not a minimal edit of the original image. The difference map compares two
+different real images and therefore includes patient anatomy, acquisition,
+positioning, and dataset variation. High changed pixel fraction is expected and
+does not mean the method failed; it means the method answers a different
+question than edit-based approaches.
+
+### How To Report It
+
+Use:
+
+```text
+retrieval-based nearest-unlike-neighbor baseline
+```
+
+Report it as a case-based baseline, not as a generated or minimally edited
+counterfactual.
 
 ## SEDC-T
 
@@ -194,6 +238,8 @@ argument is that the methods reveal a trade-off:
 
 - Prototype-guided optimization has the highest model validity but weak
   locality and limited medical plausibility.
+- Retrieval-NUN provides real target-class cases and avoids generated artifacts,
+  but it is not minimal and cannot isolate causal image evidence.
 - SEDC-T has stronger locality and clearer region-level explanations, but lower
   validity, especially on Pneumonia.
 - DVCE covers the generative method category, but current outputs remain
