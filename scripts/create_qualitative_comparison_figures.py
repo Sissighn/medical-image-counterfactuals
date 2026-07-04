@@ -30,6 +30,7 @@ CATEGORY_ORDER = [
 METHOD_ORDER = [
     "Prototype-guided optimization baseline",
     "Prototype-guided plausibility ablation",
+    "Retrieval-based nearest-unlike-neighbor baseline",
     "SEDC-T original-style best-first",
     "SEDC-T tuned project variant",
     "DVCE-style, OpenAI checkpoint",
@@ -188,11 +189,15 @@ def format_cell_note(example: dict[str, Any]) -> str:
     l1 = format_float(example.get("l1"), 4)
     linf = format_float(example.get("linf"), 4)
     changed_fraction = format_float(example.get("changed_pixel_fraction"), 4)
+    embedding_distance = example.get("embedding_distance")
     threshold = example.get("sparsity_threshold")
     threshold_label = f">{float(threshold):.2f}" if threshold is not None else ""
+    embedding_text = ""
+    if embedding_distance is not None:
+        embedding_text = f" | emb dist {format_float(embedding_distance, 4)}"
     return (
         f"sample {sample} | target {target} | CF {pred} ({confidence})\n"
-        f"valid {valid} | MAD {l1} | L_inf {linf} | changed{threshold_label} {changed_fraction}"
+        f"valid {valid}{embedding_text} | MAD {l1} | L_inf {linf} | changed{threshold_label} {changed_fraction}"
     )
 
 
@@ -499,6 +504,11 @@ def write_readme(
             "colors would only be appropriate with an explicitly labelled alternate "
             "scale, because otherwise tiny differences could appear misleadingly "
             "large.",
+            "",
+            "For method-level interpretation and the trade-offs between "
+            "Prototype-guided optimization, Retrieval-NUN, SEDC-T, and DVCE, see:",
+            "",
+            "- `results/qualitative_figures/qualitative_results_interpretation.md`",
             "",
             "Generated per-method figures:",
             "",
