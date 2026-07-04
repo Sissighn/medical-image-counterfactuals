@@ -2,13 +2,14 @@
 
 ## Compared Methods
 
-This project currently compares three counterfactual explanation directions for
+This project currently compares four counterfactual explanation directions for
 medical image classification:
 
 ```text
 1. Prototype-guided optimization baseline
-2. SEDC-T original-style / SEDC-T-style targeted segment replacement
-3. DVCE-style diffusion-guided generation
+2. Retrieval-based nearest-unlike-neighbor baseline
+3. SEDC-T original-style / SEDC-T-style targeted segment replacement
+4. DVCE-style diffusion-guided generation
 ```
 
 All methods are evaluated against trained ResNet18 classifiers for BUSI and
@@ -46,6 +47,8 @@ is reported separately.
 | Prototype-guided optimization baseline | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 changed pixel fraction | 5.69s |
 | Prototype-guided plausibility ablation | BUSI | 15 | 1.00 | 0.9953 | 0.0315 changed pixel fraction | 4.78s |
 | Prototype-guided plausibility ablation | Pneumonia | 20 | 1.00 | 0.9814 | 0.0934 changed pixel fraction | 4.76s |
+| Retrieval-based nearest-unlike-neighbor baseline | BUSI | 15 | 1.00 | 0.8191 | 0.8516 changed pixel fraction | 0.01s |
+| Retrieval-based nearest-unlike-neighbor baseline | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 changed pixel fraction | 0.01s |
 | SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6674 | 0.1517 changed pixel fraction | 6.59s |
 | SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.7343 | 0.1410 changed pixel fraction | 13.78s |
 | SEDC-T project variant | BUSI | 15 | 0.80 | 0.6376 | 0.1471 changed pixel fraction | 0.56s |
@@ -91,6 +94,15 @@ validity at 1.00 on both datasets while reducing changed pixel fraction from
 better presentation candidates, but does not change the method's role as a
 technical baseline with limited locality.
 
+The retrieval-based nearest-unlike-neighbor baseline also reaches 1.00 validity
+on both datasets because it retrieves real training images from the requested
+target class that are correctly classified by the model. This makes it visually
+intuitive as a case-based comparison: the counterfactual is an actual example
+from the target class. However, it is not a minimal edit of the original image.
+The high changed pixel fraction is expected because the retrieved image may
+differ in patient anatomy, acquisition conditions, positioning, and general
+image appearance.
+
 The SEDC-T original-style best-first run is the safer method-faithfulness
 baseline. It follows the target-score best-first search more closely and uses no
 ROI restriction. It reaches 12/15 valid counterfactuals on BUSI and 11/20 on
@@ -123,6 +135,7 @@ separate questions.
 
 ```text
 Prototype-guided optimization: high validity, limited locality.
+Retrieval-NUN: real target-class examples, interpretable as cases, not minimal edits.
 SEDC-T original-style: method-faithful, localized, slower, moderate validity.
 SEDC-T project variant: faster and constrained, but includes adaptations.
 DVCE-style generation: generative and promising, but still sensitive to checkpoint and guidance settings.
