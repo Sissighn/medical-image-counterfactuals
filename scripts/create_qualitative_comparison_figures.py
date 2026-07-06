@@ -32,6 +32,7 @@ METHOD_ORDER = [
     "Prototype-guided plausibility ablation",
     "Retrieval-based nearest-unlike-neighbor baseline",
     "SEDC-T original-style best-first",
+    "SEDC-T project variant",
     "SEDC-T tuned project variant",
     "DVCE-style, OpenAI checkpoint",
     "DVCE-style, Pneumonia fine-tuned checkpoint",
@@ -422,9 +423,9 @@ def create_method_figure(
             transform=ax.transAxes,
         )
 
-    method_output_dir = output_dir / "per_method"
+    method_output_dir = output_dir / "per_method" / slugify(dataset)
     method_output_dir.mkdir(parents=True, exist_ok=True)
-    figure_path = method_output_dir / f"{slugify(dataset)}__{slugify(method)}.png"
+    figure_path = method_output_dir / f"{slugify(method)}.png"
     fig.savefig(figure_path, dpi=dpi, bbox_inches="tight")
     plt.close(fig)
 
@@ -478,9 +479,11 @@ def write_readme(
         "This folder contains paper-friendly qualitative comparison figures for "
         "the counterfactual methods evaluated in this project.",
         "",
-        "The main figures are stored in `per_method/`. Each figure contains one "
-        "method on one dataset. Rows correspond to the qualitative case types "
-        "available for that method:",
+        "The main figures are stored in dataset-specific folders under "
+        "`per_method/`, for example `per_method/busi/` and "
+        "`per_method/pneumonia/`. Each figure contains one method on one "
+        "dataset. Rows correspond to the qualitative case types available for "
+        "that method:",
         "",
     ]
     for _, label in CATEGORY_ORDER:
