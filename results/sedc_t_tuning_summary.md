@@ -21,6 +21,22 @@ number of interpretable parameters:
 - ROI constraint,
 - replacement mode.
 
+## Variant Terminology
+
+The project does not define four equally weighted SEDC-T methods. It contains
+two main SEDC-T states and several additional tuning ablations:
+
+| Category | Search mode | ROI | Role in the paper |
+| --- | --- | --- | --- |
+| Original-style reference | `original_best_first` | `none` | method-faithfulness reference for BUSI and Pneumonia |
+| Project variant | `greedy_minimal` | `none` for BUSI, `lung_fields` for Pneumonia | faster practical variant; Pneumonia ROI is project-specific |
+| Tuning ablations | `greedy_minimal` | varied | parameter checks, not separate main methods |
+
+The ROI constraint is not part of the original-style SEDC-T reference. It was
+introduced only as a project-specific Pneumonia variant to test whether a rough
+anatomical restriction makes the selected regions easier to interpret. BUSI has
+no lung-field ROI, so the comparable BUSI project variant uses `roi_mode=none`.
+
 ## Results
 
 | Variant | Dataset | ROI | Replacement | Max segments | Validity | Mean CF confidence | Mean changed pixel fraction | Mean L1 | Mean runtime |
@@ -75,4 +91,3 @@ SEDC-T is useful as a localized, region-based model-behavior explanation, but it
 is not consistently strong for generating valid and medically plausible
 counterfactuals on the Pneumonia dataset.
 ```
-
