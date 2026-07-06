@@ -6,7 +6,7 @@
       "type": "per_method",
       "dataset": "BUSI",
       "method": "Prototype-guided optimization baseline",
-      "figure_path": "results/qualitative_figures/per_method/busi__prototype_guided_optimization_baseline.png",
+      "figure_path": "results/qualitative_figures/per_method/busi/prototype_guided_optimization_baseline.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -18,7 +18,7 @@
       "type": "per_method",
       "dataset": "BUSI",
       "method": "Prototype-guided plausibility ablation",
-      "figure_path": "results/qualitative_figures/per_method/busi__prototype_guided_plausibility_ablation.png",
+      "figure_path": "results/qualitative_figures/per_method/busi/prototype_guided_plausibility_ablation.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -30,7 +30,7 @@
       "type": "per_method",
       "dataset": "BUSI",
       "method": "Retrieval-based nearest-unlike-neighbor baseline",
-      "figure_path": "results/qualitative_figures/per_method/busi__retrieval_based_nearest_unlike_neighbor_baseline.png",
+      "figure_path": "results/qualitative_figures/per_method/busi/retrieval_based_nearest_unlike_neighbor_baseline.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -42,7 +42,20 @@
       "type": "per_method",
       "dataset": "BUSI",
       "method": "SEDC-T original-style best-first",
-      "figure_path": "results/qualitative_figures/per_method/busi__sedc_t_original_style_best_first.png",
+      "figure_path": "results/qualitative_figures/per_method/busi/sedc_t_original_style_best_first.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "SEDC-T project variant",
+      "figure_path": "results/qualitative_figures/per_method/busi/sedc_t_project_variant.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -55,7 +68,7 @@
       "type": "per_method",
       "dataset": "BUSI",
       "method": "SEDC-T tuned project variant (none, max 10)",
-      "figure_path": "results/qualitative_figures/per_method/busi__sedc_t_tuned_project_variant_none_max_10.png",
+      "figure_path": "results/qualitative_figures/per_method/busi/sedc_t_tuned_project_variant_none_max_10.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -68,7 +81,7 @@
       "type": "per_method",
       "dataset": "BUSI",
       "method": "DVCE-style, OpenAI checkpoint",
-      "figure_path": "results/qualitative_figures/per_method/busi__dvce_style_openai_checkpoint.png",
+      "figure_path": "results/qualitative_figures/per_method/busi/dvce_style_openai_checkpoint.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -80,7 +93,7 @@
       "type": "per_method",
       "dataset": "Pneumonia",
       "method": "Prototype-guided optimization baseline",
-      "figure_path": "results/qualitative_figures/per_method/pneumonia__prototype_guided_optimization_baseline.png",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/prototype_guided_optimization_baseline.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -92,7 +105,7 @@
       "type": "per_method",
       "dataset": "Pneumonia",
       "method": "Prototype-guided plausibility ablation",
-      "figure_path": "results/qualitative_figures/per_method/pneumonia__prototype_guided_plausibility_ablation.png",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/prototype_guided_plausibility_ablation.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -104,7 +117,7 @@
       "type": "per_method",
       "dataset": "Pneumonia",
       "method": "Retrieval-based nearest-unlike-neighbor baseline",
-      "figure_path": "results/qualitative_figures/per_method/pneumonia__retrieval_based_nearest_unlike_neighbor_baseline.png",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/retrieval_based_nearest_unlike_neighbor_baseline.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -116,7 +129,20 @@
       "type": "per_method",
       "dataset": "Pneumonia",
       "method": "SEDC-T original-style best-first",
-      "figure_path": "results/qualitative_figures/per_method/pneumonia__sedc_t_original_style_best_first.png",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/sedc_t_original_style_best_first.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "SEDC-T project variant (lung_fields)",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/sedc_t_project_variant_lung_fields.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -129,7 +155,7 @@
       "type": "per_method",
       "dataset": "Pneumonia",
       "method": "SEDC-T tuned project variant (none, max 8)",
-      "figure_path": "results/qualitative_figures/per_method/pneumonia__sedc_t_tuned_project_variant_none_max_8.png",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/sedc_t_tuned_project_variant_none_max_8.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -142,7 +168,7 @@
       "type": "per_method",
       "dataset": "Pneumonia",
       "method": "DVCE-style, OpenAI checkpoint",
-      "figure_path": "results/qualitative_figures/per_method/pneumonia__dvce_style_openai_checkpoint.png",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/dvce_style_openai_checkpoint.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -155,7 +181,7 @@
       "type": "per_method",
       "dataset": "Pneumonia",
       "method": "DVCE-style, Pneumonia fine-tuned checkpoint",
-      "figure_path": "results/qualitative_figures/per_method/pneumonia__dvce_style_pneumonia_fine_tuned_checkpoint.png",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/dvce_style_pneumonia_fine_tuned_checkpoint.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
