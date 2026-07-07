@@ -181,14 +181,6 @@ def choose_manifest_samples(model, test_dataset, device, manifest_path, max_reco
     return manifest, samples
 
 
-def select_target_class(probabilities, original_class):
-    ranked = torch.argsort(probabilities, descending=True)
-    for class_idx in ranked.tolist():
-        if class_idx != original_class:
-            return class_idx
-    return int((original_class + 1) % probabilities.shape[0])
-
-
 def select_target_classes(probabilities, original_class, strategy):
     ranked = torch.argsort(probabilities, descending=True).tolist()
     candidates = [class_idx for class_idx in ranked if class_idx != original_class]
@@ -393,10 +385,6 @@ def save_counterfactual_visualization(
     fig.tight_layout(rect=[0, 0, 1, 0.78])
     fig.savefig(figure_path, dpi=150)
     plt.close(fig)
-
-
-def save_comparison(*args, **kwargs):
-    save_counterfactual_visualization(*args, **kwargs)
 
 
 def compute_image_debug_stats(original_pixels, cf_pixels):
@@ -686,7 +674,7 @@ def main():
         original_confidence = float(sample["probabilities"][original_class])
         counterfactual_confidence = float(result["probabilities"][result["prediction"]])
         valid_counterfactual = result["prediction"] == target_class
-        save_comparison(
+        save_counterfactual_visualization(
             original_pixels=original_pixels,
             cf_pixels=result["image"],
             output_path=output_path,
@@ -743,9 +731,6 @@ def main():
             "counterfactual_prediction": classes[result["prediction"]],
             "counterfactual_confidence": counterfactual_confidence,
             "valid_counterfactual": valid_counterfactual,
-            # Backward-compatible aliases for earlier result files.
-            "true_class": classes[sample["label"]],
-            "valid": valid_counterfactual,
             "attempted_targets": [
                 {
                     "target_class": attempt["target_class"],
