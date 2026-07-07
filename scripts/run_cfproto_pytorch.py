@@ -257,6 +257,7 @@ def generate_counterfactual(
     target = torch.tensor([target_class], device=image.device)
 
     best = None
+    last_loss_terms = None
     start_time = time.time()
 
     for step in range(steps):
@@ -291,6 +292,15 @@ def generate_counterfactual(
         ae_loss = torch.tensor(0.0, device=image.device)
         if autoencoder is not None:
             ae_loss = F.mse_loss(autoencoder(cf_pixels), cf_pixels)
+        loss_terms = {
+            "class_loss": float(class_loss.detach().item()),
+            "l1_loss": float(l1_loss.detach().item()),
+            "l2_loss": float(l2_loss.detach().item()),
+            "tv_loss": float(tv_loss.detach().item()),
+            "proto_loss": float(proto_loss.detach().item()),
+            "ae_loss": float(ae_loss.detach().item()),
+        }
+        last_loss_terms = loss_terms
 
         loss = (
             attack_const * class_loss
@@ -317,6 +327,7 @@ def generate_counterfactual(
                         "target_probability": target_probability,
                         "attack_const": attack_const,
                         "autoencoder_loss": float(ae_loss.item()),
+                        "loss_terms": loss_terms,
                     }
 
     runtime = time.time() - start_time
@@ -349,6 +360,7 @@ def generate_counterfactual(
         "best_step": best["step"] if best is not None else None,
         "attack_const": best["attack_const"] if best is not None else attack_const,
         "autoencoder_loss": best["autoencoder_loss"] if best is not None else None,
+        "loss_terms": best["loss_terms"] if best is not None else last_loss_terms,
     }
 
 
@@ -444,15 +456,26 @@ def compute_image_debug_stats(original_pixels, cf_pixels):
     }
 
 
-def compute_change_metrics(original_pixels, cf_pixels, threshold=0.03):
+def compute_change_metrics(
+    original_pixels,
+    cf_pixels,
+    threshold=0.03,
+    thresholds=(0.03, 0.01, 0.005, 0.001),
+):
     diff = torch.abs(cf_pixels - original_pixels)
-    return {
+    metrics = {
         "l1_mean": float(diff.mean().item()),
         "l2_mean": float(torch.sqrt(torch.mean(diff**2)).item()),
         "linf": float(diff.max().item()),
         "sparsity_threshold": threshold,
         "changed_pixel_fraction": float((diff > threshold).float().mean().item()),
     }
+    for value in thresholds:
+        suffix = str(value).replace(".", "_")
+        metrics[f"changed_pixel_fraction_threshold_{suffix}"] = float(
+            (diff > value).float().mean().item()
+        )
+    return metrics
 
 
 def get_attack_consts(attack_const, c_init, c_steps):
@@ -492,9 +515,24 @@ def compute_aggregate_metrics(records):
     if not records:
         return aggregate
 
-    metric_names = ["l1_mean", "l2_mean", "linf", "changed_pixel_fraction"]
+    metric_names = [
+        "l1_mean",
+        "l2_mean",
+        "linf",
+        "changed_pixel_fraction",
+        "changed_pixel_fraction_threshold_0_03",
+        "changed_pixel_fraction_threshold_0_01",
+        "changed_pixel_fraction_threshold_0_005",
+        "changed_pixel_fraction_threshold_0_001",
+    ]
     for metric_name in metric_names:
-        values = [record["change_metrics"][metric_name] for record in records]
+        values = [
+            record["change_metrics"][metric_name]
+            for record in records
+            if metric_name in record["change_metrics"]
+        ]
+        if not values:
+            continue
         aggregate[metric_name] = {
             "mean": sum(values) / len(values),
             "min": min(values),
@@ -613,6 +651,14 @@ def main():
     )
     parser.add_argument("--allow_color_changes", action="store_true")
     parser.add_argument("--batch_size", type=int, default=16)
+    parser.add_argument(
+        "--log_loss_terms",
+        action="store_true",
+        help=(
+            "Print unweighted raw loss terms for the selected result per sample. "
+            "Useful for calibrating lambda/gamma magnitudes."
+        ),
+    )
     args = parser.parse_args()
 
     device = get_device()
@@ -800,6 +846,7 @@ def main():
                     ],
                     "best_step": attempt["result"]["best_step"],
                     "autoencoder_loss": attempt["result"]["autoencoder_loss"],
+                    "loss_terms": attempt["result"]["loss_terms"],
                 }
                 for attempt in attempted_targets
             ],
@@ -809,12 +856,26 @@ def main():
             "best_step": result["best_step"],
             "attack_const": result["attack_const"],
             "autoencoder_loss": result["autoencoder_loss"],
+            "loss_terms": result["loss_terms"],
             "change_metrics": change_metrics,
             "image_debug_stats": image_debug_stats,
             "image_path": str(output_path),
             "summary_path": str(output_path.with_suffix(".summary.png")),
         }
         records.append(record)
+
+        if args.log_loss_terms and result["loss_terms"] is not None:
+            loss_terms = result["loss_terms"]
+            print("  raw loss terms at selected result")
+            for loss_name in [
+                "class_loss",
+                "l1_loss",
+                "l2_loss",
+                "tv_loss",
+                "proto_loss",
+                "ae_loss",
+            ]:
+                print(f"    {loss_name}: {loss_terms[loss_name]:.6f}")
 
     cfproto_implemented = [
         "optional CW-style targeted hinge loss",
@@ -858,6 +919,7 @@ def main():
             "force_grayscale": not args.allow_color_changes,
             "manifest_path": args.manifest_path,
             "manifest_max_samples": args.manifest_max_samples,
+            "log_loss_terms": args.log_loss_terms,
         },
         "autoencoder_checkpoint": (
             {
