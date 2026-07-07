@@ -63,6 +63,13 @@ def summarize_metadata(path):
     parameters = metadata.get("parameters", {})
     if method == "PyTorch prototype-guided optimization baseline":
         if (
+            parameters.get("attack_loss") == "cw_hinge"
+            or parameters.get("lambda_l1", 0) > 0
+            or parameters.get("c_steps", 1) > 1
+            or parameters.get("target_strategy") == "prototype_distance"
+        ):
+            method = "PyTorch prototype-guided CFProto-aligned ablation"
+        elif (
             parameters.get("lambda_l2", 0) > 5.0
             or parameters.get("lambda_tv", 0) > 0.2
             or parameters.get("max_delta", 1.0) < 0.12
@@ -151,6 +158,7 @@ def write_markdown(rows, output_path):
             "- Validity only checks whether the model prediction changed to the target class.",
             "- Mean change is method-dependent and should be interpreted together with the qualitative images.",
             "- Medical plausibility must be discussed separately from model validity.",
+            "- Prototype-guided CFProto-aligned rows use the newer optional margin-loss/L1/c-search controls; they are still not full Alibi CFProto because no autoencoder/encoder, k-d tree, or FISTA optimizer is used.",
         ]
     )
 
