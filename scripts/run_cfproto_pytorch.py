@@ -95,6 +95,27 @@ def compute_feature_prototypes(model, train_loader, num_classes, device):
     return feature_sums / class_counts.unsqueeze(1).clamp_min(1.0)
 
 
+def cw_attack_loss(probabilities, target_class, kappa):
+    target_probability = probabilities[:, target_class]
+    non_target_mask = torch.ones_like(probabilities, dtype=torch.bool)
+    non_target_mask[:, target_class] = False
+    non_target_probability = probabilities.masked_fill(
+        ~non_target_mask, -1e9
+    ).max(dim=1).values
+    return torch.clamp(
+        non_target_probability - target_probability + kappa,
+        min=0.0,
+    ).mean()
+
+
+def compute_attack_loss(logits, probabilities, target, target_class, attack_loss, kappa):
+    if attack_loss == "cross_entropy":
+        return F.cross_entropy(logits, target)
+    if attack_loss == "cw_hinge":
+        return cw_attack_loss(probabilities, target_class, kappa)
+    raise ValueError(f"Unsupported attack loss: {attack_loss}")
+
+
 def choose_samples(model, test_loader, device, max_samples):
     samples = []
 
@@ -102,7 +123,7 @@ def choose_samples(model, test_loader, device, max_samples):
         for images, labels in test_loader:
             images = images.to(device)
             labels = labels.to(device)
-            logits, _ = model(images)
+            logits, features = model(images)
             probabilities = F.softmax(logits, dim=1)
             predictions = torch.argmax(probabilities, dim=1)
 
@@ -114,6 +135,7 @@ def choose_samples(model, test_loader, device, max_samples):
                             "label": int(labels[idx].item()),
                             "prediction": int(predictions[idx].item()),
                             "probabilities": probabilities[idx].detach().cpu().tolist(),
+                            "features": features[idx].detach().cpu(),
                         }
                     )
                     if len(samples) >= max_samples:
@@ -130,7 +152,7 @@ def choose_manifest_samples(model, test_dataset, device, manifest_path, max_reco
         for record in records:
             image, label, image_path = load_image_from_manifest_record(test_dataset, record)
             image = image.to(device)
-            logits, _ = model(image)
+            logits, features = model(image)
             probabilities = F.softmax(logits, dim=1)
             prediction = int(torch.argmax(probabilities, dim=1).item())
             expected_prediction = int(record["original_prediction_index"])
@@ -152,6 +174,7 @@ def choose_manifest_samples(model, test_dataset, device, manifest_path, max_reco
                     "target_class_index": int(record["target_class_index"]),
                     "target_class": record["target_class"],
                     "image_source_path": image_path,
+                    "features": features[0].detach().cpu(),
                 }
             )
 
@@ -177,6 +200,15 @@ def select_target_classes(probabilities, original_class, strategy):
     return [candidates[0]]
 
 
+def select_target_by_prototype_distance(features, prototypes, original_class):
+    distances = torch.linalg.vector_norm(
+        prototypes.detach().cpu() - features.detach().cpu(),
+        dim=1,
+    )
+    distances[original_class] = float("inf")
+    return int(torch.argmin(distances).item())
+
+
 def generate_counterfactual(
     model,
     image,
@@ -185,6 +217,10 @@ def generate_counterfactual(
     target_prototype,
     steps,
     learning_rate,
+    attack_loss,
+    attack_const,
+    kappa,
+    lambda_l1,
     lambda_l2,
     lambda_tv,
     lambda_proto,
@@ -225,13 +261,22 @@ def generate_counterfactual(
         logits, features = model(cf_normalized)
         probabilities = F.softmax(logits, dim=1)
 
-        class_loss = F.cross_entropy(logits, target)
+        class_loss = compute_attack_loss(
+            logits=logits,
+            probabilities=probabilities,
+            target=target,
+            target_class=target_class,
+            attack_loss=attack_loss,
+            kappa=kappa,
+        )
+        l1_loss = torch.mean(torch.abs(cf_pixels - original_pixels))
         l2_loss = F.mse_loss(cf_pixels, original_pixels)
         tv_loss = total_variation(smooth_delta)
         proto_loss = F.mse_loss(features[0], target_prototype)
 
         loss = (
-            class_loss
+            attack_const * class_loss
+            + lambda_l1 * l1_loss
             + lambda_l2 * l2_loss
             + lambda_tv * tv_loss
             + lambda_proto * proto_loss
@@ -251,6 +296,7 @@ def generate_counterfactual(
                         "step": step + 1,
                         "score": score,
                         "target_probability": target_probability,
+                        "attack_const": attack_const,
                     }
 
     runtime = time.time() - start_time
@@ -281,6 +327,7 @@ def generate_counterfactual(
         "probabilities": final_probabilities[0].detach().cpu().tolist(),
         "runtime_seconds": runtime,
         "best_step": best["step"] if best is not None else None,
+        "attack_const": best["attack_const"] if best is not None else attack_const,
     }
 
 
@@ -391,6 +438,32 @@ def compute_change_metrics(original_pixels, cf_pixels, threshold=0.03):
     }
 
 
+def get_attack_consts(attack_const, c_init, c_steps):
+    """Return fixed geometric attack-constant candidates around c_init.
+
+    This is a lightweight CFProto-inspired c-search over a symmetric geometric
+    grid, not the adaptive binary search used by Alibi CFProto. For c_steps <= 1
+    the previous behavior is kept exactly: only attack_const is used.
+    With an even number of steps, the grid keeps exactly c_steps candidates and
+    includes c_init, so one side necessarily receives one extra candidate.
+    """
+    if c_steps <= 1:
+        return [attack_const]
+
+    lower_steps = c_steps // 2
+    upper_steps = c_steps - lower_steps
+    return [c_init * (2**step) for step in range(-lower_steps, upper_steps)]
+
+
+def score_attempt_for_selection(result, original_pixels):
+    diff = torch.abs(result["image"] - original_pixels)
+    return (
+        not result["valid"],
+        float(diff.mean().item()),
+        -float(result["probabilities"][result["prediction"]]),
+    )
+
+
 def compute_aggregate_metrics(records):
     valid_count = sum(record["valid_counterfactual"] for record in records)
     aggregate = {
@@ -441,12 +514,66 @@ def main():
     )
     parser.add_argument("--steps", type=int, default=300)
     parser.add_argument("--learning_rate", type=float, default=0.01)
+    parser.add_argument(
+        "--attack_loss",
+        choices=["cross_entropy", "cw_hinge"],
+        default="cross_entropy",
+        help=(
+            "cross_entropy keeps the earlier project baseline. cw_hinge uses a "
+            "targeted Carlini-Wagner-style margin loss closer to Alibi CFProto."
+        ),
+    )
+    parser.add_argument(
+        "--attack_const",
+        type=float,
+        default=1.0,
+        help="Weight for the attack loss. Comparable to CFProto's c constant.",
+    )
+    parser.add_argument(
+        "--c_init",
+        type=float,
+        default=1.0,
+        help=(
+            "Center value for the optional symmetric geometric c-search. "
+            "Used only when c_steps > 1."
+        ),
+    )
+    parser.add_argument(
+        "--c_steps",
+        type=int,
+        default=1,
+        help=(
+            "Number of attack-constant candidates in a fixed geometric grid "
+            "around c_init. This is a lightweight CFProto-inspired search, "
+            "not the full Alibi binary search."
+        ),
+    )
+    parser.add_argument(
+        "--kappa",
+        type=float,
+        default=0.0,
+        help="Target margin for cw_hinge attack loss.",
+    )
+    parser.add_argument(
+        "--lambda_l1",
+        type=float,
+        default=0.0,
+        help="Optional L1 image-distance penalty. This is not FISTA shrinkage.",
+    )
     parser.add_argument("--lambda_l2", type=float, default=5.0)
     parser.add_argument("--lambda_tv", type=float, default=0.2)
     parser.add_argument("--lambda_proto", type=float, default=0.05)
     parser.add_argument("--max_delta", type=float, default=0.12)
     parser.add_argument("--perturbation_resolution", type=int, default=28)
-    parser.add_argument("--target_strategy", choices=["second_best", "all"], default="all")
+    parser.add_argument(
+        "--target_strategy",
+        choices=["second_best", "all", "prototype_distance"],
+        default="all",
+        help=(
+            "Target selection for non-manifest runs. Manifest mode keeps the "
+            "manifest target for fair fixed evaluation."
+        ),
+    )
     parser.add_argument("--allow_color_changes", action="store_true")
     parser.add_argument("--batch_size", type=int, default=16)
     args = parser.parse_args()
@@ -493,50 +620,68 @@ def main():
         original_probabilities = torch.tensor(sample["probabilities"])
         if "target_class_index" in sample:
             target_candidates = [sample["target_class_index"]]
+        elif args.target_strategy == "prototype_distance":
+            target_candidates = [
+                select_target_by_prototype_distance(
+                    sample["features"], prototypes, original_class
+                )
+            ]
         else:
             target_candidates = select_target_classes(
                 original_probabilities, original_class, args.target_strategy
             )
         attempted_targets = []
         best_attempt = None
+        original_pixels = denormalize(image).detach()
+        attack_consts = get_attack_consts(
+            attack_const=args.attack_const,
+            c_init=args.c_init,
+            c_steps=args.c_steps,
+        )
 
         for target_class in target_candidates:
             print(
                 f"Sample {sample_idx}: {classes[original_class]} -> {classes[target_class]}"
             )
-            result = generate_counterfactual(
-                model=model,
-                image=image,
-                original_class=original_class,
-                target_class=target_class,
-                target_prototype=prototypes[target_class],
-                steps=args.steps,
-                learning_rate=args.learning_rate,
-                lambda_l2=args.lambda_l2,
-                lambda_tv=args.lambda_tv,
-                lambda_proto=args.lambda_proto,
-                max_delta=args.max_delta,
-                force_grayscale=not args.allow_color_changes,
-                perturbation_resolution=args.perturbation_resolution,
-            )
-            attempt = {
-                "target_class_index": target_class,
-                "target_class": classes[target_class],
-                "result": result,
-            }
-            attempted_targets.append(attempt)
+            for attack_const in attack_consts:
+                result = generate_counterfactual(
+                    model=model,
+                    image=image,
+                    original_class=original_class,
+                    target_class=target_class,
+                    target_prototype=prototypes[target_class],
+                    steps=args.steps,
+                    learning_rate=args.learning_rate,
+                    attack_loss=args.attack_loss,
+                    attack_const=attack_const,
+                    kappa=args.kappa,
+                    lambda_l1=args.lambda_l1,
+                    lambda_l2=args.lambda_l2,
+                    lambda_tv=args.lambda_tv,
+                    lambda_proto=args.lambda_proto,
+                    max_delta=args.max_delta,
+                    force_grayscale=not args.allow_color_changes,
+                    perturbation_resolution=args.perturbation_resolution,
+                )
+                attempt = {
+                    "target_class_index": target_class,
+                    "target_class": classes[target_class],
+                    "attack_const": attack_const,
+                    "result": result,
+                }
+                attempted_targets.append(attempt)
 
-            if result["valid"]:
-                best_attempt = attempt
+                if best_attempt is None or score_attempt_for_selection(
+                    result, original_pixels
+                ) < score_attempt_for_selection(best_attempt["result"], original_pixels):
+                    best_attempt = attempt
+
+            if best_attempt is not None and best_attempt["result"]["valid"]:
                 break
-
-            if best_attempt is None:
-                best_attempt = attempt
 
         target_class = best_attempt["target_class_index"]
         result = best_attempt["result"]
 
-        original_pixels = denormalize(image).detach()
         output_path = output_dir / f"sample_{sample_idx:02d}.png"
         original_confidence = float(sample["probabilities"][original_class])
         counterfactual_confidence = float(result["probabilities"][result["prediction"]])
@@ -604,6 +749,7 @@ def main():
             "attempted_targets": [
                 {
                     "target_class": attempt["target_class"],
+                    "attack_const": attempt["attack_const"],
                     "valid": attempt["result"]["valid"],
                     "counterfactual_prediction": classes[
                         attempt["result"]["prediction"]
@@ -616,6 +762,7 @@ def main():
             "counterfactual_probabilities": result["probabilities"],
             "runtime_seconds": result["runtime_seconds"],
             "best_step": result["best_step"],
+            "attack_const": result["attack_const"],
             "change_metrics": change_metrics,
             "image_debug_stats": image_debug_stats,
             "image_path": str(output_path),
@@ -631,6 +778,12 @@ def main():
         "parameters": {
             "steps": args.steps,
             "learning_rate": args.learning_rate,
+            "attack_loss": args.attack_loss,
+            "attack_const": args.attack_const,
+            "c_init": args.c_init,
+            "c_steps": args.c_steps,
+            "kappa": args.kappa,
+            "lambda_l1": args.lambda_l1,
             "lambda_l2": args.lambda_l2,
             "lambda_tv": args.lambda_tv,
             "lambda_proto": args.lambda_proto,
@@ -640,6 +793,21 @@ def main():
             "force_grayscale": not args.allow_color_changes,
             "manifest_path": args.manifest_path,
             "manifest_max_samples": args.manifest_max_samples,
+        },
+        "cfproto_alignment_note": {
+            "implemented": [
+                "optional CW-style targeted hinge loss",
+                "optional prototype-distance target selection for non-manifest runs",
+                "optional L1 image-distance penalty",
+                "optional symmetric geometric attack-constant c-search",
+            ],
+            "not_implemented": [
+                "Alibi TensorFlow CounterfactualProto graph",
+                "autoencoder reconstruction loss",
+                "encoder-space or KD-tree prototypes independent from the classifier",
+                "FISTA shrinkage-thresholding optimizer",
+                "full Alibi binary search over c",
+            ],
         },
         "evaluation_manifest": {
             "path": args.manifest_path,
