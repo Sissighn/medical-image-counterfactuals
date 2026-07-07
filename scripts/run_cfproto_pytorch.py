@@ -14,6 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from src.autoencoder import ARCHITECTURE_NAME, ConvAutoencoder
 from src.data_utils import create_dataloaders
 from src.evaluation_manifest import (
     load_image_from_manifest_record,
@@ -71,6 +72,26 @@ def load_checkpoint_model(model_path, device):
     model = ResNetWithFeatures(model).to(device)
     model.eval()
     return model, checkpoint
+
+
+def load_autoencoder_model(autoencoder_path, device):
+    checkpoint = torch.load(autoencoder_path, map_location=device)
+    architecture = checkpoint.get("architecture")
+    if architecture != ARCHITECTURE_NAME:
+        raise ValueError(
+            f"Unsupported autoencoder architecture: {architecture}. "
+            f"Expected {ARCHITECTURE_NAME}."
+        )
+
+    autoencoder = ConvAutoencoder(
+        input_channels=checkpoint.get("input_channels", 3),
+        base_channels=checkpoint.get("base_channels", 32),
+    ).to(device)
+    autoencoder.load_state_dict(checkpoint["model_state_dict"])
+    autoencoder.eval()
+    for parameter in autoencoder.parameters():
+        parameter.requires_grad_(False)
+    return autoencoder, checkpoint
 
 
 def compute_feature_prototypes(model, train_loader, num_classes, device):
@@ -219,6 +240,8 @@ def generate_counterfactual(
     max_delta,
     force_grayscale,
     perturbation_resolution,
+    autoencoder=None,
+    gamma=0.0,
 ):
     original_pixels = denormalize(image).detach()
     channels = 1 if force_grayscale else 3
@@ -265,6 +288,9 @@ def generate_counterfactual(
         l2_loss = F.mse_loss(cf_pixels, original_pixels)
         tv_loss = total_variation(smooth_delta)
         proto_loss = F.mse_loss(features[0], target_prototype)
+        ae_loss = torch.tensor(0.0, device=image.device)
+        if autoencoder is not None:
+            ae_loss = F.mse_loss(autoencoder(cf_pixels), cf_pixels)
 
         loss = (
             attack_const * class_loss
@@ -272,6 +298,7 @@ def generate_counterfactual(
             + lambda_l2 * l2_loss
             + lambda_tv * tv_loss
             + lambda_proto * proto_loss
+            + gamma * ae_loss
         )
         loss.backward()
         optimizer.step()
@@ -289,6 +316,7 @@ def generate_counterfactual(
                         "score": score,
                         "target_probability": target_probability,
                         "attack_const": attack_const,
+                        "autoencoder_loss": float(ae_loss.item()),
                     }
 
     runtime = time.time() - start_time
@@ -320,6 +348,7 @@ def generate_counterfactual(
         "runtime_seconds": runtime,
         "best_step": best["step"] if best is not None else None,
         "attack_const": best["attack_const"] if best is not None else attack_const,
+        "autoencoder_loss": best["autoencoder_loss"] if best is not None else None,
     }
 
 
@@ -551,6 +580,26 @@ def main():
     parser.add_argument("--lambda_l2", type=float, default=5.0)
     parser.add_argument("--lambda_tv", type=float, default=0.2)
     parser.add_argument("--lambda_proto", type=float, default=0.05)
+    parser.add_argument(
+        "--autoencoder_path",
+        type=str,
+        default=None,
+        help=(
+            "Optional ConvAutoencoder checkpoint. Together with gamma this enables "
+            "a CFProto-like autoencoder plausibility term. Without this path, the "
+            "script keeps the previous behavior and skips the autoencoder forward pass."
+        ),
+    )
+    parser.add_argument(
+        "--gamma",
+        type=float,
+        default=0.0,
+        help=(
+            "Weight for the optional autoencoder reconstruction loss "
+            "MSE(AE(counterfactual), counterfactual). Active only when "
+            "autoencoder_path is set."
+        ),
+    )
     parser.add_argument("--max_delta", type=float, default=0.12)
     parser.add_argument("--perturbation_resolution", type=int, default=28)
     parser.add_argument(
@@ -573,6 +622,14 @@ def main():
     model, checkpoint = load_checkpoint_model(args.model_path, device)
     classes = checkpoint["classes"]
     num_classes = checkpoint["num_classes"]
+    autoencoder = None
+    autoencoder_checkpoint = None
+    if args.autoencoder_path:
+        print(f"Loading autoencoder checkpoint: {args.autoencoder_path}")
+        autoencoder, autoencoder_checkpoint = load_autoencoder_model(
+            args.autoencoder_path,
+            device,
+        )
 
     data = create_dataloaders(
         args.dataset_path, batch_size=args.batch_size, use_augmentation=False
@@ -650,6 +707,8 @@ def main():
                     max_delta=args.max_delta,
                     force_grayscale=not args.allow_color_changes,
                     perturbation_resolution=args.perturbation_resolution,
+                    autoencoder=autoencoder,
+                    gamma=args.gamma,
                 )
                 attempt = {
                     "target_class_index": target_class,
@@ -740,6 +799,7 @@ def main():
                         attempt["result"]["prediction"]
                     ],
                     "best_step": attempt["result"]["best_step"],
+                    "autoencoder_loss": attempt["result"]["autoencoder_loss"],
                 }
                 for attempt in attempted_targets
             ],
@@ -748,12 +808,30 @@ def main():
             "runtime_seconds": result["runtime_seconds"],
             "best_step": result["best_step"],
             "attack_const": result["attack_const"],
+            "autoencoder_loss": result["autoencoder_loss"],
             "change_metrics": change_metrics,
             "image_debug_stats": image_debug_stats,
             "image_path": str(output_path),
             "summary_path": str(output_path.with_suffix(".summary.png")),
         }
         records.append(record)
+
+    cfproto_implemented = [
+        "optional CW-style targeted hinge loss",
+        "optional prototype-distance target selection for non-manifest runs",
+        "optional L1 image-distance penalty",
+        "optional symmetric geometric attack-constant c-search",
+    ]
+    cfproto_not_implemented = [
+        "Alibi TensorFlow CounterfactualProto graph",
+        "encoder-space or KD-tree prototypes independent from the classifier",
+        "FISTA shrinkage-thresholding optimizer",
+        "full Alibi binary search over c",
+    ]
+    if args.autoencoder_path:
+        cfproto_implemented.append("optional autoencoder reconstruction loss")
+    else:
+        cfproto_not_implemented.append("autoencoder reconstruction loss")
 
     metadata = {
         "method": "PyTorch prototype-guided optimization baseline",
@@ -772,6 +850,8 @@ def main():
             "lambda_l2": args.lambda_l2,
             "lambda_tv": args.lambda_tv,
             "lambda_proto": args.lambda_proto,
+            "autoencoder_path": args.autoencoder_path,
+            "gamma": args.gamma,
             "max_delta": args.max_delta,
             "perturbation_resolution": args.perturbation_resolution,
             "target_strategy": args.target_strategy,
@@ -779,20 +859,20 @@ def main():
             "manifest_path": args.manifest_path,
             "manifest_max_samples": args.manifest_max_samples,
         },
+        "autoencoder_checkpoint": (
+            {
+                "architecture": autoencoder_checkpoint.get("architecture"),
+                "dataset_path": autoencoder_checkpoint.get("dataset_path"),
+                "image_size": autoencoder_checkpoint.get("image_size"),
+                "base_channels": autoencoder_checkpoint.get("base_channels"),
+                "pixel_range": autoencoder_checkpoint.get("pixel_range"),
+            }
+            if autoencoder_checkpoint is not None
+            else None
+        ),
         "cfproto_alignment_note": {
-            "implemented": [
-                "optional CW-style targeted hinge loss",
-                "optional prototype-distance target selection for non-manifest runs",
-                "optional L1 image-distance penalty",
-                "optional symmetric geometric attack-constant c-search",
-            ],
-            "not_implemented": [
-                "Alibi TensorFlow CounterfactualProto graph",
-                "autoencoder reconstruction loss",
-                "encoder-space or KD-tree prototypes independent from the classifier",
-                "FISTA shrinkage-thresholding optimizer",
-                "full Alibi binary search over c",
-            ],
+            "implemented": cfproto_implemented,
+            "not_implemented": cfproto_not_implemented,
         },
         "evaluation_manifest": {
             "path": args.manifest_path,
