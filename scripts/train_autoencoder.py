@@ -12,7 +12,12 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.autoencoder import ARCHITECTURE_NAME, ConvAutoencoder
+from src.autoencoder import (
+    ARCHITECTURE_NAME,
+    BOTTLENECK_ARCHITECTURE_NAME,
+    ConvAutoencoder,
+    ConvAutoencoderBottleneck,
+)
 from src.data_utils import IMAGE_SIZE, create_dataloaders
 from src.train_model import get_device
 
@@ -85,6 +90,9 @@ def train_autoencoder(
     batch_size,
     learning_rate,
     base_channels,
+    architecture,
+    latent_dim,
+    num_workers,
     max_batches=None,
     num_reconstruction_examples=5,
 ):
@@ -92,16 +100,31 @@ def train_autoencoder(
     start_time = time.time()
     print(f"Device: {device}")
     print(f"Dataset path: {dataset_path}")
-    print(f"Architecture: {ARCHITECTURE_NAME}")
+    if architecture == "conv_autoencoder":
+        architecture_name = ARCHITECTURE_NAME
+        autoencoder = ConvAutoencoder(base_channels=base_channels).to(device)
+    elif architecture == "conv_autoencoder_bottleneck":
+        architecture_name = BOTTLENECK_ARCHITECTURE_NAME
+        autoencoder = ConvAutoencoderBottleneck(
+            base_channels=base_channels,
+            image_size=IMAGE_SIZE,
+            latent_dim=latent_dim,
+        ).to(device)
+    else:
+        raise ValueError(f"Unsupported autoencoder architecture: {architecture}")
+
+    print(f"Architecture: {architecture_name}")
+    if architecture == "conv_autoencoder_bottleneck":
+        print(f"Latent dimension: {latent_dim}")
 
     data = create_dataloaders(
         dataset_path,
         batch_size=batch_size,
         use_augmentation=False,
+        num_workers=num_workers,
     )
     train_loader = data["train_loader"]
 
-    autoencoder = ConvAutoencoder(base_channels=base_channels).to(device)
     optimizer = torch.optim.Adam(autoencoder.parameters(), lr=learning_rate)
     history = []
 
@@ -148,7 +171,9 @@ def train_autoencoder(
         "image_size": IMAGE_SIZE,
         "input_channels": 3,
         "base_channels": base_channels,
-        "architecture": ARCHITECTURE_NAME,
+        "architecture": architecture_name,
+        "architecture_cli": architecture,
+        "latent_dim": latent_dim if architecture == "conv_autoencoder_bottleneck" else None,
         "loss": "mse_reconstruction",
         "pixel_range": "[0, 1]",
         "normalization_note": (
@@ -158,7 +183,18 @@ def train_autoencoder(
         "epochs": epochs,
         "batch_size": batch_size,
         "learning_rate": learning_rate,
+        "num_workers": num_workers,
         "max_batches": max_batches,
+        "training_parameters": {
+            "epochs": epochs,
+            "batch_size": batch_size,
+            "learning_rate": learning_rate,
+            "base_channels": base_channels,
+            "architecture": architecture,
+            "latent_dim": latent_dim if architecture == "conv_autoencoder_bottleneck" else None,
+            "num_workers": num_workers,
+            "max_batches": max_batches,
+        },
         "training_seconds": training_seconds,
         "classes": data["classes"],
         "history": history,
@@ -192,6 +228,13 @@ def main():
     parser.add_argument("--learning_rate", type=float, default=1e-3)
     parser.add_argument("--base_channels", type=int, default=32)
     parser.add_argument(
+        "--architecture",
+        choices=["conv_autoencoder", "conv_autoencoder_bottleneck"],
+        default="conv_autoencoder_bottleneck",
+    )
+    parser.add_argument("--latent_dim", type=int, default=256)
+    parser.add_argument("--num_workers", type=int, default=0)
+    parser.add_argument(
         "--max_batches",
         type=int,
         default=None,
@@ -207,6 +250,9 @@ def main():
         batch_size=args.batch_size,
         learning_rate=args.learning_rate,
         base_channels=args.base_channels,
+        architecture=args.architecture,
+        latent_dim=args.latent_dim,
+        num_workers=args.num_workers,
         max_batches=args.max_batches,
         num_reconstruction_examples=args.num_reconstruction_examples,
     )
