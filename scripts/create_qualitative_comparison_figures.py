@@ -35,8 +35,10 @@ METHOD_ORDER = [
     "Retrieval-based nearest-unlike-neighbor baseline",
     "SEDC-T original-style best-first",
     "SEDC-T lung-field ROI ablation",
-    "DVCE-style, OpenAI checkpoint",
-    "DVCE-style, Pneumonia fine-tuned checkpoint",
+    "DVCE original-style without Cone Projection, OpenAI checkpoint",
+    "DVCE original-style with Cone Projection, OpenAI checkpoint",
+    "DVCE original-style with Cone Projection, Pneumonia fine-tuned checkpoint",
+    "DVCE original-style with Cone Projection, BUSI fine-tuned checkpoint",
 ]
 
 
@@ -50,7 +52,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--selected_examples",
         type=Path,
-        default=Path("results/meeting_paul_tuesday/selected_examples.json"),
+        default=Path("results/qualitative_selection/selected_examples.json"),
         help="JSON file created by select_interpretable_examples.py.",
     )
     parser.add_argument(

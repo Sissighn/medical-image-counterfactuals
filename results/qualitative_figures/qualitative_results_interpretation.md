@@ -10,13 +10,10 @@ This document explains the qualitative per-method figures in
 | BUSI | CFProto-nearer prototype-guided optimization baseline | `per_method/busi/cfproto_nearer_prototype_guided_optimization_baseline.png` |
 | BUSI | Retrieval-based nearest-unlike-neighbor baseline | `per_method/busi/retrieval_based_nearest_unlike_neighbor_baseline.png` |
 | BUSI | SEDC-T original-style best-first | `per_method/busi/sedc_t_original_style_best_first.png` |
-| BUSI | DVCE-style OpenAI checkpoint | `per_method/busi/dvce_style_openai_checkpoint.png` |
 | Pneumonia | CFProto-nearer prototype-guided optimization baseline | `per_method/pneumonia/cfproto_nearer_prototype_guided_optimization_baseline.png` |
 | Pneumonia | Retrieval-based nearest-unlike-neighbor baseline | `per_method/pneumonia/retrieval_based_nearest_unlike_neighbor_baseline.png` |
 | Pneumonia | SEDC-T original-style best-first | `per_method/pneumonia/sedc_t_original_style_best_first.png` |
 | Pneumonia | SEDC-T lung-field ROI ablation | `per_method/pneumonia/sedc_t_lung_field_roi_ablation.png` |
-| Pneumonia | DVCE-style OpenAI checkpoint | `per_method/pneumonia/dvce_style_openai_checkpoint.png` |
-| Pneumonia | DVCE-style Pneumonia fine-tuned checkpoint | `per_method/pneumonia/dvce_style_pneumonia_fine_tuned_checkpoint.png` |
 
 ## CFProto-Nearer Prototype-Guided Optimization
 
@@ -57,11 +54,12 @@ segment replacement.
 
 ## DVCE
 
-DVCE figures represent the generative direction. The OpenAI checkpoint and the
-Pneumonia fine-tuned checkpoint should be interpreted as feasibility states.
-They can produce model-valid target-class changes on the small fixed subset,
-but outputs can contain visible artifacts and depend strongly on checkpoint and
-guidance parameters.
+DVCE figures from the earlier free-guidance prototype have been removed. The
+retained implementation now uses the original-code-nearer DVCE core:
+`p_sample`, `pred_xstart` guidance, `classifier_lambda=0.1`, `lp_custom=1.0`,
+`lp_custom_value=0.15`, and `enforce_same_norms=True`. New qualitative figures
+should only be regenerated after the OpenAI, Pneumonia medical-checkpoint, and
+BUSI medical-checkpoint states have been rerun with this core.
 
 ## Overall Reading
 

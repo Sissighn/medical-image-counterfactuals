@@ -36,7 +36,17 @@ def infer_method(metadata):
             guidance_space == "pred_xstart"
             or runner_settings.get("gen_type") == "p_sample"
         )
-        prefix = "DVCE original-style" if original_style else "DVCE-style"
+        prefix = (
+            "DVCE original-style"
+            if original_style
+            else "Removed legacy DVCE free-guidance result"
+        )
+        if original_style:
+            prefix = (
+                f"{prefix} with Cone Projection"
+                if metadata.get("cone_projection_enabled")
+                else f"{prefix} without Cone Projection"
+            )
 
         if "ema_0.9999_005000" in checkpoint_lower or "pneumonia" in checkpoint_lower:
             return f"{prefix}, Pneumonia fine-tuned checkpoint"
@@ -534,7 +544,7 @@ def write_readme(output_dir):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--metadata", nargs="+", required=True)
-    parser.add_argument("--output_dir", default="results/meeting_paul_tuesday")
+    parser.add_argument("--output_dir", default="results/qualitative_selection")
     parser.add_argument("--copy_assets", action="store_true")
     args = parser.parse_args()
 
@@ -574,7 +584,7 @@ def main():
             indent=4,
         )
 
-    print(f"Saved meeting package to {output_dir}")
+    print(f"Saved qualitative example selection to {output_dir}")
     if missing_images:
         print(f"Warning: {len(set(missing_images))} referenced images are missing.")
 
