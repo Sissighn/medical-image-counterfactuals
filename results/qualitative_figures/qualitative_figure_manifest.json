@@ -5,8 +5,20 @@
     {
       "type": "per_method",
       "dataset": "BUSI",
-      "method": "Prototype-guided optimization baseline",
-      "figure_path": "results/qualitative_figures/per_method/busi/prototype_guided_optimization_baseline.png",
+      "method": "cfproto_encoder_knn final CFProto-nearer prototype-guided method",
+      "figure_path": "results/qualitative_figures/per_method/busi/cfproto_encoder_knn_final_cfproto_nearer_prototype_guided_method.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "Prototype-guided legacy ResNet/class-mean baseline",
+      "figure_path": "results/qualitative_figures/per_method/busi/prototype_guided_legacy_resnet_class_mean_baseline.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -19,6 +31,18 @@
       "dataset": "BUSI",
       "method": "Prototype-guided plausibility ablation",
       "figure_path": "results/qualitative_figures/per_method/busi/prototype_guided_plausibility_ablation.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "Prototype-guided legacy CFProto-aligned ablation",
+      "figure_path": "results/qualitative_figures/per_method/busi/prototype_guided_legacy_cfproto_aligned_ablation.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -92,8 +116,21 @@
     {
       "type": "per_method",
       "dataset": "Pneumonia",
-      "method": "Prototype-guided optimization baseline",
-      "figure_path": "results/qualitative_figures/per_method/pneumonia/prototype_guided_optimization_baseline.png",
+      "method": "cfproto_encoder_knn final CFProto-nearer prototype-guided method",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/cfproto_encoder_knn_final_cfproto_nearer_prototype_guided_method.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "Prototype-guided legacy ResNet/class-mean baseline",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/prototype_guided_legacy_resnet_class_mean_baseline.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -143,6 +180,19 @@
       "dataset": "Pneumonia",
       "method": "SEDC-T project variant (lung_fields)",
       "figure_path": "results/qualitative_figures/per_method/pneumonia/sedc_t_project_variant_lung_fields.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "SEDC-T tuned project variant (lung_fields, max 10)",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/sedc_t_tuned_project_variant_lung_fields_max_10.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",

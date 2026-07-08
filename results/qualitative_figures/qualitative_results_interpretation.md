@@ -1,9 +1,10 @@
 # Qualitative Results Interpretation
 
-This document explains the qualitative counterfactual figures in
-`results/qualitative_figures/per_method/`. The figures are intended for the
-seminar paper and for discussion of model validity versus visual/medical
-plausibility.
+This document explains the qualitative counterfactual figures in the
+dataset-specific folders `results/qualitative_figures/per_method/busi/` and
+`results/qualitative_figures/per_method/pneumonia/`. The figures are intended
+for the seminar paper and for discussion of model validity versus
+visual/medical plausibility.
 
 ## How To Read The Figures
 
@@ -36,28 +37,76 @@ per image.
 
 | Dataset | Method | Figure | Rows |
 | --- | --- | --- | --- |
-| BUSI | Prototype-guided optimization baseline | `per_method/busi__prototype_guided_optimization_baseline.png` | balanced, high-confidence, low-plausibility |
-| BUSI | Prototype-guided plausibility ablation | `per_method/busi__prototype_guided_plausibility_ablation.png` | balanced, high-confidence, low-plausibility |
-| BUSI | Retrieval-based nearest-unlike-neighbor baseline | `per_method/busi__retrieval_based_nearest_unlike_neighbor_baseline.png` | balanced, high-confidence, low-plausibility |
-| BUSI | SEDC-T original-style best-first | `per_method/busi__sedc_t_original_style_best_first.png` | balanced, high-confidence, low-plausibility, failure |
-| BUSI | DVCE-style, OpenAI checkpoint | `per_method/busi__dvce_style_openai_checkpoint.png` | balanced, high-confidence, low-plausibility |
-| Pneumonia | Prototype-guided optimization baseline | `per_method/pneumonia__prototype_guided_optimization_baseline.png` | balanced, high-confidence, low-plausibility |
-| Pneumonia | Prototype-guided plausibility ablation | `per_method/pneumonia__prototype_guided_plausibility_ablation.png` | balanced, high-confidence, low-plausibility |
-| Pneumonia | Retrieval-based nearest-unlike-neighbor baseline | `per_method/pneumonia__retrieval_based_nearest_unlike_neighbor_baseline.png` | balanced, high-confidence, low-plausibility |
-| Pneumonia | SEDC-T original-style best-first | `per_method/pneumonia__sedc_t_original_style_best_first.png` | balanced, high-confidence, low-plausibility, failure |
-| Pneumonia | SEDC-T tuned project variant | `per_method/pneumonia__sedc_t_tuned_project_variant_none_max_8.png` | balanced, high-confidence, low-plausibility, failure |
-| Pneumonia | DVCE-style, OpenAI checkpoint | `per_method/pneumonia__dvce_style_openai_checkpoint.png` | balanced, high-confidence, low-plausibility, failure |
-| Pneumonia | DVCE-style, Pneumonia fine-tuned checkpoint | `per_method/pneumonia__dvce_style_pneumonia_fine_tuned_checkpoint.png` | balanced, high-confidence, low-plausibility, failure |
+| BUSI | cfproto_encoder_knn final CFProto-nearer prototype-guided method | `per_method/busi/cfproto_encoder_knn_final_cfproto_nearer_prototype_guided_method.png` | balanced, high-confidence, low-plausibility |
+| BUSI | Prototype-guided legacy ResNet/class-mean baseline | `per_method/busi/prototype_guided_legacy_resnet_class_mean_baseline.png` | balanced, high-confidence, low-plausibility |
+| BUSI | Prototype-guided plausibility ablation | `per_method/busi/prototype_guided_plausibility_ablation.png` | balanced, high-confidence, low-plausibility |
+| BUSI | Prototype-guided legacy CFProto-aligned ablation | `per_method/busi/prototype_guided_legacy_cfproto_aligned_ablation.png` | balanced, high-confidence, low-plausibility |
+| BUSI | Retrieval-based nearest-unlike-neighbor baseline | `per_method/busi/retrieval_based_nearest_unlike_neighbor_baseline.png` | balanced, high-confidence, low-plausibility |
+| BUSI | SEDC-T original-style best-first | `per_method/busi/sedc_t_original_style_best_first.png` | balanced, high-confidence, low-plausibility, failure |
+| BUSI | SEDC-T project variant | `per_method/busi/sedc_t_project_variant.png` | balanced, high-confidence, low-plausibility, failure |
+| BUSI | SEDC-T tuned project variant | `per_method/busi/sedc_t_tuned_project_variant_none_max_10.png` | balanced, high-confidence, low-plausibility, failure |
+| BUSI | DVCE-style, OpenAI checkpoint | `per_method/busi/dvce_style_openai_checkpoint.png` | balanced, high-confidence, low-plausibility |
+| Pneumonia | cfproto_encoder_knn final CFProto-nearer prototype-guided method | `per_method/pneumonia/cfproto_encoder_knn_final_cfproto_nearer_prototype_guided_method.png` | balanced, high-confidence, low-plausibility, failure |
+| Pneumonia | Prototype-guided legacy ResNet/class-mean baseline | `per_method/pneumonia/prototype_guided_legacy_resnet_class_mean_baseline.png` | balanced, high-confidence, low-plausibility |
+| Pneumonia | Prototype-guided plausibility ablation | `per_method/pneumonia/prototype_guided_plausibility_ablation.png` | balanced, high-confidence, low-plausibility |
+| Pneumonia | Retrieval-based nearest-unlike-neighbor baseline | `per_method/pneumonia/retrieval_based_nearest_unlike_neighbor_baseline.png` | balanced, high-confidence, low-plausibility |
+| Pneumonia | SEDC-T original-style best-first | `per_method/pneumonia/sedc_t_original_style_best_first.png` | balanced, high-confidence, low-plausibility, failure |
+| Pneumonia | SEDC-T project variant with lung-field ROI | `per_method/pneumonia/sedc_t_project_variant_lung_fields.png` | balanced, high-confidence, low-plausibility, failure |
+| Pneumonia | SEDC-T tuned project variant | `per_method/pneumonia/sedc_t_tuned_project_variant_none_max_8.png` | balanced, high-confidence, low-plausibility, failure |
+| Pneumonia | DVCE-style, OpenAI checkpoint | `per_method/pneumonia/dvce_style_openai_checkpoint.png` | balanced, high-confidence, low-plausibility, failure |
+| Pneumonia | DVCE-style, Pneumonia fine-tuned checkpoint | `per_method/pneumonia/dvce_style_pneumonia_fine_tuned_checkpoint.png` | balanced, high-confidence, low-plausibility, failure |
 
 ## Method-Level Interpretation
 
-### Prototype-Guided Optimization Baseline
+### cfproto_encoder_knn Final CFProto-Nearer Prototype-Guided Method
 
-The prototype-guided baseline reaches very high model validity on both datasets
+The final CFProto-nearer prototype-guided method uses autoencoder
+encoder-space local target-class KNN prototypes, adaptive binary-style
+`c`-search, elastic-net selection, and polynomial learning-rate decay. This is
+methodically closer to CFProto than the earlier ResNet/class-mean prototype
+baseline, but it is still not a full Alibi `CounterfactualProto` reproduction.
+
+The qualitative figures show that the method can reach model-valid target
+predictions with small absolute pixel changes. On BUSI all fixed-manifest
+examples are valid. On Pneumonia, the figure includes a failure case because
+two fixed-manifest examples remain predicted as `PNEUMONIA` instead of the
+manifest target `NORMAL`.
+
+Strengths:
+
+- final CFProto-nearer prototype-guided variant in this project,
+- uses encoder-space local target-class prototypes rather than ResNet
+  classifier-feature prototypes,
+- keeps manifest samples and targets fixed,
+- produces small absolute changes on a fixed difference scale.
+
+Weaknesses:
+
+- still not full Alibi CFProto,
+- changes are often diffuse or visually subtle,
+- model-valid changes do not imply medical plausibility,
+- Pneumonia still contains failure cases.
+
+Interpretation:
+
+```text
+cfproto_encoder_knn is the final CFProto-nearer prototype-guided method. It is
+methodically stronger than the earlier prototype baseline, but the qualitative
+interpretation remains cautious: validity is classifier validity, not a
+clinically causal visual transformation.
+```
+
+### Prototype-Guided Legacy ResNet/Class-Mean Baseline
+
+The legacy prototype-guided baseline reaches very high model validity on both datasets
 and often flips the classifier with only small absolute pixel changes. In the
 figures, this is visible through very dark difference maps and low MAD values.
 In some examples the thresholded changed-pixel fraction is close to zero, while
 MAD and `L_inf` are still non-zero.
+
+The qualitative figures for this method come from the previously reported
+ResNet/class-mean fixed-evaluation runs. They are retained as legacy context,
+not as the final CFProto-nearer method.
 
 This means the images are not identical. Rather, the model decision can be
 changed by very small, diffuse perturbations. This is useful as a technical
@@ -184,6 +233,31 @@ Interpretation:
 ```text
 SEDC-T provides the best locality, but not the best validity. It is useful for
 explaining model behavior, especially when the selected segments are plausible.
+```
+
+### SEDC-T Project Variant
+
+The SEDC-T project variant is the faster `greedy_minimal` implementation. For
+BUSI it is run without ROI, while for Pneumonia the project variant uses the
+rough `lung_fields` ROI. This ROI is not part of the original-style SEDC-T
+reference; it was added as a project-specific constraint to test whether
+segment changes inside approximate lung fields are easier to justify
+anatomically.
+
+Qualitatively, the Pneumonia ROI variant is useful for discussion because it
+shows the trade-off between anatomical restriction and validity. Restricting
+candidate segments can prevent changes in obvious border regions, but it also
+reduces the search space and can make target-class flips harder. This is why
+the ROI project variant is reported separately from both the original-style
+reference and the tuned no-ROI ablation.
+
+Interpretation:
+
+```text
+The SEDC-T ROI project variant should be read as an anatomical-control
+ablation, not as the original SEDC-T method. It helps discuss where the method
+is allowed to intervene, but it does not automatically improve validity or
+medical plausibility.
 ```
 
 ### SEDC-T Tuned Project Variant
