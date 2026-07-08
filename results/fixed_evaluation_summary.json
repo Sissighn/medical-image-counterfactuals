@@ -2,7 +2,7 @@
     "rows": [
         {
             "metadata_path": "results/final/cfproto_encoder_knn/busi/metadata.json",
-            "method": "CFProto-nearer prototype-guided optimization baseline",
+            "method": "CFProto-nearer prototype-guided optimization baseline (encoder feature map)",
             "dataset": "BUSI",
             "samples": 15,
             "validity": 1.0,
@@ -12,13 +12,53 @@
         },
         {
             "metadata_path": "results/final/cfproto_encoder_knn/pneumonia/metadata.json",
-            "method": "CFProto-nearer prototype-guided optimization baseline",
+            "method": "CFProto-nearer prototype-guided optimization baseline (encoder feature map)",
             "dataset": "Pneumonia",
             "samples": 20,
             "validity": 0.9,
             "mean_counterfactual_confidence": 0.5766677588224411,
             "mean_change": 0.0108418367934064,
             "mean_runtime_seconds": 8.581644713878632
+        },
+        {
+            "metadata_path": "results/final/cfproto_encoder_knn_bottleneck256/busi/metadata.json",
+            "method": "CFProto-nearer prototype-guided optimization baseline (bottleneck256)",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 0.6666666666666666,
+            "mean_counterfactual_confidence": 0.6844756444295247,
+            "mean_change": 0.616790218418464,
+            "mean_runtime_seconds": 8.64886770248413
+        },
+        {
+            "metadata_path": "results/final/cfproto_encoder_knn_bottleneck256/pneumonia/metadata.json",
+            "method": "CFProto-nearer prototype-guided optimization baseline (bottleneck256)",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 0.5,
+            "mean_counterfactual_confidence": 0.753709614276886,
+            "mean_change": 0.6665557071566581,
+            "mean_runtime_seconds": 8.725240707397461
+        },
+        {
+            "metadata_path": "results/final/cfproto_encoder_knn_bottleneck1024/busi/metadata.json",
+            "method": "CFProto-nearer prototype-guided optimization baseline (bottleneck1024)",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 0.6666666666666666,
+            "mean_counterfactual_confidence": 0.6590171972910563,
+            "mean_change": 0.7053119540214539,
+            "mean_runtime_seconds": 14.604366779327393
+        },
+        {
+            "metadata_path": "results/final/cfproto_encoder_knn_bottleneck1024/pneumonia/metadata.json",
+            "method": "CFProto-nearer prototype-guided optimization baseline (bottleneck1024)",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 0.55,
+            "mean_counterfactual_confidence": 0.7292291462421417,
+            "mean_change": 0.6312380239367485,
+            "mean_runtime_seconds": 13.783432364463806
         },
         {
             "metadata_path": "results/fixed_evaluation/retrieval_nun_busi_balanced_manifest/metadata.json",
@@ -41,74 +81,34 @@
             "mean_runtime_seconds": 0.00964205265045166
         },
         {
-            "metadata_path": "results/fixed_evaluation/sedc_t_original_style_busi_balanced_manifest/metadata.json",
-            "method": "SEDC-T original-style best-first segment replacement",
+            "metadata_path": "results/final/sedc_t_original_style_quickshift_gaussian/busi/metadata.json",
+            "method": "SEDC-T original-style best-first",
             "dataset": "BUSI",
             "samples": 15,
             "validity": 0.8,
-            "mean_counterfactual_confidence": 0.6673823277155558,
-            "mean_change": 0.15170732339223225,
-            "mean_runtime_seconds": 6.58691242535909
+            "mean_counterfactual_confidence": 0.6343278547128042,
+            "mean_change": 0.26397348046302793,
+            "mean_runtime_seconds": 7.514162206649781
         },
         {
-            "metadata_path": "results/fixed_evaluation/sedc_t_original_style_pneumonia_balanced_manifest/metadata.json",
-            "method": "SEDC-T original-style best-first segment replacement",
+            "metadata_path": "results/final/sedc_t_original_style_quickshift_gaussian/pneumonia/metadata.json",
+            "method": "SEDC-T original-style best-first",
             "dataset": "Pneumonia",
             "samples": 20,
             "validity": 0.55,
-            "mean_counterfactual_confidence": 0.7343096941709518,
-            "mean_change": 0.14097277596592903,
-            "mean_runtime_seconds": 13.777848994731903
+            "mean_counterfactual_confidence": 0.6702266216278077,
+            "mean_change": 0.3377012897282839,
+            "mean_runtime_seconds": 14.409084069728852
         },
         {
-            "metadata_path": "results/fixed_evaluation/sedc_t_busi_balanced_manifest/metadata.json",
-            "method": "SEDC-T project variant",
-            "dataset": "BUSI",
-            "samples": 15,
-            "validity": 0.8,
-            "mean_counterfactual_confidence": 0.637592343489329,
-            "mean_change": 0.14714073091745378,
-            "mean_runtime_seconds": 0.5568064053853353
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/sedc_t_pneumonia_balanced_manifest/metadata.json",
-            "method": "SEDC-T project variant (lung_fields)",
-            "dataset": "Pneumonia",
-            "samples": 20,
-            "validity": 0.45,
-            "mean_counterfactual_confidence": 0.7638695329427719,
-            "mean_change": 0.15097855599597096,
-            "mean_runtime_seconds": 0.3947916626930237
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/sedc_t_tuned_busi_none_blur_max10/metadata.json",
-            "method": "SEDC-T tuned project variant (none, max 10)",
-            "dataset": "BUSI",
-            "samples": 15,
-            "validity": 0.8,
-            "mean_counterfactual_confidence": 0.6050315022468566,
-            "mean_change": 0.16983019759257634,
-            "mean_runtime_seconds": 1.0000335375467937
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_lung_roi_blur_max10/metadata.json",
-            "method": "SEDC-T tuned project variant (lung_fields, max 10)",
+            "metadata_path": "results/final/sedc_t_lung_field_roi_quickshift_gaussian/pneumonia/metadata.json",
+            "method": "SEDC-T lung-field ROI ablation",
             "dataset": "Pneumonia",
             "samples": 20,
             "validity": 0.5,
-            "mean_counterfactual_confidence": 0.765269523859024,
-            "mean_change": 0.21308294804766775,
-            "mean_runtime_seconds": 0.7086531043052673
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/sedc_t_tuned_pneumonia_none_blur_max8/metadata.json",
-            "method": "SEDC-T tuned project variant (none, max 8)",
-            "dataset": "Pneumonia",
-            "samples": 20,
-            "validity": 0.6,
-            "mean_counterfactual_confidence": 0.6799874186515809,
-            "mean_change": 0.15522062415257096,
-            "mean_runtime_seconds": 1.206890380382538
+            "mean_counterfactual_confidence": 0.7775347113609314,
+            "mean_change": 0.18429328817874194,
+            "mean_runtime_seconds": 15.483212101459504
         },
         {
             "metadata_path": "results/fixed_evaluation/dvce_busi_manifest_5_current_checkpoint/metadata.json",
