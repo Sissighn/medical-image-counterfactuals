@@ -2,7 +2,7 @@
 
 This folder contains paper-friendly qualitative comparison figures for the counterfactual methods evaluated in this project.
 
-The main figures are stored in `per_method/`. Each figure contains one method on one dataset. Rows correspond to the qualitative case types available for that method:
+The main figures are stored in dataset-specific folders under `per_method/`, for example `per_method/busi/` and `per_method/pneumonia/`. Each figure contains one method on one dataset. Rows correspond to the qualitative case types available for that method:
 
 - Most balanced valid case
 - Highest-confidence valid case
@@ -23,18 +23,24 @@ For method-level interpretation and the trade-offs between Prototype-guided opti
 
 Generated per-method figures:
 
-- `results/qualitative_figures/per_method/busi__prototype_guided_optimization_baseline.png`
-- `results/qualitative_figures/per_method/busi__prototype_guided_plausibility_ablation.png`
-- `results/qualitative_figures/per_method/busi__retrieval_based_nearest_unlike_neighbor_baseline.png`
-- `results/qualitative_figures/per_method/busi__sedc_t_original_style_best_first.png`
-- `results/qualitative_figures/per_method/busi__sedc_t_tuned_project_variant_none_max_10.png`
-- `results/qualitative_figures/per_method/busi__dvce_style_openai_checkpoint.png`
-- `results/qualitative_figures/per_method/pneumonia__prototype_guided_optimization_baseline.png`
-- `results/qualitative_figures/per_method/pneumonia__prototype_guided_plausibility_ablation.png`
-- `results/qualitative_figures/per_method/pneumonia__retrieval_based_nearest_unlike_neighbor_baseline.png`
-- `results/qualitative_figures/per_method/pneumonia__sedc_t_original_style_best_first.png`
-- `results/qualitative_figures/per_method/pneumonia__sedc_t_tuned_project_variant_none_max_8.png`
-- `results/qualitative_figures/per_method/pneumonia__dvce_style_openai_checkpoint.png`
-- `results/qualitative_figures/per_method/pneumonia__dvce_style_pneumonia_fine_tuned_checkpoint.png`
+- `results/qualitative_figures/per_method/busi/cfproto_encoder_knn_final_cfproto_nearer_prototype_guided_method.png`
+- `results/qualitative_figures/per_method/busi/prototype_guided_legacy_resnet_class_mean_baseline.png`
+- `results/qualitative_figures/per_method/busi/prototype_guided_plausibility_ablation.png`
+- `results/qualitative_figures/per_method/busi/prototype_guided_legacy_cfproto_aligned_ablation.png`
+- `results/qualitative_figures/per_method/busi/retrieval_based_nearest_unlike_neighbor_baseline.png`
+- `results/qualitative_figures/per_method/busi/sedc_t_original_style_best_first.png`
+- `results/qualitative_figures/per_method/busi/sedc_t_project_variant.png`
+- `results/qualitative_figures/per_method/busi/sedc_t_tuned_project_variant_none_max_10.png`
+- `results/qualitative_figures/per_method/busi/dvce_style_openai_checkpoint.png`
+- `results/qualitative_figures/per_method/pneumonia/cfproto_encoder_knn_final_cfproto_nearer_prototype_guided_method.png`
+- `results/qualitative_figures/per_method/pneumonia/prototype_guided_legacy_resnet_class_mean_baseline.png`
+- `results/qualitative_figures/per_method/pneumonia/prototype_guided_plausibility_ablation.png`
+- `results/qualitative_figures/per_method/pneumonia/retrieval_based_nearest_unlike_neighbor_baseline.png`
+- `results/qualitative_figures/per_method/pneumonia/sedc_t_original_style_best_first.png`
+- `results/qualitative_figures/per_method/pneumonia/sedc_t_project_variant_lung_fields.png`
+- `results/qualitative_figures/per_method/pneumonia/sedc_t_tuned_project_variant_lung_fields_max_10.png`
+- `results/qualitative_figures/per_method/pneumonia/sedc_t_tuned_project_variant_none_max_8.png`
+- `results/qualitative_figures/per_method/pneumonia/dvce_style_openai_checkpoint.png`
+- `results/qualitative_figures/per_method/pneumonia/dvce_style_pneumonia_fine_tuned_checkpoint.png`
 
 Warnings emitted during generation: 0

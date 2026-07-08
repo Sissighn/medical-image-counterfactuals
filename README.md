@@ -255,9 +255,26 @@ PYTHONPATH=. python scripts/run_cfproto_pytorch.py \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
 ```
 
-This method computes feature prototypes from the ResNet18 embedding space and
-optimizes an input image toward the target class while penalizing large or noisy
-changes.
+This method optimizes an input image toward a target class while penalizing
+large or noisy changes. The script supports two prototype spaces:
+`--prototype_space encoder` uses class prototypes in the latent space of a
+separately trained ConvAutoencoder and is the CFProto-nearer configuration;
+`--prototype_space resnet` keeps the earlier ResNet18 penultimate-feature
+prototypes as a legacy fallback. The script also contains optional
+CFProto-aligned components such as a targeted margin loss
+(`--attack_loss cw_hinge`), a prototype-distance target selection mode for
+non-manifest runs, optional L1 regularization, and a lightweight symmetric
+geometric search over the attack constant `c`. A separately trained
+ConvAutoencoder can also be used via `--autoencoder_path` and `--gamma` to add a
+CFProto-like reconstruction plausibility term.
+
+The fixed results below were generated with the earlier cross-entropy based
+prototype-guided settings. The newer CFProto-aligned options are available for
+additional ablations, but they are not claimed as a full Alibi
+`CounterfactualProto` reproduction because the original Alibi graph,
+k-d-tree prototype search, and FISTA optimizer are not used. The autoencoder
+term and encoder-space prototypes are only active for runs that provide an
+autoencoder checkpoint.
 
 ### Retrieval-Based Nearest-Unlike-Neighbor Baseline
 
@@ -339,7 +356,8 @@ replacement for the original-style SEDC-T result.
 
 The stronger-regularized prototype-guided results are summarized in
 `results/prototype_plausibility_ablation.md`. They are also an ablation, not a
-new method.
+new method. The current implementation notes for the CFProto-aligned options
+are documented in `results/method_implementation_audit.md`.
 
 ## Result Files
 

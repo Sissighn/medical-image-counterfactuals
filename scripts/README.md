@@ -11,8 +11,12 @@ scripts below.
 | `prepare_busi.py` | Prepare the BUSI dataset in the processed `train/val/test` folder structure. |
 | `prepare_pneumonia.py` | Prepare the Pneumonia dataset in the processed `train/val/test` folder structure. |
 | `evaluate_model.py` | Evaluate a saved classifier on the full test split and write metrics to JSON. |
+| `train_autoencoder.py` | Train an unsupervised ConvAutoencoder on denormalized `[0, 1]` images for the optional CFProto-like autoencoder plausibility term. |
+| `check_autoencoder_plausibility.py` | Sanity-check whether an autoencoder assigns higher reconstruction loss to brightness/contrast, patch, and noise perturbations than to original images. |
+| `check_cfproto_loss_scales.py` | Debug raw and weighted CFProto-style loss scales for legacy ResNet prototypes vs. autoencoder encoder-space prototypes without generating qualitative figures. |
 | `create_evaluation_manifest.py` | Create fixed correctly classified evaluation samples for counterfactual comparison. |
-| `run_cfproto_pytorch.py` | Run the prototype-guided optimization baseline. |
+| `run_cfproto_pytorch.py` | Run the prototype-guided optimization baseline, including optional CFProto-aligned controls such as `cw_hinge`, L1 regularization, prototype-distance target selection, symmetric geometric c-search, encoder-space prototypes via `--prototype_space encoder`, and an autoencoder reconstruction term via `--autoencoder_path`/`--gamma`. |
+| `gamma_sweep.py` | Run repeated CFProto-style optimization jobs over multiple `gamma` values and summarize validity, confidence, distance, changed-pixel, and autoencoder-loss metrics. |
 | `run_retrieval_nun_pytorch.py` | Run the retrieval-based nearest-unlike-neighbor case baseline. |
 | `run_sedc_t_pytorch.py` | Run SEDC-T original-style or the faster project variant via `--search_mode`. |
 | `run_dvce_medical_prototype.py` | Run the DVCE-style diffusion-guided counterfactual prototype. |
