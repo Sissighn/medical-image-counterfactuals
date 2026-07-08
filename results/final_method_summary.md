@@ -9,7 +9,7 @@ report writing and presentation preparation.
 The current project compares four implemented counterfactual directions:
 
 ```text
-1. Prototype-guided optimization baseline
+1. CFProto-nearer prototype-guided optimization (`cfproto_encoder_knn`)
 2. Retrieval-based nearest-unlike-neighbor baseline
 3. SEDC-T segment replacement
 4. DVCE-style diffusion-guided generation
@@ -45,37 +45,48 @@ These models are not intended to be clinically optimal. Their role is to provide
 reasonable learned decision functions that can be explained with counterfactual
 methods.
 
-## Method 1: Prototype-Guided Optimization Baseline
+## Method 1: CFProto-Nearer Prototype-Guided Optimization
 
-The prototype-guided optimization baseline computes class-level feature
-prototypes from the trained ResNet18 embedding space. It then optimizes an input
-image toward a target class while constraining the image change.
+The final prototype-guided method uses autoencoder encoder-space local
+target-class KNN prototypes. It then optimizes an input image toward the fixed
+manifest target class while constraining the image change.
 
 This is not presented as a full Alibi CFProto reproduction. It is a
-project-specific baseline that borrows the prototype-guidance idea and is used
-to provide a high-validity reference point for the other methods.
+PyTorch-based CFProto-nearer implementation. Compared with the earlier
+ResNet/class-mean prototype baseline, it adds encoder-space KNN prototypes,
+adaptive binary-style c-search, elastic-net selection, and polynomial
+learning-rate decay.
+
+The implementation still does not reproduce the original Alibi TensorFlow
+graph, FISTA/shrinkage optimizer, TrustScore, or original Alibi k-d-tree
+machinery.
 
 Recommended wording:
 
 ```text
-Prototype-guided optimization baseline
+cfproto_encoder_knn final CFProto-nearer prototype-guided method
 ```
 
 Fixed-evaluation result:
 
 | Variant | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Baseline | BUSI | 15 | 1.00 | 0.9978 | 0.0559 | 5.24s |
-| Baseline | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 | 5.69s |
+| cfproto_encoder_knn final | BUSI | 15 | 1.00 | 0.5471 | 0.0084 | 7.43s |
+| cfproto_encoder_knn final | Pneumonia | 20 | 0.90 | 0.5767 | 0.0108 | 8.58s |
+| Legacy ResNet/class-mean baseline | BUSI | 15 | 1.00 | 0.9978 | 0.0559 | 5.24s |
+| Legacy ResNet/class-mean baseline | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 | 5.69s |
 | Plausibility ablation | BUSI | 15 | 1.00 | 0.9953 | 0.0315 | 4.78s |
 | Plausibility ablation | Pneumonia | 20 | 1.00 | 0.9814 | 0.0934 | 4.76s |
+
+The legacy rows are retained for comparison only. The final method for the
+paper comparison is `cfproto_encoder_knn`.
 
 Interpretation:
 
 ```text
-High model validity, but changes can be diffuse and medically hard to localize.
-The plausibility ablation reduces changed area without changing the method
-core, but the method's best role remains a technical baseline.
+CFProto-nearer and stable on the fixed manifests, but changes can still be
+diffuse or visually subtle. Validity is model validity, not medical
+plausibility.
 ```
 
 ## Method 2: Retrieval-Based Nearest-Unlike-Neighbor Baseline

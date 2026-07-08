@@ -6,7 +6,7 @@ This project currently compares four counterfactual explanation directions for
 medical image classification:
 
 ```text
-1. Prototype-guided optimization baseline
+1. CFProto-nearer prototype-guided optimization (`cfproto_encoder_knn`)
 2. Retrieval-based nearest-unlike-neighbor baseline
 3. SEDC-T original-style / SEDC-T-style targeted segment replacement
 4. DVCE-style diffusion-guided generation
@@ -43,8 +43,10 @@ is reported separately.
 
 | Method | Dataset | Samples | Validity | Mean CF confidence | Mean change | Mean runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Prototype-guided optimization baseline | BUSI | 15 | 1.00 | 0.9978 | 0.0559 changed pixel fraction | 5.24s |
-| Prototype-guided optimization baseline | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 changed pixel fraction | 5.69s |
+| cfproto_encoder_knn final CFProto-nearer prototype-guided method | BUSI | 15 | 1.00 | 0.5471 | 0.0084 changed pixel fraction | 7.43s |
+| cfproto_encoder_knn final CFProto-nearer prototype-guided method | Pneumonia | 20 | 0.90 | 0.5767 | 0.0108 changed pixel fraction | 8.58s |
+| Prototype-guided legacy ResNet/class-mean baseline | BUSI | 15 | 1.00 | 0.9978 | 0.0559 changed pixel fraction | 5.24s |
+| Prototype-guided legacy ResNet/class-mean baseline | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 changed pixel fraction | 5.69s |
 | Prototype-guided plausibility ablation | BUSI | 15 | 1.00 | 0.9953 | 0.0315 changed pixel fraction | 4.78s |
 | Prototype-guided plausibility ablation | Pneumonia | 20 | 1.00 | 0.9814 | 0.0934 changed pixel fraction | 4.76s |
 | Retrieval-based nearest-unlike-neighbor baseline | BUSI | 15 | 1.00 | 0.8191 | 0.8516 changed pixel fraction | 0.01s |
@@ -83,9 +85,17 @@ results/method_variant_rationale.md
 
 ## Interpretation
 
-The prototype-guided baseline reaches the highest validity on both datasets. It
-is useful as a technical baseline, but the changes are often diffuse intensity or
-texture shifts rather than clearly localized medical changes.
+The final CFProto-nearer prototype-guided method is reported as
+`cfproto_encoder_knn`. It uses autoencoder encoder-space local target-class
+KNN prototypes, adaptive binary-style c-search, elastic-net selection, and
+polynomial learning-rate decay. It is methodically closer to CFProto than the
+earlier ResNet/class-mean prototype baseline, but it is still not a full Alibi
+CFProto reproduction.
+
+The older prototype-guided rows remain in the table as legacy baselines or
+ablations. They should not be treated as replacements for the final
+`cfproto_encoder_knn` method. Their high confidence values are useful context,
+but they came from earlier prototype spaces and settings.
 
 A conservative prototype-guided plausibility ablation keeps the same method
 core but increases regularization and lowers the maximum perturbation. It keeps
@@ -134,7 +144,8 @@ separate questions.
 ## Current Conclusion
 
 ```text
-Prototype-guided optimization: high validity, limited locality.
+CFProto-nearer prototype-guided optimization: high BUSI validity, lower Pneumonia validity than legacy, small but diffuse changes.
+Legacy prototype-guided optimization: high validity, retained as baseline/ablation.
 Retrieval-NUN: real target-class examples, interpretable as cases, not minimal edits.
 SEDC-T original-style: method-faithful, localized, slower, moderate validity.
 SEDC-T project variant: faster and constrained, but includes adaptations.

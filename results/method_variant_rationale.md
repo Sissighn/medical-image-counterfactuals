@@ -34,9 +34,21 @@ without being visually or medically plausible.
 ### Why This Is A Baseline
 
 The implementation uses the idea of class prototypes, but it does not reproduce
-all mechanisms of Alibi CFProto. In particular, it does not use the Alibi
-`CounterfactualProto` explainer, an autoencoder/encoder, k-nearest encoded
-prototypes, k-d trees, trust-score filtering, or the original `c_steps` search.
+all mechanisms of Alibi CFProto. The current script is closer to CFProto than
+the first version because it can use a targeted margin loss, optional L1
+regularization, prototype-distance target selection for non-manifest runs, and
+a lightweight symmetric geometric search over the attack constant. It now also
+supports adaptive binary-style `c` search, elastic-net best-counterfactual
+selection, polynomial learning-rate decay, and local target-class k-nearest
+encoder prototypes. Two prototype spaces are available: `--prototype_space
+encoder` computes class prototypes in the latent space of the frozen
+ConvAutoencoder and is the CFProto-nearer configuration; `--prototype_space
+resnet` keeps the earlier ResNet18 penultimate-feature prototypes as a legacy
+fallback. The optional ConvAutoencoder reconstruction term is controlled by
+`--autoencoder_path` and `--gamma`. However, it still does not use the Alibi
+`CounterfactualProto` TensorFlow graph, the original k-d-tree machinery,
+trust-score filtering, the FISTA shrinkage-thresholding optimizer, or the full
+original binary-search procedure over `c`.
 
 ### Why It Is Still Useful
 
@@ -50,8 +62,9 @@ It is useful as a baseline because it:
 ### Plausibility Ablation
 
 A conservative plausibility-focused ablation was added without changing the
-method core. It keeps the prototype-guided objective, but increases image and
-smoothness regularization and lowers the maximum perturbation:
+method core used for the reported fixed-evaluation baseline. It keeps the
+prototype-guided objective, but increases image and smoothness regularization
+and lowers the maximum perturbation:
 
 ```text
 lambda_l2=20.0, lambda_tv=0.5, max_delta=0.08
@@ -68,6 +81,25 @@ pixel fraction:
 The ablation is useful for presentation because it produces less aggressive
 prototype-guided examples. It should still be reported as a technical baseline:
 the changes can remain diffuse and are not necessarily medically causal.
+
+The fixed results in this document were produced before the optional
+CFProto-aligned hinge-loss, symmetric c-search, autoencoder reconstruction
+controls, and encoder-space prototypes were added. Those newer controls are
+implementation options for future ablations, not a replacement for the reported
+fixed-manifest numbers.
+
+For the planned final CFProto-nearer fixed-manifest run, the selected main
+configuration is `--prototype_space encoder` with the dataset-specific
+ConvAutoencoder checkpoint and `gamma=0.0`. The encoder prototype space is used
+because it is methodically closer to CFProto than classifier-feature prototypes.
+The earlier `--prototype_space resnet` mode should be treated as a legacy
+fallback or explicit ablation, not as the main CFProto-nearer variant.
+
+After the original-alignment update, the most CFProto-near candidate can also
+use `--prototype_mode knn_mean`, `--selection_metric elastic_net`, and
+`--c_search_mode adaptive_binary`, but these options should be validated with a
+small method check before replacing the documented final configuration. They do
+not change the fixed manifest samples or manifest targets.
 
 ### How To Report It
 

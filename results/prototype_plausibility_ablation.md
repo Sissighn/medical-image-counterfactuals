@@ -3,11 +3,20 @@
 This ablation tests whether the prototype-guided optimization baseline can
 produce less diffuse image changes without changing the method core.
 
+Note: these results were generated with the earlier cross-entropy based
+prototype-guided objective. The current script now also supports CFProto-aligned
+options such as `cw_hinge`, optional `lambda_l1`, prototype-distance target
+selection, a symmetric geometric attack-constant search, encoder-space
+prototypes via `--prototype_space encoder`, and an optional autoencoder
+reconstruction term via `--autoencoder_path` and `--gamma`. Those newer options
+are not reflected in the numbers below unless separate fixed-manifest runs are
+generated.
+
 ## Setup
 
 The baseline method remains the same:
 
-- target-class optimization,
+- target-class optimization with the earlier cross-entropy attack loss,
 - feature-prototype loss,
 - L2 image regularization,
 - total variation regularization,
