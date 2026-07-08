@@ -68,6 +68,17 @@ results/meeting_paul_tuesday/
 results/meeting_paul_tuesday/images/
 results/diffusion_training_setup/openai_logdir/
 
+# Local debug, smoke-test, and ablation outputs
+results/debug/
+results/ablations/
+results/autoencoder_plausibility_*
+
+# Final run image artifacts are regenerated from metadata and scripts.
+# Keep final metadata/markdown summaries trackable.
+results/final/**/*.png
+results/final/**/*.jpg
+results/final/**/*.jpeg
+
 # Notebook checkpoints
 .ipynb_checkpoints/
 results/project_structure_diagram.png
