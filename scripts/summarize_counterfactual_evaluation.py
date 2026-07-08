@@ -93,16 +93,29 @@ def summarize_metadata(path):
         method = "Retrieval-based nearest-unlike-neighbor baseline"
     diffusion_checkpoint_path = str(metadata.get("diffusion_checkpoint_path") or "")
     if method == "DVCE medical multi-sample generation evaluation":
-        if "ema_0.9999_005000" in diffusion_checkpoint_path:
-            method = (
-                "DVCE medical multi-sample generation evaluation "
-                "with Pneumonia fine-tuned checkpoint"
-            )
-        elif "256x256_diffusion_uncond" in diffusion_checkpoint_path:
-            method = (
-                "DVCE medical multi-sample generation evaluation "
-                "with OpenAI checkpoint"
-            )
+        checkpoint_lower = diffusion_checkpoint_path.lower()
+        runner_settings = metadata.get("runner_settings", {}) or {}
+        guidance_space = runner_settings.get("guidance_space") or metadata.get(
+            "guidance_space"
+        )
+        original_style = (
+            guidance_space == "pred_xstart"
+            or runner_settings.get("gen_type") == "p_sample"
+        )
+        prefix = (
+            "DVCE original-style medical generation"
+            if original_style
+            else "DVCE medical multi-sample generation evaluation"
+        )
+
+        if "ema_0.9999_005000" in checkpoint_lower or "pneumonia" in checkpoint_lower:
+            method = f"{prefix} with Pneumonia fine-tuned checkpoint"
+        elif "busi" in checkpoint_lower:
+            method = f"{prefix} with BUSI fine-tuned checkpoint"
+        elif "256x256_diffusion_uncond" in checkpoint_lower:
+            method = f"{prefix} with OpenAI checkpoint"
+        else:
+            method = prefix
     dataset = infer_dataset_name(metadata)
     samples = aggregate.get("num_samples") or len(records)
     validity = aggregate.get("validity")
@@ -113,6 +126,7 @@ def summarize_metadata(path):
         metric_mean(aggregate, "changed_pixel_fraction")
         or aggregate.get("mean_changed_pixels_threshold_0_05")
         or aggregate.get("mean_absolute_difference")
+        or aggregate.get("mean_l1_norm")
         or metric_mean(aggregate, "l1_mean")
     )
     runtime = metric_mean(aggregate, "runtime_seconds") or aggregate.get(
@@ -162,6 +176,8 @@ def write_markdown(rows, output_path):
             "- Validity only checks whether the model prediction changed to the target class.",
             "- Mean change is method-dependent and should be interpreted together with the qualitative images.",
             "- Medical plausibility must be discussed separately from model validity.",
+            "- DVCE original-style rows use the original-code-nearer pred_xstart guidance core without Cone Projection unless explicitly stated otherwise.",
+            "- For DVCE rows, Mean change prioritizes the existing project metric and falls back to original-style L1 norm only when needed.",
             "- The CFProto-nearer row is the only retained prototype-guided result.",
             "- The CFProto-nearer implementation still is not a full Alibi CFProto reproduction; FISTA/shrinkage, TrustScore, the original TensorFlow graph, and original Alibi k-d-tree machinery are not fully reproduced.",
         ]
