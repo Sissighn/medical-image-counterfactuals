@@ -73,6 +73,10 @@ class ConvAutoencoder(nn.Module):
             nn.Sigmoid(),
         )
 
+    def encode(self, images):
+        """Return the latent encoder representation before reconstruction."""
+        return self.encoder(images)
+
     def forward(self, images):
-        encoded = self.encoder(images)
+        encoded = self.encode(images)
         return self.decoder(encoded)
