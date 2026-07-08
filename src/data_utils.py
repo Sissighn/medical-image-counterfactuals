@@ -36,7 +36,12 @@ def get_transforms(use_augmentation=True):
     return train_transform, eval_transform
 
 
-def create_dataloaders(dataset_dir, batch_size=BATCH_SIZE, use_augmentation=True):
+def create_dataloaders(
+    dataset_dir,
+    batch_size=BATCH_SIZE,
+    use_augmentation=True,
+    num_workers=0,
+):
     dataset_dir = Path(dataset_dir)
 
     train_transform, eval_transform = get_transforms(use_augmentation=use_augmentation)
@@ -53,11 +58,26 @@ def create_dataloaders(dataset_dir, batch_size=BATCH_SIZE, use_augmentation=True
         root=dataset_dir / "test", transform=eval_transform
     )
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+    )
 
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+    )
 
-    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(
+        test_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+    )
 
     return {
         "train_dataset": train_dataset,
