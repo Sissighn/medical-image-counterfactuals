@@ -1,17 +1,18 @@
 # Method Variant Rationale
 
 This document explains which method states are retained in the project and why.
-The old prototype-guided variants have been removed. The only retained
-prototype-guided method is the CFProto-nearer prototype-guided optimization
-baseline.
+The old prototype-guided variants have been removed. The retained main
+prototype-guided method is the CFProto-nearer encoder feature-map configuration;
+the bottleneck256 and bottleneck1024 configurations are retained only as
+autoencoder/prototype-space ablations.
 
 ## Current Method Roles
 
 | Method family | Retained role | Notes |
 | --- | --- | --- |
-| CFProto-nearer prototype-guided optimization | Final prototype-guided method | Encoder-kNN prototypes, adaptive c-search, elastic-net selection, polynomial learning-rate decay, targeted margin loss |
+| CFProto-nearer prototype-guided optimization | Final prototype-guided method plus bottleneck ablations | Encoder-kNN prototypes, adaptive c-search, elastic-net selection, polynomial learning-rate decay, targeted margin loss |
 | Retrieval-NUN | Case-based nearest unlike baseline | Retrieves real target-class training images; not a minimal edit |
-| SEDC-T | Region-based/localized counterfactuals | Original-style best-first plus project/tuning variants |
+| SEDC-T | Region-based/localized counterfactuals | Original-style best-first plus Pneumonia lung-field ROI ablation |
 | DVCE | Generative counterfactual feasibility | OpenAI checkpoint plus Pneumonia fine-tuned checkpoint state |
 
 ## CFProto-Nearer Prototype-Guided Optimization
@@ -35,7 +36,12 @@ It is methodically aligned with CFProto, but it is not a full Alibi
 TensorFlow graph, and the original Alibi k-d-tree machinery are not fully
 reproduced.
 
-No separate older prototype-guided result is retained as a comparison row.
+The encoder feature-map configuration is the main reported prototype-guided
+result. The bottleneck256 and bottleneck1024 configurations are kept as
+ablations because they test a more compact autoencoder latent representation.
+In the current fixed-manifest results they are not improvements: they reduce
+validity and increase changed pixel fraction. No older ResNet/class-mean or
+Cross-Entropy prototype-guided result is retained as a main comparison row.
 
 ## Retrieval-NUN
 
@@ -49,17 +55,18 @@ sample; differences can reflect anatomy, acquisition, and dataset variation.
 
 ## SEDC-T
 
-SEDC-T is retained with multiple states because these states answer different
+SEDC-T is retained with two states because these states answer different
 questions:
 
 - original-style best-first: closer to the referenced SEDC-T search mechanism,
-- project variant: faster practical implementation,
-- tuned variants: controlled parameter checks for segment budget, replacement
-  mode, and ROI effects.
+- Pneumonia lung-field ROI ablation: same best-first/Quickshift/Gaussian-blur
+  mechanism, but candidate segments are restricted to a simple geometric
+  lung-field mask.
 
 The original-style best-first run should be used as the method-faithfulness
-reference. ROI and tuned variants must be described as project-specific
-constraints or parameter checks.
+reference. The ROI result must be described as a project-specific Pneumonia
+ablation, not as part of original SEDC-T and not as a medical lung
+segmentation.
 
 ## DVCE
 

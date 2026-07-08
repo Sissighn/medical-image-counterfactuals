@@ -184,10 +184,21 @@ baseline, not a minimal edit.
 PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/fixed_evaluation/sedc_t_original_style_busi_balanced_manifest \
+  --output_dir results/final/sedc_t_original_style_quickshift_gaussian/busi \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
-  --search_mode original_best_first \
   --roi_mode none
+```
+
+For the retained Pneumonia ROI ablation, use the same SEDC-T search and
+replacement mechanism but restrict candidate segments to the lung-field ROI:
+
+```bash
+PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
+  --model_path models/pneumonia_resnet18_pretrained.pth \
+  --dataset_path data/processed/Pneumonia \
+  --output_dir results/final/sedc_t_lung_field_roi_quickshift_gaussian/pneumonia \
+  --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json \
+  --roi_mode lung_fields
 ```
 
 ### DVCE-Style Generation
@@ -210,12 +221,15 @@ PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | CFProto-nearer prototype-guided optimization | BUSI | 15 | 1.00 | 0.5471 | 0.0084 | 7.43s |
 | CFProto-nearer prototype-guided optimization | Pneumonia | 20 | 0.90 | 0.5767 | 0.0108 | 8.58s |
+| CFProto bottleneck256 ablation | BUSI | 15 | 0.67 | 0.6845 | 0.6168 | 8.65s |
+| CFProto bottleneck256 ablation | Pneumonia | 20 | 0.50 | 0.7537 | 0.6666 | 8.73s |
+| CFProto bottleneck1024 ablation | BUSI | 15 | 0.67 | 0.6590 | 0.7053 | 14.60s |
+| CFProto bottleneck1024 ablation | Pneumonia | 20 | 0.55 | 0.7292 | 0.6312 | 13.78s |
 | Retrieval-NUN | BUSI | 15 | 1.00 | 0.8191 | 0.8516 | 0.01s |
 | Retrieval-NUN | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 | 0.01s |
-| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6674 | 0.1517 | 6.59s |
-| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.7343 | 0.1410 | 13.78s |
-| SEDC-T project variant | BUSI | 15 | 0.80 | 0.6376 | 0.1471 | 0.56s |
-| SEDC-T project variant with lung-field ROI | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 | 0.39s |
+| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 7.51s |
+| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6702 | 0.3377 | 14.41s |
+| SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7775 | 0.1843 | 15.48s |
 | DVCE-style OpenAI checkpoint | BUSI | 5 | 1.00 | 0.7034 | 0.3569 | 8.86s |
 | DVCE-style OpenAI checkpoint | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 | 9.49s |
 | DVCE-style Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 | 15.63s |

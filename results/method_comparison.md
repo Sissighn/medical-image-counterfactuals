@@ -20,14 +20,15 @@ more expensive.
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | CFProto-nearer prototype-guided optimization baseline | BUSI | 15 | 1.00 | 0.5471 | 0.0084 changed pixel fraction | 7.43s |
 | CFProto-nearer prototype-guided optimization baseline | Pneumonia | 20 | 0.90 | 0.5767 | 0.0108 changed pixel fraction | 8.58s |
+| CFProto bottleneck256 ablation | BUSI | 15 | 0.67 | 0.6845 | 0.6168 changed pixel fraction | 8.65s |
+| CFProto bottleneck256 ablation | Pneumonia | 20 | 0.50 | 0.7537 | 0.6666 changed pixel fraction | 8.73s |
+| CFProto bottleneck1024 ablation | BUSI | 15 | 0.67 | 0.6590 | 0.7053 changed pixel fraction | 14.60s |
+| CFProto bottleneck1024 ablation | Pneumonia | 20 | 0.55 | 0.7292 | 0.6312 changed pixel fraction | 13.78s |
 | Retrieval-based nearest-unlike-neighbor baseline | BUSI | 15 | 1.00 | 0.8191 | 0.8516 changed pixel fraction | 0.01s |
 | Retrieval-based nearest-unlike-neighbor baseline | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 changed pixel fraction | 0.01s |
-| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6674 | 0.1517 changed pixel fraction | 6.59s |
-| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.7343 | 0.1410 changed pixel fraction | 13.78s |
-| SEDC-T project variant | BUSI | 15 | 0.80 | 0.6376 | 0.1471 changed pixel fraction | 0.56s |
-| SEDC-T project variant with lung-field ROI | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 changed pixel fraction | 0.39s |
-| SEDC-T tuned project variant | BUSI | 15 | 0.80 | 0.6050 | 0.1698 changed pixel fraction | 1.00s |
-| SEDC-T tuned project variant | Pneumonia | 20 | 0.60 | 0.6800 | 0.1552 changed pixel fraction | 1.21s |
+| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 changed pixel fraction | 7.51s |
+| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6702 | 0.3377 changed pixel fraction | 14.41s |
+| SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7775 | 0.1843 changed pixel fraction | 15.48s |
 | DVCE-style diffusion-guided generation | BUSI | 5 | 1.00 | 0.7034 | 0.3569 changed pixels above threshold | 8.86s |
 | DVCE-style diffusion-guided generation | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 changed pixels above threshold | 9.49s |
 | DVCE-style with Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 changed pixels above threshold | 15.63s |
@@ -40,13 +41,16 @@ results/fixed_evaluation_summary.md
 
 ## Interpretation
 
-The CFProto-nearer prototype-guided optimization baseline is the only retained
+The CFProto-nearer encoder feature-map configuration is the retained main
 prototype-guided method. It uses encoder-space target-class kNN prototypes,
 adaptive c-search, elastic-net selection, polynomial learning-rate decay, and a
-targeted margin-style attack loss. It is methodically aligned with CFProto, but
-it is not a full Alibi `CounterfactualProto` reproduction. FISTA/shrinkage,
-TrustScore, the original TensorFlow graph, and the original Alibi k-d-tree
-machinery are not fully reproduced.
+targeted margin-style attack loss. The bottleneck256 and bottleneck1024 rows are
+autoencoder/prototype-space ablations. They are methodically interesting, but
+they are not treated as improvements because they reduce validity and increase
+the changed pixel fraction in the current fixed-manifest runs. The implementation
+is aligned with CFProto, but it is not a full Alibi `CounterfactualProto`
+reproduction. FISTA/shrinkage, TrustScore, the original TensorFlow graph, and
+the original Alibi k-d-tree machinery are not fully reproduced.
 
 Retrieval-NUN reaches 1.00 validity because it retrieves real target-class
 training images that are correctly classified by the model. It is intuitive as
