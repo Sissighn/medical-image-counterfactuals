@@ -1,8 +1,10 @@
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 
@@ -25,6 +27,57 @@ def denormalize(images):
     return (images * std + mean).clamp(0.0, 1.0)
 
 
+def image_to_grayscale(image):
+    return image.mean(dim=0).detach().cpu()
+
+
+def save_loss_curve(history, output_path):
+    figure_path = output_path.with_name(f"{output_path.stem}_loss_curve.png")
+    epochs = [record["epoch"] for record in history]
+    losses = [record["train_loss"] for record in history]
+
+    fig, axis = plt.subplots(figsize=(7, 4.5))
+    axis.plot(epochs, losses, marker="o", linewidth=1.5)
+    axis.set_xlabel("Epoch")
+    axis.set_ylabel("Training reconstruction MSE")
+    axis.set_title("Autoencoder Training Loss")
+    axis.grid(alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(figure_path, dpi=180)
+    plt.close(fig)
+    print(f"Loss curve saved to: {figure_path}")
+
+
+def save_reconstruction_examples(autoencoder, data_loader, device, output_path, max_examples):
+    figure_path = output_path.with_name(f"{output_path.stem}_reconstructions.png")
+    autoencoder.eval()
+
+    with torch.no_grad():
+        images, _ = next(iter(data_loader))
+        images = denormalize(images.to(device))[:max_examples]
+        reconstructions = autoencoder(images).clamp(0.0, 1.0)
+        diffs = torch.abs(reconstructions - images)
+
+    rows = images.shape[0]
+    fig, axes = plt.subplots(rows, 3, figsize=(8, 2.4 * rows), squeeze=False)
+    for row in range(rows):
+        panels = [
+            (image_to_grayscale(images[row]), "Original"),
+            (image_to_grayscale(reconstructions[row]), "Reconstruction"),
+            (image_to_grayscale(diffs[row]), "Absolute difference"),
+        ]
+        for col, (panel, title) in enumerate(panels):
+            cmap = "gray" if col < 2 else "magma"
+            axes[row, col].imshow(panel, cmap=cmap, vmin=0.0, vmax=1.0)
+            axes[row, col].set_title(title)
+            axes[row, col].axis("off")
+
+    fig.tight_layout()
+    fig.savefig(figure_path, dpi=180, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Reconstruction examples saved to: {figure_path}")
+
+
 def train_autoencoder(
     dataset_path,
     output_path,
@@ -33,8 +86,10 @@ def train_autoencoder(
     learning_rate,
     base_channels,
     max_batches=None,
+    num_reconstruction_examples=5,
 ):
     device = get_device()
+    start_time = time.time()
     print(f"Device: {device}")
     print(f"Dataset path: {dataset_path}")
     print(f"Architecture: {ARCHITECTURE_NAME}")
@@ -83,6 +138,8 @@ def train_autoencoder(
         )
         print(f"Epoch {epoch + 1}/{epochs} | Train reconstruction MSE: {epoch_loss:.6f}")
 
+    training_seconds = time.time() - start_time
+
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     checkpoint = {
@@ -102,6 +159,7 @@ def train_autoencoder(
         "batch_size": batch_size,
         "learning_rate": learning_rate,
         "max_batches": max_batches,
+        "training_seconds": training_seconds,
         "classes": data["classes"],
         "history": history,
     }
@@ -113,6 +171,16 @@ def train_autoencoder(
 
     print(f"Autoencoder checkpoint saved to: {output_path}")
     print(f"Training history saved to: {history_path}")
+    print(f"Training time: {training_seconds:.1f} seconds")
+
+    save_loss_curve(history, output_path)
+    save_reconstruction_examples(
+        autoencoder=autoencoder,
+        data_loader=data["test_loader"],
+        device=device,
+        output_path=output_path,
+        max_examples=num_reconstruction_examples,
+    )
 
 
 def main():
@@ -129,6 +197,7 @@ def main():
         default=None,
         help="Optional cap for smoke tests. By default the full train split is used.",
     )
+    parser.add_argument("--num_reconstruction_examples", type=int, default=5)
     args = parser.parse_args()
 
     train_autoencoder(
@@ -139,6 +208,7 @@ def main():
         learning_rate=args.learning_rate,
         base_channels=args.base_channels,
         max_batches=args.max_batches,
+        num_reconstruction_examples=args.num_reconstruction_examples,
     )
 
 
