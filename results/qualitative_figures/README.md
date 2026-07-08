@@ -9,9 +9,12 @@ The main figures are stored in dataset-specific folders under `per_method/`, for
 - Low-plausibility valid case
 - Failure case
 
-The figures are composed from the existing per-example visualizations referenced in:
+The retained figure index is:
 
-- `results/meeting_paul_tuesday/selected_examples.json`
+- `results/qualitative_figures/qualitative_figure_manifest.json`
+
+The figures are composed from existing per-example visualizations selected from
+the method metadata. They are not new evaluation runs.
 
 The comparison script does not recompute, stretch, or per-image normalize the embedded difference maps. Source plots are displayed as saved, and image data is only converted to the standard display range `[0, 1]`. Long white bands inside source plots are compacted for readability, but the image panels and color values are not changed.
 
@@ -26,15 +29,11 @@ Generated per-method figures:
 - `results/qualitative_figures/per_method/busi/cfproto_nearer_prototype_guided_optimization_baseline.png`
 - `results/qualitative_figures/per_method/busi/retrieval_based_nearest_unlike_neighbor_baseline.png`
 - `results/qualitative_figures/per_method/busi/sedc_t_original_style_best_first.png`
-- `results/qualitative_figures/per_method/busi/sedc_t_project_variant.png`
-- `results/qualitative_figures/per_method/busi/sedc_t_tuned_project_variant_none_max_10.png`
 - `results/qualitative_figures/per_method/busi/dvce_style_openai_checkpoint.png`
 - `results/qualitative_figures/per_method/pneumonia/cfproto_nearer_prototype_guided_optimization_baseline.png`
 - `results/qualitative_figures/per_method/pneumonia/retrieval_based_nearest_unlike_neighbor_baseline.png`
 - `results/qualitative_figures/per_method/pneumonia/sedc_t_original_style_best_first.png`
-- `results/qualitative_figures/per_method/pneumonia/sedc_t_project_variant_lung_fields.png`
-- `results/qualitative_figures/per_method/pneumonia/sedc_t_tuned_project_variant_lung_fields_max_10.png`
-- `results/qualitative_figures/per_method/pneumonia/sedc_t_tuned_project_variant_none_max_8.png`
+- `results/qualitative_figures/per_method/pneumonia/sedc_t_lung_field_roi_ablation.png`
 - `results/qualitative_figures/per_method/pneumonia/dvce_style_openai_checkpoint.png`
 - `results/qualitative_figures/per_method/pneumonia/dvce_style_pneumonia_fine_tuned_checkpoint.png`
 

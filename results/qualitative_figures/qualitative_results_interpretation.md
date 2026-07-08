@@ -10,15 +10,11 @@ This document explains the qualitative per-method figures in
 | BUSI | CFProto-nearer prototype-guided optimization baseline | `per_method/busi/cfproto_nearer_prototype_guided_optimization_baseline.png` |
 | BUSI | Retrieval-based nearest-unlike-neighbor baseline | `per_method/busi/retrieval_based_nearest_unlike_neighbor_baseline.png` |
 | BUSI | SEDC-T original-style best-first | `per_method/busi/sedc_t_original_style_best_first.png` |
-| BUSI | SEDC-T project variant | `per_method/busi/sedc_t_project_variant.png` |
-| BUSI | SEDC-T tuned project variant | `per_method/busi/sedc_t_tuned_project_variant_none_max_10.png` |
 | BUSI | DVCE-style OpenAI checkpoint | `per_method/busi/dvce_style_openai_checkpoint.png` |
 | Pneumonia | CFProto-nearer prototype-guided optimization baseline | `per_method/pneumonia/cfproto_nearer_prototype_guided_optimization_baseline.png` |
 | Pneumonia | Retrieval-based nearest-unlike-neighbor baseline | `per_method/pneumonia/retrieval_based_nearest_unlike_neighbor_baseline.png` |
 | Pneumonia | SEDC-T original-style best-first | `per_method/pneumonia/sedc_t_original_style_best_first.png` |
-| Pneumonia | SEDC-T project variant with lung-field ROI | `per_method/pneumonia/sedc_t_project_variant_lung_fields.png` |
-| Pneumonia | SEDC-T tuned project variant with lung-field ROI | `per_method/pneumonia/sedc_t_tuned_project_variant_lung_fields_max_10.png` |
-| Pneumonia | SEDC-T tuned project variant without ROI | `per_method/pneumonia/sedc_t_tuned_project_variant_none_max_8.png` |
+| Pneumonia | SEDC-T lung-field ROI ablation | `per_method/pneumonia/sedc_t_lung_field_roi_ablation.png` |
 | Pneumonia | DVCE-style OpenAI checkpoint | `per_method/pneumonia/dvce_style_openai_checkpoint.png` |
 | Pneumonia | DVCE-style Pneumonia fine-tuned checkpoint | `per_method/pneumonia/dvce_style_pneumonia_fine_tuned_checkpoint.png` |
 
@@ -36,6 +32,10 @@ low-contrast difference maps do not mean the plotting is broken; they indicate
 that the method found small perturbations according to the recorded pixel-scale
 metrics.
 
+The bottleneck256 and bottleneck1024 CFProto variants are currently documented
+as quantitative ablations. They are not included as retained qualitative
+per-method figures because they are not the main prototype-guided configuration.
+
 ## Retrieval-NUN
 
 Retrieval-NUN shows the nearest real target-class training case. The method is
@@ -47,11 +47,13 @@ because two different patient images are compared.
 
 SEDC-T figures are the most localized because the method changes image
 segments. The original-style best-first figures are the method-faithfulness
-reference. Project and tuned variants help discuss runtime, ROI constraints,
-and whether Pneumonia failure cases are caused by parameter choice. Pneumonia
-remains difficult, which supports the interpretation that the classifier may
-use broad or diffuse cues that are not easily flipped by a small number of
-segment replacements.
+reference. The only retained ablation is the Pneumonia lung-field ROI variant,
+which uses the same best-first, Quickshift, and Gaussian-blur mechanism but
+restricts candidate segments to a simple geometric lung-field mask. This ROI is
+not a medical lung segmentation and is not part of the original SEDC-T method.
+Pneumonia remains difficult, which supports the interpretation that the
+classifier may use broad or diffuse cues that are not easily flipped by
+segment replacement.
 
 ## DVCE
 

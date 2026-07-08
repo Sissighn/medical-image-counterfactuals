@@ -34,17 +34,13 @@ def infer_method(metadata):
         return "DVCE-style"
 
     if method == "SEDC-T-style targeted segment replacement":
-        search_mode = parameters.get("search_mode") or "greedy_minimal"
-        roi_mode = parameters.get("roi_mode") or "none"
-        max_segments = parameters.get("max_segments")
-        if search_mode == "greedy_minimal" and max_segments and max_segments > 6:
-            return f"SEDC-T tuned project variant ({roi_mode}, max {max_segments})"
-        if roi_mode != "none":
-            return f"SEDC-T project variant ({roi_mode})"
-        return "SEDC-T project variant"
+        return "Removed non-final SEDC-T result"
 
     if method == "SEDC-T original-style best-first segment replacement":
         return "SEDC-T original-style best-first"
+
+    if method == "SEDC-T-style lung-field ROI ablation":
+        return "SEDC-T lung-field ROI ablation"
 
     if method == "Retrieval-based nearest-unlike-neighbor baseline":
         return "Retrieval-based nearest-unlike-neighbor baseline"
@@ -57,7 +53,18 @@ def infer_method(metadata):
             and parameters.get("c_search_mode") == "adaptive_binary"
             and parameters.get("selection_metric") == "elastic_net"
         ):
-            return "CFProto-nearer prototype-guided optimization baseline"
+            checkpoint = metadata.get("autoencoder_checkpoint") or {}
+            architecture = checkpoint.get("architecture")
+            latent_dim = checkpoint.get("latent_dim")
+            if architecture == "conv_autoencoder_bottleneck_v1" and latent_dim:
+                return (
+                    "CFProto-nearer prototype-guided optimization baseline "
+                    f"(bottleneck{latent_dim})"
+                )
+            return (
+                "CFProto-nearer prototype-guided optimization baseline "
+                "(encoder feature map)"
+            )
         return "Removed non-final prototype-guided result"
 
     return method
@@ -442,10 +449,10 @@ def write_tradeoff_table(summaries, output_dir):
             note = "Real target-class examples; intuitive case baseline but not a minimal edit."
         elif "SEDC-T original" in method:
             note = "Localized and method-faithful; moderate validity and slower runtime."
-        elif "SEDC-T tuned" in method:
-            note = "Ablation; slightly higher Pneumonia validity but more changed area."
+        elif "SEDC-T lung-field ROI" in method:
+            note = "Pneumonia-only ROI ablation; restricts candidate segments to approximate lung fields."
         elif "SEDC-T project" in method:
-            note = "Fast/local; includes project-specific constraints when ROI is used."
+            note = "Older project-specific SEDC-T result."
         elif "DVCE" in method:
             note = "Generative feasibility; validity and plausibility depend on checkpoint/guidance."
         else:
@@ -473,7 +480,7 @@ def write_readme(output_dir):
         "- Its changes can be model-valid without being medically plausible.",
         "- Retrieval-NUN retrieves real target-class cases and is visually intuitive, but it is not a minimal image edit.",
         "- SEDC-T provides localized region changes and is the clearest region-based method, but validity is lower, especially on Pneumonia.",
-        "- SEDC-T tuning improves Pneumonia only slightly, suggesting a method/data limitation rather than a simple parameter issue.",
+        "- The retained SEDC-T variants are the original-style reference and a Pneumonia-only lung-field ROI ablation.",
         "- DVCE covers the generative method category, but outputs remain sensitive to checkpoint and guidance settings.",
         "- Validity means target-class model prediction, not medical plausibility.",
         "",
