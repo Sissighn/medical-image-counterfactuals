@@ -2,7 +2,7 @@
     "rows": [
         {
             "metadata_path": "results/final/cfproto_encoder_knn/busi/metadata.json",
-            "method": "cfproto_encoder_knn final CFProto-nearer prototype-guided method",
+            "method": "CFProto-nearer prototype-guided optimization baseline",
             "dataset": "BUSI",
             "samples": 15,
             "validity": 1.0,
@@ -12,63 +12,13 @@
         },
         {
             "metadata_path": "results/final/cfproto_encoder_knn/pneumonia/metadata.json",
-            "method": "cfproto_encoder_knn final CFProto-nearer prototype-guided method",
+            "method": "CFProto-nearer prototype-guided optimization baseline",
             "dataset": "Pneumonia",
             "samples": 20,
             "validity": 0.9,
             "mean_counterfactual_confidence": 0.5766677588224411,
             "mean_change": 0.0108418367934064,
             "mean_runtime_seconds": 8.581644713878632
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/prototype_busi_balanced_manifest/metadata.json",
-            "method": "Prototype-guided legacy ResNet/class-mean baseline",
-            "dataset": "BUSI",
-            "samples": 15,
-            "validity": 1.0,
-            "mean_counterfactual_confidence": 0.997770078976949,
-            "mean_change": 0.05592713585938327,
-            "mean_runtime_seconds": 5.236982949574789
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/prototype_pneumonia_balanced_manifest/metadata.json",
-            "method": "Prototype-guided legacy ResNet/class-mean baseline",
-            "dataset": "Pneumonia",
-            "samples": 20,
-            "validity": 1.0,
-            "mean_counterfactual_confidence": 0.9927817285060883,
-            "mean_change": 0.1441814794205129,
-            "mean_runtime_seconds": 5.686196970939636
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/prototype_plausibility_busi_l2_20_tv_0_5_delta_0_08/metadata.json",
-            "method": "Prototype-guided plausibility ablation",
-            "dataset": "BUSI",
-            "samples": 15,
-            "validity": 1.0,
-            "mean_counterfactual_confidence": 0.9952911853790283,
-            "mean_change": 0.03153300277444941,
-            "mean_runtime_seconds": 4.783790493011475
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/metadata.json",
-            "method": "Prototype-guided plausibility ablation",
-            "dataset": "Pneumonia",
-            "samples": 20,
-            "validity": 1.0,
-            "mean_counterfactual_confidence": 0.9813584476709366,
-            "mean_change": 0.09339624476851896,
-            "mean_runtime_seconds": 4.762204480171204
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/prototype_cfproto_aligned_busi_cw_hinge_l1_csearch/metadata.json",
-            "method": "Prototype-guided legacy CFProto-aligned ablation",
-            "dataset": "BUSI",
-            "samples": 15,
-            "validity": 1.0,
-            "mean_counterfactual_confidence": 0.9766920049985249,
-            "mean_change": 0.03182796439699208,
-            "mean_runtime_seconds": 3.927422062555949
         },
         {
             "metadata_path": "results/fixed_evaluation/retrieval_nun_busi_balanced_manifest/metadata.json",

@@ -1,142 +1,56 @@
 # Final Method Summary
 
-## Purpose
+## Scope
 
-This file summarizes the implemented counterfactual methods and the current
-fixed-evaluation results. It is intended as a compact public project summary for
-report writing and presentation preparation.
-
-The current project compares four implemented counterfactual directions:
-
-```text
-1. CFProto-nearer prototype-guided optimization (`cfproto_encoder_knn`)
-2. Retrieval-based nearest-unlike-neighbor baseline
-3. SEDC-T segment replacement
-4. DVCE-style diffusion-guided generation
-```
-
-The wording is intentionally careful. The implementations are adaptations to a
-PyTorch medical-image setup and should not be described as exact reproductions
-of the original methods unless the mechanisms are checked one by one.
-
-Several method states are reported because they answer different questions:
-
-| State type | Purpose |
-| --- | --- |
-| Main method result | primary comparison on fixed evaluation manifests |
-| Original-style / method-faithfulness check | shows how close the implementation is to the referenced method mechanism |
-| Project variant or tuning ablation | tests whether additional constraints or parameter changes explain failure cases |
-
-The detailed justification is documented in
-`results/method_variant_rationale.md` and
-`results/method_implementation_audit.md`.
+This file summarizes the current method set used for the seminar project. The
+prototype-guided track has been cleaned up: the only retained prototype-guided
+method is the CFProto-nearer prototype-guided optimization baseline.
 
 ## Baseline Classifiers
 
-The counterfactual methods explain pretrained ResNet18 classifiers trained on
-two medical image datasets:
-
-| Dataset | Classes | Best model | Accuracy | Weighted F1 |
+| Dataset | Classes | Model | Accuracy | Weighted F1 |
 | --- | --- | --- | ---: | ---: |
 | BUSI | benign, malignant, normal | ResNet18 pretrained | 0.8390 | 0.8365 |
 | Pneumonia | NORMAL, PNEUMONIA | ResNet18 pretrained | 0.8782 | 0.8732 |
 
-These models are not intended to be clinically optimal. Their role is to provide
-reasonable learned decision functions that can be explained with counterfactual
-methods.
+## Method 1: CFProto-Nearer Prototype-Guided Optimization Baseline
 
-## Method 1: CFProto-Nearer Prototype-Guided Optimization
+The method optimizes the input image toward the fixed manifest target class
+using:
 
-The final prototype-guided method uses autoencoder encoder-space local
-target-class KNN prototypes. It then optimizes an input image toward the fixed
-manifest target class while constraining the image change.
+- autoencoder encoder-space target-class kNN mean prototypes,
+- adaptive attack-constant search,
+- elastic-net best-counterfactual selection,
+- polynomial learning-rate decay,
+- targeted margin-style attack loss.
 
-This is not presented as a full Alibi CFProto reproduction. It is a
-PyTorch-based CFProto-nearer implementation. Compared with the earlier
-ResNet/class-mean prototype baseline, it adds encoder-space KNN prototypes,
-adaptive binary-style c-search, elastic-net selection, and polynomial
-learning-rate decay.
+It remains a PyTorch-based implementation in this medical image pipeline, not a
+full Alibi CFProto reproduction. FISTA/shrinkage, TrustScore, the original
+TensorFlow graph, and the original Alibi k-d-tree machinery are not fully
+reproduced.
 
-The implementation still does not reproduce the original Alibi TensorFlow
-graph, FISTA/shrinkage optimizer, TrustScore, or original Alibi k-d-tree
-machinery.
-
-Recommended wording:
-
-```text
-cfproto_encoder_knn final CFProto-nearer prototype-guided method
-```
-
-Fixed-evaluation result:
-
-| Variant | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean runtime |
-| --- | --- | ---: | ---: | ---: | ---: | ---: |
-| cfproto_encoder_knn final | BUSI | 15 | 1.00 | 0.5471 | 0.0084 | 7.43s |
-| cfproto_encoder_knn final | Pneumonia | 20 | 0.90 | 0.5767 | 0.0108 | 8.58s |
-| Legacy ResNet/class-mean baseline | BUSI | 15 | 1.00 | 0.9978 | 0.0559 | 5.24s |
-| Legacy ResNet/class-mean baseline | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 | 5.69s |
-| Plausibility ablation | BUSI | 15 | 1.00 | 0.9953 | 0.0315 | 4.78s |
-| Plausibility ablation | Pneumonia | 20 | 1.00 | 0.9814 | 0.0934 | 4.76s |
-
-The legacy rows are retained for comparison only. The final method for the
-paper comparison is `cfproto_encoder_knn`.
-
-Interpretation:
-
-```text
-CFProto-nearer and stable on the fixed manifests, but changes can still be
-diffuse or visually subtle. Validity is model validity, not medical
-plausibility.
-```
+| Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean runtime |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| BUSI | 15 | 1.00 | 0.5471 | 0.0084 | 7.43s |
+| Pneumonia | 20 | 0.90 | 0.5767 | 0.0108 | 8.58s |
 
 ## Method 2: Retrieval-Based Nearest-Unlike-Neighbor Baseline
 
-The retrieval-based nearest-unlike-neighbor baseline retrieves the nearest real
-training image from the manifest target class using cosine distance in the
-trained ResNet18 penultimate embedding space. Candidate neighbors are restricted
-to training images whose true label and model prediction both match the target
-class.
-
-This method does not generate or edit the original image. It is a case-based
-counterfactual baseline: it answers which real target-class example is closest
-to the original image in model feature space.
-
-Recommended wording:
-
-```text
-Retrieval-based nearest-unlike-neighbor baseline
-```
-
-Fixed-evaluation result:
+Retrieval-NUN retrieves the nearest real training image from the manifest target
+class in ResNet18 penultimate feature space. It is a case-based baseline, not a
+minimal image edit.
 
 | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean embedding distance | Mean runtime |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | BUSI | 15 | 1.00 | 0.8191 | 0.8516 | 0.2953 | 0.01s |
 | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 | 0.2493 | 0.01s |
 
-Interpretation:
+## Method 3: SEDC-T-Style Segment Replacement
 
-```text
-Retrieval-NUN is visually intuitive because it uses real target-class images and
-does not introduce generated artifacts. Its limitation is that it is not a
-minimal edit: differences can reflect patient, anatomy, acquisition, or dataset
-variation rather than causal evidence for the class change.
-```
-
-## Method 3: SEDC-T Segment Replacement
-
-The SEDC-T method segments an image and searches for region replacements that
-change the classifier prediction to the target class. The project now reports an
-original-style best-first mode for method fidelity and a faster project variant
-for comparison.
-
-Recommended wording:
-
-```text
-SEDC-T original-style best-first segment replacement
-```
-
-Fixed-evaluation result:
+SEDC-T changes image segments and queries the classifier for a target-class
+flip. The original-style best-first run is the method-faithfulness reference;
+project/tuned variants are reported separately because they change search speed,
+ROI constraints, or segment budgets.
 
 | Variant | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
@@ -144,88 +58,25 @@ Fixed-evaluation result:
 | Original-style best-first | Pneumonia | 20 | 0.55 | 0.7343 | 0.1410 | 13.78s |
 | Project variant | BUSI | 15 | 0.80 | 0.6376 | 0.1471 | 0.56s |
 | Project variant with lung-field ROI | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 | 0.39s |
-
-Interpretation:
-
-```text
-More localized and visually readable than the prototype-guided baseline, but
-less consistently valid. The original-style best-first mode is method-faithful
-but slower. The project variant is faster and can use a simple lung-field ROI,
-but this ROI must be described as a project-specific constraint rather than an
-original SEDC-T mechanism.
-```
-
-Tuning ablation:
-
-```text
-The best tuned Pneumonia setting reached 0.60 validity, only slightly above the
-0.55 original-style result. This suggests that low Pneumonia validity is not
-just a parameter issue, but reflects a limitation of segment replacement for
-diffuse chest X-ray cues.
-```
+| Tuned project variant | BUSI | 15 | 0.80 | 0.6050 | 0.1698 | 1.00s |
+| Tuned project variant | Pneumonia | 20 | 0.60 | 0.6800 | 0.1552 | 1.21s |
 
 ## Method 4: DVCE-Style Diffusion-Guided Generation
 
-The DVCE-style prototype uses a diffusion-guided generation process together
-with the medical ResNet18 classifier adapter. It covers the generative
-counterfactual category.
-
-The OpenAI checkpoint result is the current DVCE-style baseline. The Pneumonia
-fine-tuned checkpoint is reported as a checkpoint/guidance ablation, not as a
-separate fourth method.
-
-Recommended wording:
-
-```text
-DVCE-style diffusion-guided feasibility prototype
-```
-
-Fixed-evaluation result with the current diffusion checkpoint:
-
-| Dataset | Samples | Validity | Mean CF confidence | Mean changed pixels above threshold | Mean runtime |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| BUSI | 5 | 1.00 | 0.7034 | 0.3569 | 8.86s |
-| Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 | 9.49s |
-
-Additional Pneumonia fine-tuned diffusion checkpoint result:
+DVCE-style generation covers the generative direction. The OpenAI checkpoint and
+the Pneumonia fine-tuned checkpoint are reported as checkpoint/guidance states
+of the same feasibility method.
 
 | Variant | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixels above threshold | Mean runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Medical checkpoint, original settings | Pneumonia | 5 | 0.20 | 0.7673 | 0.1615 | 9.50s |
-| Medical checkpoint, stronger guidance | Pneumonia | 5 | 0.40 | 0.7236 | 0.1615 | 9.30s |
-| Medical checkpoint, compromise setting | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 | 15.63s |
-| Medical checkpoint, strongest tested setting | Pneumonia | 5 | 1.00 | 0.8527 | 0.4453 | 25.96s |
-
-Interpretation:
-
-```text
-Generative and capable of target-class flips, but still limited by the
-diffusion prior and guidance settings. The Pneumonia fine-tuned checkpoint can
-be integrated successfully, but higher validity requires stronger generation
-changes and can still produce noise-like artifacts. Visual plausibility must be
-evaluated separately from model validity.
-```
-
-## Overall Comparison
-
-| Criterion | Prototype-guided baseline | Retrieval-NUN | SEDC-T | DVCE-style |
-| --- | --- | --- | --- | --- |
-| Validity | strongest | strongest by construction | lower, especially on Pneumonia | promising on small fixed subset |
-| Locality | weak to moderate | not an edit | strongest | weak to moderate |
-| Runtime | moderate | fastest after database construction | original-style slower, project variant fastest | slowest |
-| Visual interpretability | limited by diffuse changes | intuitive real-case comparison | strongest localized edit | limited by artifacts/domain mismatch |
-| Best role | technical baseline | case-based baseline | main region-based method | generative feasibility method |
+| OpenAI checkpoint | BUSI | 5 | 1.00 | 0.7034 | 0.3569 | 8.86s |
+| OpenAI checkpoint | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 | 9.49s |
+| Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 | 15.63s |
 
 ## Main Takeaway
 
-The methods show a trade-off between validity and interpretability.
-
-```text
-Prototype-guided optimization is highly valid but less localized.
-Retrieval-NUN is interpretable as a nearest real target-class case but not a minimal edit.
-SEDC-T replacement is localized but not always valid; the original-style run is safer for method fidelity.
-DVCE-style generation is generative but currently limited by domain mismatch.
-```
-
-The project therefore compares different explanation behaviors rather than
-claiming that one method is universally best.
+The methods expose different trade-offs. CFProto-nearer optimization is compact
+and model-valid, Retrieval-NUN is intuitive but not minimal, SEDC-T is more
+localized but less consistently valid, and DVCE is generative but sensitive to
+checkpoint and guidance settings. Model validity must not be equated with
+medical plausibility.
