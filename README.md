@@ -1,162 +1,92 @@
 # Medical Image Counterfactuals
 
-This repository contains code and experiment summaries for comparing
+This repository contains code and result summaries for comparing
 counterfactual explanation methods for medical image classification.
 
-The project focuses on two datasets:
+Datasets:
 
-- BUSI breast ultrasound classification with `benign`, `malignant`, and `normal`
-  classes.
-- Chest X-ray pneumonia classification with `NORMAL` and `PNEUMONIA` classes.
+- BUSI breast ultrasound: `benign`, `malignant`, `normal`
+- Chest X-ray pneumonia: `NORMAL`, `PNEUMONIA`
 
-The workflow is:
+Workflow:
 
 ```text
-prepare datasets -> train ResNet18 classifiers -> generate counterfactuals -> evaluate methods
+prepare datasets -> train ResNet18 classifiers -> create fixed manifests -> generate counterfactuals -> evaluate methods
 ```
 
 ## Current Status
-
-The classification models are pretrained ResNet18 baselines trained with data
-augmentation and class-weighted cross entropy.
 
 | Dataset | Model | Accuracy | Weighted F1 |
 | --- | --- | ---: | ---: |
 | BUSI | ResNet18 pretrained | 0.8390 | 0.8365 |
 | Pneumonia | ResNet18 pretrained | 0.8782 | 0.8732 |
 
-Four counterfactual directions are currently implemented:
+Retained counterfactual directions:
 
 | Method | Role |
 | --- | --- |
-| Prototype-guided optimization baseline | High-validity technical baseline |
+| CFProto-nearer prototype-guided optimization baseline | Optimized image perturbation with encoder-kNN prototypes |
 | Retrieval-based nearest-unlike-neighbor baseline | Case-based real target-class comparison |
-| SEDC-T segment replacement | Region-based and more localized explanations |
+| SEDC-T-style segment replacement | Region-based/localized explanation |
 | DVCE-style diffusion-guided generation | Generative feasibility method |
 
-The fixed evaluation summary is stored in:
+Central summaries:
 
 ```text
 results/fixed_evaluation_summary.md
-```
-
-Method variants and project-specific adaptations are documented separately:
-
-```text
+results/method_comparison.md
+results/final_method_summary.md
 results/method_variant_rationale.md
-results/method_implementation_audit.md
 ```
 
 ## Repository Structure
 
 ```text
-.
-|-- README.md
-|-- requirements.txt
-|-- requirements-dvce.txt
-|-- src/
-|   |-- data_utils.py
-|   |-- evaluation_manifest.py
-|   `-- train_model.py
-|-- scripts/
-|   |-- create_evaluation_manifest.py
-|   |-- evaluate_model.py
-|   |-- prepare_busi.py
-|   |-- prepare_pneumonia.py
-|   |-- prepare_diffusion_training_data.py
-|   |-- run_cfproto_pytorch.py
-|   |-- run_sedc_t_pytorch.py
-|   |-- run_dvce_medical_prototype.py
-|   `-- summarize_counterfactual_evaluation.py
-`-- results/
-    |-- baseline_comparison.md
-    |-- method_comparison.md
-    |-- fixed_evaluation_summary.md
-    |-- final_method_summary.md
-    |-- evaluation_manifests/
-    `-- fixed_evaluation/
+src/        reusable data/model utilities
+scripts/    preparation, training, counterfactual, and evaluation scripts
+results/    compact JSON/Markdown summaries and fixed manifests
 ```
 
-The following folders are intentionally not tracked by Git:
+Large local assets are intentionally ignored by Git:
 
 ```text
 data/
 models/
 external/
 checkpoints/
-.venv/
-.venv-dvce/
+results/debug/
+results/ablations/
+generated PNG/JPG result images
 ```
 
-This keeps datasets, model checkpoints, external repositories, and generated
-visual artifacts out of the repository.
-
-## Environment Setup
-
-Create and activate a Python virtual environment:
+## Setup
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-```
-
-Install the required packages:
-
-```bash
 pip install -r requirements.txt
 ```
 
-DVCE-related experiments may require a separate environment and the additional
-dependencies listed in:
+DVCE experiments may need:
 
 ```text
 requirements-dvce.txt
 ```
 
-## Data
+## Data Format
 
-The code expects processed datasets in ImageFolder format:
-
-```text
-data/processed/BUSI/
-|-- train/
-|-- val/
-`-- test/
-
-data/processed/Pneumonia/
-|-- train/
-|-- val/
-`-- test/
-```
-
-Each split must contain one subfolder per class.
-
-Expected BUSI classes:
+Processed datasets are expected in ImageFolder format:
 
 ```text
-benign
-malignant
-normal
+data/processed/BUSI/{train,val,test}/...
+data/processed/Pneumonia/{train,val,test}/...
 ```
 
-Expected Pneumonia classes:
+Raw and processed datasets are not included in this repository.
 
-```text
-NORMAL
-PNEUMONIA
-```
+## Training Classifiers
 
-The raw and processed datasets are not included in this repository.
-
-## Training
-
-The training script is:
-
-```text
-src/train_model.py
-```
-
-Example for BUSI:
+Example BUSI classifier:
 
 ```bash
 PYTHONPATH=. python src/train_model.py \
@@ -169,7 +99,7 @@ PYTHONPATH=. python src/train_model.py \
   --pretrained
 ```
 
-Example for Pneumonia:
+Example Pneumonia classifier:
 
 ```bash
 PYTHONPATH=. python src/train_model.py \
@@ -182,57 +112,17 @@ PYTHONPATH=. python src/train_model.py \
   --pretrained
 ```
 
-The training pipeline supports:
+## Fixed Evaluation Manifests
 
-- ResNet18 classification
-- optional ImageNet pretrained weights
-- training-time data augmentation
-- class-weighted cross entropy
-- automatic device selection for MPS, CUDA, or CPU
-- best-checkpoint saving based on validation F1 score
-
-## Model Evaluation
-
-Use the evaluation script to compute test metrics:
-
-```bash
-PYTHONPATH=. python scripts/evaluate_model.py \
-  --model_path models/busi_resnet18_pretrained.pth \
-  --dataset_path data/processed/BUSI \
-  --output_path results/busi_pretrained_test_evaluation.json
-```
-
-The evaluation output includes:
-
-- accuracy
-- weighted F1 score
-- weighted precision
-- weighted recall
-- classification report
-- confusion matrix
-
-Baseline results are summarized in:
-
-```text
-results/baseline_comparison.md
-```
-
-## Fixed Counterfactual Evaluation
-
-The final method comparison uses fixed manifests of correctly classified test
-samples. This prevents each method from silently evaluating on different images.
-
-Current fixed manifests:
+The comparison uses fixed correctly classified test samples and fixed target
+classes:
 
 ```text
 results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
 results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json
 ```
 
-The target class is selected with the `second_best` strategy: the target is the
-most likely non-original class according to the classifier.
-
-Create a manifest:
+Create a BUSI manifest:
 
 ```bash
 PYTHONPATH=. python scripts/create_evaluation_manifest.py \
@@ -245,38 +135,37 @@ PYTHONPATH=. python scripts/create_evaluation_manifest.py \
 
 ## Counterfactual Methods
 
-### Prototype-Guided Optimization Baseline
+### CFProto-Nearer Prototype-Guided Optimization Baseline
+
+Final BUSI command:
 
 ```bash
 PYTHONPATH=. python scripts/run_cfproto_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/fixed_evaluation/prototype_busi_balanced_manifest \
-  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
+  --output_dir results/final/cfproto_encoder_knn/busi \
+  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
+  --autoencoder_path models/autoencoder_busi.pth
 ```
 
-This method optimizes an input image toward a target class while penalizing
-large or noisy changes. The script supports two prototype spaces:
-`--prototype_space encoder` uses class prototypes in the latent space of a
-separately trained ConvAutoencoder and is the CFProto-nearer configuration;
-`--prototype_space resnet` keeps the earlier ResNet18 penultimate-feature
-prototypes as a legacy fallback. The script also contains optional
-CFProto-aligned components such as a targeted margin loss
-(`--attack_loss cw_hinge`), a prototype-distance target selection mode for
-non-manifest runs, optional L1 regularization, and a lightweight symmetric
-geometric search over the attack constant `c`. A separately trained
-ConvAutoencoder can also be used via `--autoencoder_path` and `--gamma` to add a
-CFProto-like reconstruction plausibility term.
+The script defaults to the final CFProto-nearer configuration:
 
-The fixed results below were generated with the earlier cross-entropy based
-prototype-guided settings. The newer CFProto-aligned options are available for
-additional ablations, but they are not claimed as a full Alibi
-`CounterfactualProto` reproduction because the original Alibi graph,
-k-d-tree prototype search, and FISTA optimizer are not used. The autoencoder
-term and encoder-space prototypes are only active for runs that provide an
-autoencoder checkpoint.
+```text
+prototype_space=encoder
+prototype_mode=knn_mean
+prototype_k=3
+c_search_mode=adaptive_binary
+selection_metric=elastic_net
+lr_schedule=polynomial
+attack_loss=cw_hinge
+gamma=0.0
+```
 
-### Retrieval-Based Nearest-Unlike-Neighbor Baseline
+This is not a full Alibi CFProto reproduction. FISTA/shrinkage, TrustScore, the
+original TensorFlow graph, and the original Alibi k-d-tree machinery are not
+fully reproduced.
+
+### Retrieval-NUN
 
 ```bash
 PYTHONPATH=. python scripts/run_retrieval_nun_pytorch.py \
@@ -286,11 +175,10 @@ PYTHONPATH=. python scripts/run_retrieval_nun_pytorch.py \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
 ```
 
-This method retrieves the nearest real training image from the target class in
-the ResNet18 penultimate embedding space. It is a case-based baseline, not a
-minimal image edit.
+Retrieval-NUN retrieves a real target-class training image. It is a case-based
+baseline, not a minimal edit.
 
-### SEDC-T Segment Replacement
+### SEDC-T
 
 ```bash
 PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
@@ -302,12 +190,7 @@ PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
   --roi_mode none
 ```
 
-This method segments the image and searches for region replacements that change
-the classifier output to the target class. The `original_best_first` mode follows
-the target-score best-first search more closely. The faster `greedy_minimal`
-mode is kept as a project variant and should be reported separately.
-
-### DVCE-Style Diffusion-Guided Generation
+### DVCE-Style Generation
 
 ```bash
 PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
@@ -321,58 +204,21 @@ PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
   --skip_timesteps 44
 ```
 
-This method adapts a diffusion-guided counterfactual workflow to the medical
-ResNet18 classifiers. It is currently treated as a feasibility-level generative
-method because the diffusion prior is not medical-domain-specific.
-
 ## Current Fixed Evaluation Results
 
 | Method | Dataset | Samples | Validity | Mean CF confidence | Mean change | Runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Prototype-guided optimization | BUSI | 15 | 1.00 | 0.9978 | 0.0559 | 5.24s |
-| Prototype-guided optimization | Pneumonia | 20 | 1.00 | 0.9928 | 0.1442 | 5.69s |
-| Prototype-guided plausibility ablation | BUSI | 15 | 1.00 | 0.9953 | 0.0315 | 4.78s |
-| Prototype-guided plausibility ablation | Pneumonia | 20 | 1.00 | 0.9814 | 0.0934 | 4.76s |
-| Retrieval-based nearest-unlike-neighbor | BUSI | 15 | 1.00 | 0.8191 | 0.8516 | 0.01s |
-| Retrieval-based nearest-unlike-neighbor | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 | 0.01s |
+| CFProto-nearer prototype-guided optimization | BUSI | 15 | 1.00 | 0.5471 | 0.0084 | 7.43s |
+| CFProto-nearer prototype-guided optimization | Pneumonia | 20 | 0.90 | 0.5767 | 0.0108 | 8.58s |
+| Retrieval-NUN | BUSI | 15 | 1.00 | 0.8191 | 0.8516 | 0.01s |
+| Retrieval-NUN | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 | 0.01s |
 | SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6674 | 0.1517 | 6.59s |
 | SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.7343 | 0.1410 | 13.78s |
 | SEDC-T project variant | BUSI | 15 | 0.80 | 0.6376 | 0.1471 | 0.56s |
 | SEDC-T project variant with lung-field ROI | Pneumonia | 20 | 0.45 | 0.7639 | 0.1510 | 0.39s |
-| DVCE-style diffusion-guided generation | BUSI | 5 | 1.00 | 0.7034 | 0.3569 | 8.86s |
-| DVCE-style diffusion-guided generation | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 | 9.49s |
-| DVCE-style with Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 | 15.63s |
+| DVCE-style OpenAI checkpoint | BUSI | 5 | 1.00 | 0.7034 | 0.3569 | 8.86s |
+| DVCE-style OpenAI checkpoint | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 | 9.49s |
+| DVCE-style Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 | 15.63s |
 
-Important interpretation:
-
-```text
-Validity means that the model prediction changed to the target class.
-It does not imply that the image change is medically plausible.
-```
-
-Additional SEDC-T tuning results are summarized in
-`results/sedc_t_tuning_summary.md`. They are treated as an ablation, not as a
-replacement for the original-style SEDC-T result.
-
-The stronger-regularized prototype-guided results are summarized in
-`results/prototype_plausibility_ablation.md`. They are also an ablation, not a
-new method. The current implementation notes for the CFProto-aligned options
-are documented in `results/method_implementation_audit.md`.
-
-## Result Files
-
-Important public result summaries:
-
-```text
-results/baseline_comparison.md
-results/method_comparison.md
-results/method_variant_rationale.md
-results/method_implementation_audit.md
-results/prototype_plausibility_ablation.md
-results/fixed_evaluation_summary.md
-results/final_method_summary.md
-```
-
-Generated PNG/JPG visualizations are ignored by Git. Compact JSON and Markdown
-summaries are kept when they are useful for reproducing or documenting the
-evaluation.
+Validity means target-class model prediction. It does not imply medical
+plausibility or clinical causality.

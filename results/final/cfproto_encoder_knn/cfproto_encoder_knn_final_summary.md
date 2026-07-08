@@ -128,7 +128,7 @@ PYTHONPATH=. python scripts/run_cfproto_pytorch.py \
 
 ## Cautious Interpretation
 
-- This method is closer to CFProto than the earlier ResNet/class-mean prototype baseline because it uses autoencoder encoder-space local target-class KNN prototypes, adaptive binary-style c-search, elastic-net selection, and polynomial learning-rate decay.
+- This method is CFProto-nearer because it uses autoencoder encoder-space local target-class KNN prototypes, adaptive binary-style c-search, elastic-net selection, and polynomial learning-rate decay.
 - It is still not a full Alibi `CounterfactualProto` reproduction. FISTA/shrinkage, TrustScore, the original TensorFlow graph structure, and the original Alibi k-d-tree machinery were not fully reproduced.
 - Validity means that the trained classifier predicts the manifest target class for the generated counterfactual. It does not imply medical plausibility.
 - The changes can remain diffuse or visually subtle. They should be interpreted as model-behavior counterfactuals, not as clinically causal image edits.
