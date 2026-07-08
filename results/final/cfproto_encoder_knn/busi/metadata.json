@@ -1,5 +1,5 @@
 {
-    "method": "PyTorch prototype-guided optimization baseline",
+    "method": "CFProto-nearer prototype-guided optimization baseline",
     "model_path": "models/busi_resnet18_pretrained.pth",
     "dataset_path": "data/processed/BUSI",
     "classes": [
@@ -45,39 +45,32 @@
     },
     "cfproto_alignment_note": {
         "implemented": [
-            "optional CW-style targeted hinge loss",
-            "optional prototype-distance target selection for non-manifest runs",
-            "optional L1 image-distance penalty",
-            "optional symmetric geometric attack-constant c-search",
-            "optional adaptive binary-style attack-constant c-search",
-            "optional elastic-net best-counterfactual selection",
-            "optional polynomial learning-rate decay",
-            "encoder-space class prototypes via autoencoder encoder",
-            "local target-class k-nearest encoder prototypes",
-            "optional autoencoder reconstruction loss"
-        ],
-        "legacy": [
-            "ResNet18 penultimate feature prototypes"
+            "CW-style targeted hinge loss",
+            "L1 and L2 image-distance penalties",
+            "adaptive binary-style attack-constant c-search",
+            "elastic-net best-counterfactual selection",
+            "polynomial learning-rate decay",
+            "autoencoder encoder-space target-class kNN mean prototypes"
         ],
         "not_implemented": [
             "Alibi TensorFlow CounterfactualProto graph",
             "FISTA shrinkage-thresholding optimizer",
             "full Alibi binary search over c",
-            "k-d-tree prototype selection",
-            "TrustScore filtering"
+            "original Alibi k-d-tree prototype machinery",
+            "TrustScore filtering",
+            "active autoencoder reconstruction penalty in the final run (gamma=0)"
         ],
-        "prototype_space_note": "Autoencoder encoder-space prototypes are closer to the CFProto idea than ResNet18 classifier-feature prototypes. This script still remains a PyTorch adaptation rather than a full Alibi CounterfactualProto reproduction."
+        "prototype_space_note": "The method uses autoencoder encoder-space target-class kNN prototypes inside the project medical image pipeline. It remains a PyTorch-based CFProto-nearer implementation rather than a full Alibi CounterfactualProto reproduction."
     },
     "prototype_configuration": {
         "prototype_space": "encoder",
         "prototype_mode": "knn_mean",
         "prototype_k": 3,
-        "prototype_source": "autoencoder_encoder",
+        "prototype_source": "autoencoder_encoder_knn_mean",
         "prototype_shape": null,
         "autoencoder_prototypes_used": true,
-        "legacy_resnet_feature_prototypes": false,
         "local_knn_prototypes_used": true,
-        "preferred_cfproto_near_configuration": "--prototype_space encoder with --autoencoder_path"
+        "preferred_cfproto_near_configuration": "encoder kNN mean prototypes"
     },
     "manifest_fairness_note": {
         "manifest_samples_unchanged": true,
