@@ -81,64 +81,34 @@
             "mean_runtime_seconds": 0.00964205265045166
         },
         {
-            "metadata_path": "results/final/sedc_t_original_style_quickshift_gaussian/busi/metadata.json",
+            "metadata_path": "results/fixed_evaluation/sedc_t_busi_original_style/metadata.json",
             "method": "SEDC-T original-style best-first",
             "dataset": "BUSI",
             "samples": 15,
             "validity": 0.8,
-            "mean_counterfactual_confidence": 0.6343278547128042,
+            "mean_counterfactual_confidence": 0.6343278586864471,
             "mean_change": 0.26397348046302793,
-            "mean_runtime_seconds": 7.514162206649781
+            "mean_runtime_seconds": 6.713887135187785
         },
         {
-            "metadata_path": "results/final/sedc_t_original_style_quickshift_gaussian/pneumonia/metadata.json",
+            "metadata_path": "results/fixed_evaluation/sedc_t_pneumonia_original_style/metadata.json",
             "method": "SEDC-T original-style best-first",
             "dataset": "Pneumonia",
             "samples": 20,
             "validity": 0.55,
-            "mean_counterfactual_confidence": 0.6702266216278077,
-            "mean_change": 0.3377012897282839,
-            "mean_runtime_seconds": 14.409084069728852
+            "mean_counterfactual_confidence": 0.6759198755025864,
+            "mean_change": 0.3270238760858774,
+            "mean_runtime_seconds": 13.922122955322266
         },
         {
-            "metadata_path": "results/final/sedc_t_lung_field_roi_quickshift_gaussian/pneumonia/metadata.json",
+            "metadata_path": "results/fixed_evaluation/sedc_t_pneumonia_lung_field_roi/metadata.json",
             "method": "SEDC-T lung-field ROI ablation",
             "dataset": "Pneumonia",
             "samples": 20,
             "validity": 0.5,
-            "mean_counterfactual_confidence": 0.7775347113609314,
-            "mean_change": 0.18429328817874194,
-            "mean_runtime_seconds": 15.483212101459504
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/dvce_busi_manifest_5_current_checkpoint/metadata.json",
-            "method": "DVCE medical multi-sample generation evaluation with OpenAI checkpoint",
-            "dataset": "BUSI",
-            "samples": 5,
-            "validity": 1.0,
-            "mean_counterfactual_confidence": 0.7033544898033142,
-            "mean_change": 0.35693358778953554,
-            "mean_runtime_seconds": 8.8606
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_current_checkpoint/metadata.json",
-            "method": "DVCE medical multi-sample generation evaluation with OpenAI checkpoint",
-            "dataset": "Pneumonia",
-            "samples": 5,
-            "validity": 0.8,
-            "mean_counterfactual_confidence": 0.7218565821647644,
-            "mean_change": 0.1653879802674055,
-            "mean_runtime_seconds": 9.488
-        },
-        {
-            "metadata_path": "results/fixed_evaluation/dvce_pneumonia_manifest_5_medical_checkpoint_guidance200_sim10_skip40/metadata.json",
-            "method": "DVCE medical multi-sample generation evaluation with Pneumonia fine-tuned checkpoint",
-            "dataset": "Pneumonia",
-            "samples": 5,
-            "validity": 0.8,
-            "mean_counterfactual_confidence": 0.6937237501144409,
-            "mean_change": 0.24688110798597335,
-            "mean_runtime_seconds": 15.629
+            "mean_counterfactual_confidence": 0.7770165413618088,
+            "mean_change": 0.1744658799842,
+            "mean_runtime_seconds": 15.228716218471527
         }
     ]
 }

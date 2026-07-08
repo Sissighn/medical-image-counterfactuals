@@ -69,26 +69,46 @@ The only retained ablation is a Pneumonia-specific lung-field ROI constraint.
 
 | Variant | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 7.51s |
-| Original-style best-first | Pneumonia | 20 | 0.55 | 0.6702 | 0.3377 | 14.41s |
-| Lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7775 | 0.1843 | 15.48s |
+| Original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 6.71s |
+| Original-style best-first | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 | 13.92s |
+| Lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 | 15.23s |
 
-## Method 4: DVCE-Style Diffusion-Guided Generation
+## Method 4: DVCE Original-Style Diffusion-Guided Generation
 
-DVCE-style generation covers the generative direction. The OpenAI checkpoint and
-the Pneumonia fine-tuned checkpoint are reported as checkpoint/guidance states
-of the same feasibility method.
+DVCE generation covers the generative direction. The old free-guidance
+prototype runs have been removed. The retained implementation now uses the
+original-code-nearer DVCE core:
 
-| Variant | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixels above threshold | Mean runtime |
-| --- | --- | ---: | ---: | ---: | ---: | ---: |
-| OpenAI checkpoint | BUSI | 5 | 1.00 | 0.7034 | 0.3569 | 8.86s |
-| OpenAI checkpoint | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 | 9.49s |
-| Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 | 15.63s |
+- `gen_type=p_sample`,
+- `timestep_respacing=200`,
+- `skip_timesteps=100`,
+- `classifier_lambda=0.1`,
+- `lp_custom=1.0`,
+- `lp_custom_value=0.15`,
+- `enforce_same_norms=True`,
+- `clip_denoised=False`,
+- Cone Projection optional via `--second_model_path` and `--deg_cone_projection`.
+
+The planned checkpoint states are:
+
+| State | Dataset | Status |
+| --- | --- | --- |
+| OpenAI checkpoint | BUSI and Pneumonia | rerun needed with original-style core |
+| Pneumonia fine-tuned checkpoint | Pneumonia | rerun needed with original-style core |
+| BUSI fine-tuned checkpoint | BUSI | run after BUSI checkpoint is available |
+| Cone Projection | BUSI and Pneumonia | requires PGD-robust second ResNet18 classifiers |
+
+Commands are documented in:
+
+```text
+results/final_configs/dvce_original_style_commands.md
+results/final_configs/dvce_cone_projection_for_paul.md
+```
 
 ## Main Takeaway
 
 The methods expose different trade-offs. CFProto-nearer optimization is compact
 and model-valid, Retrieval-NUN is intuitive but not minimal, SEDC-T is more
-localized but less consistently valid, and DVCE is generative but sensitive to
-checkpoint and guidance settings. Model validity must not be equated with
-medical plausibility.
+localized but less consistently valid, and DVCE is generative but still pending
+fresh fixed-manifest results after the original-style core update. Model
+validity must not be equated with medical plausibility.

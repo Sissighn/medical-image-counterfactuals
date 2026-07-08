@@ -8,11 +8,13 @@ image classification:
 1. CFProto-nearer prototype-guided optimization baseline
 2. Retrieval-based nearest-unlike-neighbor baseline
 3. SEDC-T-style segment replacement
-4. DVCE-style diffusion-guided generation
+4. DVCE original-style diffusion-guided generation
 
 All methods use fixed evaluation manifests where feasible. DVCE is evaluated on
 the first five fixed manifest samples because diffusion sampling is substantially
-more expensive.
+more expensive. The earlier free-guidance DVCE prototype rows have been removed;
+DVCE should be rerun with the original-style core before reporting final
+quantitative values.
 
 ## Quantitative Results
 
@@ -26,12 +28,9 @@ more expensive.
 | CFProto bottleneck1024 ablation | Pneumonia | 20 | 0.55 | 0.7292 | 0.6312 changed pixel fraction | 13.78s |
 | Retrieval-based nearest-unlike-neighbor baseline | BUSI | 15 | 1.00 | 0.8191 | 0.8516 changed pixel fraction | 0.01s |
 | Retrieval-based nearest-unlike-neighbor baseline | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 changed pixel fraction | 0.01s |
-| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 changed pixel fraction | 7.51s |
-| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6702 | 0.3377 changed pixel fraction | 14.41s |
-| SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7775 | 0.1843 changed pixel fraction | 15.48s |
-| DVCE-style diffusion-guided generation | BUSI | 5 | 1.00 | 0.7034 | 0.3569 changed pixels above threshold | 8.86s |
-| DVCE-style diffusion-guided generation | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 changed pixels above threshold | 9.49s |
-| DVCE-style with Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 changed pixels above threshold | 15.63s |
+| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 changed pixel fraction | 6.71s |
+| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 changed pixel fraction | 13.92s |
+| SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 changed pixel fraction | 15.23s |
 
 The generated central summary is:
 
@@ -60,9 +59,12 @@ SEDC-T gives localized segment-level changes and is often easier to discuss
 visually. Its validity is lower, especially on Pneumonia, where diffuse model
 cues make segment replacement difficult.
 
-DVCE covers the generative direction. It can create model-valid samples on the
-small fixed subset, but outputs remain sensitive to checkpoint and guidance
-settings and must be interpreted as feasibility results.
+DVCE covers the generative direction. The retained code path is now closer to
+the local original DVCE implementation: it uses `p_sample`, evaluates classifier
+and distance guidance on `pred_xstart`, and normalizes guidance terms against
+`eps=model_output` when `enforce_same_norms=True`. Final DVCE rows should be
+reported after rerunning the OpenAI checkpoint and the medical checkpoint
+states with this implementation.
 
 Validity means that the model prediction changed to the target class. It does
 not imply medical plausibility or clinical causality.

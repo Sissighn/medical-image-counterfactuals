@@ -13,7 +13,7 @@ autoencoder/prototype-space ablations.
 | CFProto-nearer prototype-guided optimization | Final prototype-guided method plus bottleneck ablations | Encoder-kNN prototypes, adaptive c-search, elastic-net selection, polynomial learning-rate decay, targeted margin loss |
 | Retrieval-NUN | Case-based nearest unlike baseline | Retrieves real target-class training images; not a minimal edit |
 | SEDC-T | Region-based/localized counterfactuals | Original-style best-first plus Pneumonia lung-field ROI ablation |
-| DVCE | Generative counterfactual feasibility | OpenAI checkpoint plus Pneumonia fine-tuned checkpoint state |
+| DVCE | Generative counterfactual feasibility | One original-style method family with no-cone and Cone Projection states; diffusion checkpoints are OpenAI, Pneumonia-medical, and BUSI-medical |
 
 ## CFProto-Nearer Prototype-Guided Optimization
 
@@ -70,10 +70,31 @@ segmentation.
 
 ## DVCE
 
-DVCE-style generation is retained as the generative feasibility method. The
-OpenAI diffusion checkpoint and the Pneumonia fine-tuned checkpoint are reported
-as checkpoint/guidance states of the same method direction, not as unrelated
-methods.
+DVCE generation is retained as the generative feasibility method. The older
+free-guidance prototype variants have been removed. The retained implementation
+uses the original-code-nearer `src/dvce_core.py` path: `p_sample`,
+`pred_xstart` guidance, separate classifier and LP-distance gradients,
+`enforce_same_norms=True`, and `clip_denoised=False`.
+
+There is one DVCE original-style method family:
+
+```text
+DVCE original-style medical generation
+```
+
+The retained DVCE states are:
+
+- without Cone Projection, mainly as original-style baseline,
+- with Cone Projection using a PGD-robust second medical ResNet18 classifier.
+
+The diffusion checkpoint states are:
+
+- OpenAI 256x256 unconditional checkpoint,
+- Pneumonia fine-tuned medical checkpoint,
+- BUSI fine-tuned medical checkpoint once available.
+
+These states should not be reported with old free-guidance numbers. They need
+fresh fixed-manifest runs with `src/dvce_core.py`.
 
 ## Reporting Principle
 
