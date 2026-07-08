@@ -116,6 +116,121 @@ def compute_feature_prototypes(model, train_loader, num_classes, device):
     return feature_sums / class_counts.unsqueeze(1).clamp_min(1.0)
 
 
+def compute_autoencoder_latent_prototypes(autoencoder, train_loader, num_classes, device):
+    autoencoder.eval()
+    latent_sums = None
+    class_counts = torch.zeros(num_classes, device=device)
+
+    with torch.no_grad():
+        for images, labels in train_loader:
+            pixels = denormalize(images.to(device))
+            labels = labels.to(device)
+            latents = torch.flatten(autoencoder.encode(pixels), start_dim=1)
+
+            if latent_sums is None:
+                latent_sums = torch.zeros(num_classes, latents.shape[1], device=device)
+
+            for class_idx in range(num_classes):
+                mask = labels == class_idx
+                if mask.any():
+                    latent_sums[class_idx] += latents[mask].sum(dim=0)
+                    class_counts[class_idx] += mask.sum()
+
+    missing_classes = [
+        class_idx for class_idx, count in enumerate(class_counts.tolist()) if count == 0
+    ]
+    if missing_classes:
+        raise ValueError(
+            "Cannot compute autoencoder latent prototypes because no training "
+            f"examples were found for class indices: {missing_classes}"
+        )
+
+    return latent_sums / class_counts.unsqueeze(1)
+
+
+def compute_autoencoder_latent_bank(autoencoder, train_loader, device):
+    autoencoder.eval()
+    latent_batches = []
+    label_batches = []
+
+    with torch.no_grad():
+        for images, labels in train_loader:
+            pixels = denormalize(images.to(device))
+            latents = torch.flatten(autoencoder.encode(pixels), start_dim=1)
+            latent_batches.append(latents.detach())
+            label_batches.append(labels.to(device).detach())
+
+    if not latent_batches:
+        raise ValueError("Cannot build encoder prototype bank from an empty train loader.")
+
+    return torch.cat(latent_batches, dim=0), torch.cat(label_batches, dim=0)
+
+
+def compute_class_mean_prototypes_from_bank(latent_bank, label_bank, num_classes):
+    prototypes = []
+    missing_classes = []
+    for class_idx in range(num_classes):
+        mask = label_bank == class_idx
+        if not mask.any():
+            missing_classes.append(class_idx)
+            prototypes.append(torch.zeros(latent_bank.shape[1], device=latent_bank.device))
+        else:
+            prototypes.append(latent_bank[mask].mean(dim=0))
+
+    if missing_classes:
+        raise ValueError(
+            "Cannot compute encoder class-mean prototypes because no training "
+            f"examples were found for class indices: {missing_classes}"
+        )
+
+    return torch.stack(prototypes, dim=0)
+
+
+def select_encoder_knn_prototype(
+    autoencoder,
+    original_pixels,
+    latent_bank,
+    label_bank,
+    target_class,
+    prototype_mode,
+    prototype_k,
+):
+    if prototype_mode not in {"knn_mean", "knn_point"}:
+        raise ValueError(f"Unsupported KNN prototype_mode: {prototype_mode}")
+
+    with torch.no_grad():
+        original_latent = torch.flatten(
+            autoencoder.encode(original_pixels), start_dim=1
+        )[0]
+        target_mask = label_bank == target_class
+        target_latents = latent_bank[target_mask]
+        if target_latents.numel() == 0:
+            raise ValueError(
+                "Cannot compute KNN prototype because no training examples were "
+                f"found for target class index {target_class}."
+            )
+
+        distances = torch.linalg.vector_norm(
+            target_latents - original_latent.unsqueeze(0), dim=1
+        )
+        k = min(prototype_k, target_latents.shape[0])
+        nearest_distances, nearest_indices = torch.topk(
+            distances, k=k, largest=False
+        )
+        nearest_latents = target_latents[nearest_indices]
+        if prototype_mode == "knn_point":
+            prototype = nearest_latents[0]
+        else:
+            prototype = nearest_latents.mean(dim=0)
+
+    return prototype, {
+        "prototype_mode": prototype_mode,
+        "prototype_k_requested": prototype_k,
+        "prototype_k_used": int(k),
+        "knn_distances": nearest_distances.detach().cpu().tolist(),
+    }
+
+
 def cw_attack_loss(probabilities, target_class, kappa):
     target_probability = probabilities[:, target_class]
     non_target_mask = torch.ones_like(probabilities, dtype=torch.bool)
@@ -228,6 +343,7 @@ def generate_counterfactual(
     original_class,
     target_class,
     target_prototype,
+    prototype_space,
     steps,
     learning_rate,
     attack_loss,
@@ -242,6 +358,9 @@ def generate_counterfactual(
     perturbation_resolution,
     autoencoder=None,
     gamma=0.0,
+    selection_metric="current",
+    beta=0.1,
+    lr_schedule="constant",
 ):
     original_pixels = denormalize(image).detach()
     channels = 1 if force_grayscale else 3
@@ -261,6 +380,13 @@ def generate_counterfactual(
     start_time = time.time()
 
     for step in range(steps):
+        if lr_schedule == "polynomial":
+            lr_multiplier = max(0.0, 1.0 - (step / max(steps, 1))) ** 0.5
+            for group in optimizer.param_groups:
+                group["lr"] = learning_rate * lr_multiplier
+        elif lr_schedule != "constant":
+            raise ValueError(f"Unsupported lr_schedule: {lr_schedule}")
+
         optimizer.zero_grad()
 
         smooth_delta = F.interpolate(
@@ -288,7 +414,17 @@ def generate_counterfactual(
         l1_loss = torch.mean(torch.abs(cf_pixels - original_pixels))
         l2_loss = F.mse_loss(cf_pixels, original_pixels)
         tv_loss = total_variation(smooth_delta)
-        proto_loss = F.mse_loss(features[0], target_prototype)
+        if prototype_space == "encoder":
+            if autoencoder is None:
+                raise ValueError(
+                    "prototype_space='encoder' requires an autoencoder checkpoint."
+                )
+            latent = torch.flatten(autoencoder.encode(cf_pixels), start_dim=1)
+            proto_loss = F.mse_loss(latent[0], target_prototype)
+        elif prototype_space == "resnet":
+            proto_loss = F.mse_loss(features[0], target_prototype)
+        else:
+            raise ValueError(f"Unsupported prototype_space: {prototype_space}")
         ae_loss = torch.tensor(0.0, device=image.device)
         if autoencoder is not None:
             ae_loss = F.mse_loss(autoencoder(cf_pixels), cf_pixels)
@@ -318,12 +454,22 @@ def generate_counterfactual(
             target_probability = float(probabilities[0, target_class].item())
 
             if prediction == target_class:
-                score = float(loss.item())
+                selection_distances = compute_elastic_net_distance(
+                    original_pixels, cf_pixels, beta
+                )
+                if selection_metric == "elastic_net":
+                    score = selection_distances["elastic_net_distance"]
+                elif selection_metric == "current":
+                    score = float(loss.item())
+                else:
+                    raise ValueError(f"Unsupported selection_metric: {selection_metric}")
                 if best is None or score < best["score"]:
                     best = {
                         "image": cf_pixels.detach().clone(),
                         "step": step + 1,
                         "score": score,
+                        "selection_metric": selection_metric,
+                        "selection_distances": selection_distances,
                         "target_probability": target_probability,
                         "attack_const": attack_const,
                         "autoencoder_loss": float(ae_loss.item()),
@@ -361,6 +507,12 @@ def generate_counterfactual(
         "attack_const": best["attack_const"] if best is not None else attack_const,
         "autoencoder_loss": best["autoencoder_loss"] if best is not None else None,
         "loss_terms": best["loss_terms"] if best is not None else last_loss_terms,
+        "selection_metric": best["selection_metric"] if best is not None else selection_metric,
+        "selection_distances": (
+            best["selection_distances"]
+            if best is not None
+            else compute_elastic_net_distance(original_pixels, final_pixels, beta)
+        ),
     }
 
 
@@ -478,6 +630,18 @@ def compute_change_metrics(
     return metrics
 
 
+def compute_elastic_net_distance(original_pixels, cf_pixels, beta):
+    diff = cf_pixels - original_pixels
+    l2_distance = float(torch.sum(diff**2).item())
+    l1_distance = float(torch.sum(torch.abs(diff)).item())
+    return {
+        "l1_distance_sum": l1_distance,
+        "l2_distance_sum": l2_distance,
+        "beta": beta,
+        "elastic_net_distance": l2_distance + beta * l1_distance,
+    }
+
+
 def get_attack_consts(attack_const, c_init, c_steps):
     """Return fixed geometric attack-constant candidates around c_init.
 
@@ -495,8 +659,17 @@ def get_attack_consts(attack_const, c_init, c_steps):
     return [c_init * (2**step) for step in range(-lower_steps, upper_steps)]
 
 
-def score_attempt_for_selection(result, original_pixels):
+def score_attempt_for_selection(result, original_pixels, selection_metric, beta):
     diff = torch.abs(result["image"] - original_pixels)
+    if selection_metric == "elastic_net":
+        distances = compute_elastic_net_distance(original_pixels, result["image"], beta)
+        return (
+            not result["valid"],
+            distances["elastic_net_distance"],
+            -float(result["probabilities"][result["prediction"]]),
+        )
+    if selection_metric != "current":
+        raise ValueError(f"Unsupported selection_metric: {selection_metric}")
     return (
         not result["valid"],
         float(diff.mean().item()),
@@ -604,6 +777,16 @@ def main():
         ),
     )
     parser.add_argument(
+        "--c_search_mode",
+        choices=["fixed_grid", "adaptive_binary"],
+        default="fixed_grid",
+        help=(
+            "Attack-constant search mode. fixed_grid preserves the earlier "
+            "geometric candidates. adaptive_binary updates c according to "
+            "whether the previous fixed-sample/fixed-target attempt was valid."
+        ),
+    )
+    parser.add_argument(
         "--kappa",
         type=float,
         default=0.0,
@@ -638,6 +821,55 @@ def main():
             "autoencoder_path is set."
         ),
     )
+    parser.add_argument(
+        "--prototype_space",
+        choices=["resnet", "encoder"],
+        default="resnet",
+        help=(
+            "Prototype representation space. 'encoder' uses frozen "
+            "ConvAutoencoder encoder prototypes and is the CFProto-nearer "
+            "configuration. 'resnet' keeps the legacy ResNet18 penultimate "
+            "feature prototypes for backward compatibility."
+        ),
+    )
+    parser.add_argument(
+        "--prototype_mode",
+        choices=["class_mean", "knn_mean", "knn_point"],
+        default="class_mean",
+        help=(
+            "Prototype construction mode. class_mean uses one class prototype. "
+            "knn_mean and knn_point use target-class nearest neighbours in the "
+            "autoencoder encoder space and require prototype_space=encoder."
+        ),
+    )
+    parser.add_argument(
+        "--prototype_k",
+        type=int,
+        default=5,
+        help="Number of target-class neighbours for knn_mean or knn_point.",
+    )
+    parser.add_argument(
+        "--selection_metric",
+        choices=["current", "elastic_net"],
+        default="current",
+        help=(
+            "Best-counterfactual selection metric. current preserves the earlier "
+            "loss-based choice. elastic_net chooses the smallest L2 + beta * L1 "
+            "distance among valid attempts."
+        ),
+    )
+    parser.add_argument(
+        "--beta",
+        type=float,
+        default=0.1,
+        help="L1 weight for elastic-net best-counterfactual selection.",
+    )
+    parser.add_argument(
+        "--lr_schedule",
+        choices=["constant", "polynomial"],
+        default="constant",
+        help="Learning-rate schedule. polynomial applies a CFProto-like decay.",
+    )
     parser.add_argument("--max_delta", type=float, default=0.12)
     parser.add_argument("--perturbation_resolution", type=int, default=28)
     parser.add_argument(
@@ -661,6 +893,13 @@ def main():
     )
     args = parser.parse_args()
 
+    if args.prototype_space == "encoder" and not args.autoencoder_path:
+        parser.error("--prototype_space encoder requires --autoencoder_path.")
+    if args.prototype_mode in {"knn_mean", "knn_point"} and args.prototype_space != "encoder":
+        parser.error("knn_mean and knn_point require --prototype_space encoder.")
+    if args.prototype_k < 1:
+        parser.error("--prototype_k must be at least 1.")
+
     device = get_device()
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -683,10 +922,26 @@ def main():
 
     print(f"Device: {device}")
     print(f"Classes: {classes}")
-    print("Computing feature prototypes from training split...")
-    prototypes = compute_feature_prototypes(
-        model, data["train_loader"], num_classes, device
-    )
+    latent_bank = None
+    label_bank = None
+    if args.prototype_space == "encoder":
+        print("Computing autoencoder encoder-space prototype bank from training split...")
+        latent_bank, label_bank = compute_autoencoder_latent_bank(
+            autoencoder, data["train_loader"], device
+        )
+        if args.prototype_mode == "class_mean":
+            prototypes = compute_class_mean_prototypes_from_bank(
+                latent_bank, label_bank, num_classes
+            )
+        else:
+            prototypes = None
+        prototype_source = "autoencoder_encoder"
+    else:
+        print("Computing legacy ResNet18 feature prototypes from training split...")
+        prototypes = compute_feature_prototypes(
+            model, data["train_loader"], num_classes, device
+        )
+        prototype_source = "resnet18_penultimate_features"
 
     manifest = None
     if args.manifest_path:
@@ -709,12 +964,20 @@ def main():
         image = sample["image"]
         original_class = sample["prediction"]
         original_probabilities = torch.tensor(sample["probabilities"])
+        original_pixels = denormalize(image).detach()
         if "target_class_index" in sample:
             target_candidates = [sample["target_class_index"]]
         elif args.target_strategy == "prototype_distance":
+            if args.prototype_space == "encoder":
+                with torch.no_grad():
+                    original_features = torch.flatten(
+                        autoencoder.encode(original_pixels), start_dim=1
+                    )[0].detach().cpu()
+            else:
+                original_features = sample["features"]
             target_candidates = [
                 select_target_by_prototype_distance(
-                    sample["features"], prototypes, original_class
+                    original_features, prototypes, original_class
                 )
             ]
         else:
@@ -722,8 +985,8 @@ def main():
                 original_probabilities, original_class, args.target_strategy
             )
         attempted_targets = []
+        all_c_history = []
         best_attempt = None
-        original_pixels = denormalize(image).detach()
         attack_consts = get_attack_consts(
             attack_const=args.attack_const,
             c_init=args.c_init,
@@ -734,13 +997,58 @@ def main():
             print(
                 f"Sample {sample_idx}: {classes[original_class]} -> {classes[target_class]}"
             )
-            for attack_const in attack_consts:
+            if args.prototype_mode == "class_mean":
+                target_prototype = prototypes[target_class]
+                prototype_details = {
+                    "prototype_mode": args.prototype_mode,
+                    "local_prototype_used": False,
+                    "knn_distances": None,
+                }
+            else:
+                target_prototype, prototype_details = select_encoder_knn_prototype(
+                    autoencoder=autoencoder,
+                    original_pixels=original_pixels,
+                    latent_bank=latent_bank,
+                    label_bank=label_bank,
+                    target_class=target_class,
+                    prototype_mode=args.prototype_mode,
+                    prototype_k=args.prototype_k,
+                )
+                prototype_details["local_prototype_used"] = True
+
+            c_history = []
+            if args.c_search_mode == "fixed_grid":
+                attack_const_trials = [
+                    {
+                        "c_step": c_step,
+                        "attack_const": attack_const,
+                        "lower_bound": None,
+                        "upper_bound": None,
+                    }
+                    for c_step, attack_const in enumerate(attack_consts)
+                ]
+            else:
+                current_c = args.c_init
+                lower_bound = None
+                upper_bound = None
+                attack_const_trials = [None] * max(args.c_steps, 1)
+
+            for trial_index, trial in enumerate(attack_const_trials):
+                if args.c_search_mode == "adaptive_binary":
+                    trial = {
+                        "c_step": trial_index,
+                        "attack_const": current_c,
+                        "lower_bound": lower_bound,
+                        "upper_bound": upper_bound,
+                    }
+                attack_const = trial["attack_const"]
                 result = generate_counterfactual(
                     model=model,
                     image=image,
                     original_class=original_class,
                     target_class=target_class,
-                    target_prototype=prototypes[target_class],
+                    target_prototype=target_prototype,
+                    prototype_space=args.prototype_space,
                     steps=args.steps,
                     learning_rate=args.learning_rate,
                     attack_loss=args.attack_loss,
@@ -755,18 +1063,60 @@ def main():
                     perturbation_resolution=args.perturbation_resolution,
                     autoencoder=autoencoder,
                     gamma=args.gamma,
+                    selection_metric=args.selection_metric,
+                    beta=args.beta,
+                    lr_schedule=args.lr_schedule,
                 )
+                if args.c_search_mode == "adaptive_binary":
+                    if result["valid"]:
+                        upper_bound = attack_const
+                        if lower_bound is None:
+                            current_c = max(attack_const / 2.0, 1e-12)
+                        else:
+                            current_c = (lower_bound + upper_bound) / 2.0
+                    else:
+                        lower_bound = attack_const
+                        if upper_bound is None:
+                            current_c = attack_const * 2.0
+                        else:
+                            current_c = (lower_bound + upper_bound) / 2.0
+
+                c_history_entry = {
+                    **trial,
+                    "valid": result["valid"],
+                    "counterfactual_prediction": classes[result["prediction"]],
+                    "best_step": result["best_step"],
+                    "selection_distances": result["selection_distances"],
+                }
+                if args.c_search_mode == "adaptive_binary":
+                    c_history_entry["updated_lower_bound"] = lower_bound
+                    c_history_entry["updated_upper_bound"] = upper_bound
+                    c_history_entry["next_attack_const"] = current_c
+                c_history.append(c_history_entry)
+                all_c_history.append(c_history_entry)
+
                 attempt = {
                     "target_class_index": target_class,
                     "target_class": classes[target_class],
                     "attack_const": attack_const,
+                    "c_step": trial["c_step"],
+                    "c_search_mode": args.c_search_mode,
+                    "prototype_details": prototype_details,
                     "result": result,
                 }
                 attempted_targets.append(attempt)
 
                 if best_attempt is None or score_attempt_for_selection(
-                    result, original_pixels
-                ) < score_attempt_for_selection(best_attempt["result"], original_pixels):
+                    result,
+                    original_pixels,
+                    selection_metric=args.selection_metric,
+                    beta=args.beta,
+                ) < score_attempt_for_selection(
+                    best_attempt["result"],
+                    original_pixels,
+                    selection_metric=args.selection_metric,
+                    beta=args.beta,
+                ):
                     best_attempt = attempt
 
             if best_attempt is not None and best_attempt["result"]["valid"]:
@@ -836,10 +1186,17 @@ def main():
             "counterfactual_prediction": classes[result["prediction"]],
             "counterfactual_confidence": counterfactual_confidence,
             "valid_counterfactual": valid_counterfactual,
+            "selection_metric": result["selection_metric"],
+            "selection_distances": result["selection_distances"],
+            "c_history": all_c_history,
+            "prototype_details": best_attempt.get("prototype_details"),
             "attempted_targets": [
                 {
                     "target_class": attempt["target_class"],
                     "attack_const": attempt["attack_const"],
+                    "c_step": attempt["c_step"],
+                    "c_search_mode": attempt["c_search_mode"],
+                    "prototype_details": attempt["prototype_details"],
                     "valid": attempt["result"]["valid"],
                     "counterfactual_prediction": classes[
                         attempt["result"]["prediction"]
@@ -847,6 +1204,7 @@ def main():
                     "best_step": attempt["result"]["best_step"],
                     "autoencoder_loss": attempt["result"]["autoencoder_loss"],
                     "loss_terms": attempt["result"]["loss_terms"],
+                    "selection_distances": attempt["result"]["selection_distances"],
                 }
                 for attempt in attempted_targets
             ],
@@ -882,13 +1240,30 @@ def main():
         "optional prototype-distance target selection for non-manifest runs",
         "optional L1 image-distance penalty",
         "optional symmetric geometric attack-constant c-search",
+        "optional adaptive binary-style attack-constant c-search",
+        "optional elastic-net best-counterfactual selection",
+        "optional polynomial learning-rate decay",
     ]
+    cfproto_legacy = []
     cfproto_not_implemented = [
         "Alibi TensorFlow CounterfactualProto graph",
-        "encoder-space or KD-tree prototypes independent from the classifier",
         "FISTA shrinkage-thresholding optimizer",
         "full Alibi binary search over c",
+        "k-d-tree prototype selection",
+        "TrustScore filtering",
     ]
+    if args.prototype_space == "encoder":
+        cfproto_implemented.append("encoder-space class prototypes via autoencoder encoder")
+        if args.prototype_mode in {"knn_mean", "knn_point"}:
+            cfproto_implemented.append(
+                "local target-class k-nearest encoder prototypes"
+            )
+        cfproto_legacy.append("ResNet18 penultimate feature prototypes")
+    else:
+        cfproto_legacy.append("ResNet18 penultimate feature prototypes")
+        cfproto_not_implemented.append(
+            "encoder-space class prototypes via autoencoder encoder"
+        )
     if args.autoencoder_path:
         cfproto_implemented.append("optional autoencoder reconstruction loss")
     else:
@@ -906,6 +1281,7 @@ def main():
             "attack_const": args.attack_const,
             "c_init": args.c_init,
             "c_steps": args.c_steps,
+            "c_search_mode": args.c_search_mode,
             "kappa": args.kappa,
             "lambda_l1": args.lambda_l1,
             "lambda_l2": args.lambda_l2,
@@ -913,6 +1289,12 @@ def main():
             "lambda_proto": args.lambda_proto,
             "autoencoder_path": args.autoencoder_path,
             "gamma": args.gamma,
+            "prototype_space": args.prototype_space,
+            "prototype_mode": args.prototype_mode,
+            "prototype_k": args.prototype_k,
+            "selection_metric": args.selection_metric,
+            "beta": args.beta,
+            "lr_schedule": args.lr_schedule,
             "max_delta": args.max_delta,
             "perturbation_resolution": args.perturbation_resolution,
             "target_strategy": args.target_strategy,
@@ -934,7 +1316,37 @@ def main():
         ),
         "cfproto_alignment_note": {
             "implemented": cfproto_implemented,
+            "legacy": cfproto_legacy,
             "not_implemented": cfproto_not_implemented,
+            "prototype_space_note": (
+                "Autoencoder encoder-space prototypes are closer to the CFProto "
+                "idea than ResNet18 classifier-feature prototypes. This script "
+                "still remains a PyTorch adaptation rather than a full Alibi "
+                "CounterfactualProto reproduction."
+            ),
+        },
+        "prototype_configuration": {
+            "prototype_space": args.prototype_space,
+            "prototype_mode": args.prototype_mode,
+            "prototype_k": args.prototype_k,
+            "prototype_source": prototype_source,
+            "prototype_shape": list(prototypes.shape) if prototypes is not None else None,
+            "autoencoder_prototypes_used": args.prototype_space == "encoder",
+            "legacy_resnet_feature_prototypes": args.prototype_space == "resnet",
+            "local_knn_prototypes_used": args.prototype_mode in {"knn_mean", "knn_point"},
+            "preferred_cfproto_near_configuration": (
+                "--prototype_space encoder with --autoencoder_path"
+            ),
+        },
+        "manifest_fairness_note": {
+            "manifest_samples_unchanged": args.manifest_path is not None,
+            "manifest_targets_unchanged": args.manifest_path is not None,
+            "target_selection_in_manifest_mode": (
+                "record['target_class_index'] is used directly; target_strategy is ignored."
+                if args.manifest_path
+                else "non-manifest mode may use target_strategy"
+            ),
+            "invalid_counterfactuals_filtered": False,
         },
         "evaluation_manifest": {
             "path": args.manifest_path,
