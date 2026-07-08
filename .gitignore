@@ -64,8 +64,8 @@ results/fixed_evaluation_smoke/
 results/qualitative_figures/**/*.png
 results/qualitative_figures/**/*.jpg
 results/qualitative_figures/**/*.jpeg
-results/meeting_paul_tuesday/
-results/meeting_paul_tuesday/images/
+results/qualitative_selection/
+results/qualitative_selection/images/
 results/diffusion_training_setup/openai_logdir/
 
 # Local debug, smoke-test, and ablation outputs
