@@ -4,10 +4,13 @@ This table is generated from method `metadata.json` files.
 
 | Method | Dataset | Samples | Validity | Mean CF confidence | Mean change | Mean runtime (s) | Metadata |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| PyTorch prototype-guided optimization baseline | BUSI | 15 | 1.0000 | 0.9978 | 0.0559 | 5.24 | `results/fixed_evaluation/prototype_busi_balanced_manifest/metadata.json` |
-| PyTorch prototype-guided optimization baseline | Pneumonia | 20 | 1.0000 | 0.9928 | 0.1442 | 5.69 | `results/fixed_evaluation/prototype_pneumonia_balanced_manifest/metadata.json` |
-| PyTorch prototype-guided plausibility ablation | BUSI | 15 | 1.0000 | 0.9953 | 0.0315 | 4.78 | `results/fixed_evaluation/prototype_plausibility_busi_l2_20_tv_0_5_delta_0_08/metadata.json` |
-| PyTorch prototype-guided plausibility ablation | Pneumonia | 20 | 1.0000 | 0.9814 | 0.0934 | 4.76 | `results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/metadata.json` |
+| cfproto_encoder_knn final CFProto-nearer prototype-guided method | BUSI | 15 | 1.0000 | 0.5471 | 0.0084 | 7.43 | `results/final/cfproto_encoder_knn/busi/metadata.json` |
+| cfproto_encoder_knn final CFProto-nearer prototype-guided method | Pneumonia | 20 | 0.9000 | 0.5767 | 0.0108 | 8.58 | `results/final/cfproto_encoder_knn/pneumonia/metadata.json` |
+| Prototype-guided legacy ResNet/class-mean baseline | BUSI | 15 | 1.0000 | 0.9978 | 0.0559 | 5.24 | `results/fixed_evaluation/prototype_busi_balanced_manifest/metadata.json` |
+| Prototype-guided legacy ResNet/class-mean baseline | Pneumonia | 20 | 1.0000 | 0.9928 | 0.1442 | 5.69 | `results/fixed_evaluation/prototype_pneumonia_balanced_manifest/metadata.json` |
+| Prototype-guided plausibility ablation | BUSI | 15 | 1.0000 | 0.9953 | 0.0315 | 4.78 | `results/fixed_evaluation/prototype_plausibility_busi_l2_20_tv_0_5_delta_0_08/metadata.json` |
+| Prototype-guided plausibility ablation | Pneumonia | 20 | 1.0000 | 0.9814 | 0.0934 | 4.76 | `results/fixed_evaluation/prototype_plausibility_pneumonia_l2_20_tv_0_5_delta_0_08/metadata.json` |
+| Prototype-guided legacy CFProto-aligned ablation | BUSI | 15 | 1.0000 | 0.9767 | 0.0318 | 3.93 | `results/fixed_evaluation/prototype_cfproto_aligned_busi_cw_hinge_l1_csearch/metadata.json` |
 | Retrieval-based nearest-unlike-neighbor baseline | BUSI | 15 | 1.0000 | 0.8191 | 0.8516 | 0.01 | `results/fixed_evaluation/retrieval_nun_busi_balanced_manifest/metadata.json` |
 | Retrieval-based nearest-unlike-neighbor baseline | Pneumonia | 20 | 1.0000 | 0.6496 | 0.8741 | 0.01 | `results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/metadata.json` |
 | SEDC-T original-style best-first segment replacement | BUSI | 15 | 0.8000 | 0.6674 | 0.1517 | 6.59 | `results/fixed_evaluation/sedc_t_original_style_busi_balanced_manifest/metadata.json` |
@@ -26,3 +29,5 @@ This table is generated from method `metadata.json` files.
 - Validity only checks whether the model prediction changed to the target class.
 - Mean change is method-dependent and should be interpreted together with the qualitative images.
 - Medical plausibility must be discussed separately from model validity.
+- The `cfproto_encoder_knn` rows are the final CFProto-nearer prototype-guided runs. Earlier prototype-guided rows are legacy baselines or ablations and should not be treated as replacements for the final method.
+- The CFProto-nearer implementation still is not a full Alibi CFProto reproduction; FISTA/shrinkage, TrustScore, the original TensorFlow graph, and original Alibi k-d-tree machinery are not fully reproduced.
