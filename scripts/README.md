@@ -16,7 +16,7 @@ scripts below.
 | `create_evaluation_manifest.py` | Create fixed correctly classified evaluation samples for counterfactual comparison. |
 | `run_cfproto_pytorch.py` | Run the CFProto-nearer prototype-guided optimization baseline with encoder-kNN prototypes, adaptive c-search, elastic-net selection, polynomial learning-rate decay, and targeted margin loss. |
 | `run_retrieval_nun_pytorch.py` | Run the retrieval-based nearest-unlike-neighbor case baseline. |
-| `run_sedc_t_pytorch.py` | Run SEDC-T original-style or the faster project variant via `--search_mode`. |
+| `run_sedc_t_pytorch.py` | Run SEDC-T original-style best-first, plus the retained Pneumonia lung-field ROI ablation via `--roi_mode lung_fields`. |
 | `run_dvce_medical_prototype.py` | Run the DVCE-style diffusion-guided counterfactual prototype. |
 | `summarize_counterfactual_evaluation.py` | Generate compact summary tables from method metadata files. |
 | `select_interpretable_examples.py` | Select good, difficult, and failure examples from existing metadata for qualitative inspection. |

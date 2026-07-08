@@ -54,6 +54,15 @@ def record_mean(records, key):
     return float(sum(values) / len(values))
 
 
+def cfproto_variant_label(metadata):
+    checkpoint = metadata.get("autoencoder_checkpoint") or {}
+    architecture = checkpoint.get("architecture")
+    latent_dim = checkpoint.get("latent_dim")
+    if architecture == "conv_autoencoder_bottleneck_v1" and latent_dim:
+        return f"CFProto-nearer prototype-guided optimization baseline (bottleneck{latent_dim})"
+    return "CFProto-nearer prototype-guided optimization baseline (encoder feature map)"
+
+
 def summarize_metadata(path):
     metadata = load_metadata(path)
     aggregate = get_aggregate(metadata)
@@ -71,19 +80,15 @@ def summarize_metadata(path):
             and parameters.get("c_search_mode") == "adaptive_binary"
             and parameters.get("selection_metric") == "elastic_net"
         ):
-            method = "CFProto-nearer prototype-guided optimization baseline"
+            method = cfproto_variant_label(metadata)
         else:
             method = "Removed non-final prototype-guided result"
     if method == "SEDC-T-style targeted segment replacement":
-        search_mode = parameters.get("search_mode")
-        roi_mode = parameters.get("roi_mode") or "none"
-        max_segments = parameters.get("max_segments")
-        if search_mode == "greedy_minimal" and max_segments and max_segments > 6:
-            method = f"SEDC-T tuned project variant ({roi_mode}, max {max_segments})"
-        elif roi_mode != "none":
-            method = f"SEDC-T project variant ({roi_mode})"
-        else:
-            method = "SEDC-T project variant"
+        method = "Removed non-final SEDC-T result"
+    if method == "SEDC-T original-style best-first segment replacement":
+        method = "SEDC-T original-style best-first"
+    if method == "SEDC-T-style lung-field ROI ablation":
+        method = "SEDC-T lung-field ROI ablation"
     if method == "Retrieval-based nearest-unlike-neighbor baseline":
         method = "Retrieval-based nearest-unlike-neighbor baseline"
     diffusion_checkpoint_path = str(metadata.get("diffusion_checkpoint_path") or "")

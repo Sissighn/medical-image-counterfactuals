@@ -28,11 +28,13 @@ CATEGORY_ORDER = [
 ]
 
 METHOD_ORDER = [
+    "CFProto-nearer prototype-guided optimization baseline (encoder feature map)",
+    "CFProto-nearer prototype-guided optimization baseline (bottleneck256)",
+    "CFProto-nearer prototype-guided optimization baseline (bottleneck1024)",
     "CFProto-nearer prototype-guided optimization baseline",
     "Retrieval-based nearest-unlike-neighbor baseline",
     "SEDC-T original-style best-first",
-    "SEDC-T project variant",
-    "SEDC-T tuned project variant",
+    "SEDC-T lung-field ROI ablation",
     "DVCE-style, OpenAI checkpoint",
     "DVCE-style, Pneumonia fine-tuned checkpoint",
 ]
