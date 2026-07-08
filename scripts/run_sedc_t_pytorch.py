@@ -9,8 +9,13 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from skimage.segmentation import slic
+from skimage.segmentation import quickshift
 from torchvision import models, utils
+
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
@@ -23,7 +28,6 @@ from src.evaluation_manifest import (
     manifest_record_metadata,
 )
 from src.train_model import get_device
-
 
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
 IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
@@ -96,13 +100,17 @@ def choose_samples(model, test_loader, device, max_samples):
     return samples
 
 
-def choose_manifest_samples(model, test_dataset, device, manifest_path, max_records=None):
+def choose_manifest_samples(
+    model, test_dataset, device, manifest_path, max_records=None
+):
     manifest, records = load_manifest_records(manifest_path, max_records=max_records)
     samples = []
 
     with torch.no_grad():
         for record in records:
-            image, label, image_path = load_image_from_manifest_record(test_dataset, record)
+            image, label, image_path = load_image_from_manifest_record(
+                test_dataset, record
+            )
             image = image.to(device)
             logits = model(image)
             probabilities = F.softmax(logits, dim=1)
@@ -143,29 +151,53 @@ def select_target_classes(probabilities, original_class, strategy):
     return [candidates[0]]
 
 
-def create_segments(image_pixels, n_segments, compactness):
+def create_segments(
+    image_pixels,
+    quickshift_kernel_size,
+    quickshift_max_dist,
+    quickshift_ratio,
+):
     image_np = image_pixels[0].detach().cpu().permute(1, 2, 0).numpy()
-    return slic(
+    return quickshift(
         image_np,
-        n_segments=n_segments,
-        compactness=compactness,
-        start_label=0,
+        kernel_size=quickshift_kernel_size,
+        max_dist=quickshift_max_dist,
+        ratio=quickshift_ratio,
+        convert2lab=True,
         channel_axis=-1,
     )
 
 
-def create_replacement_image(image_pixels, mode, blur_kernel):
-    if mode == "mean":
-        mean_value = image_pixels.mean(dim=(2, 3), keepdim=True)
-        return mean_value.expand_as(image_pixels)
+def normalize_blur_kernel(blur_kernel):
+    if blur_kernel < 1:
+        raise ValueError("blur_kernel must be >= 1.")
+    if blur_kernel % 2 == 0:
+        corrected = blur_kernel + 1
+        print(
+            f"WARNING: blur_kernel={blur_kernel} is even; using {corrected} "
+            "for Gaussian/average blur."
+        )
+        return corrected
+    return blur_kernel
 
-    if mode == "blur":
-        padding = blur_kernel // 2
-        return F.avg_pool2d(
-            image_pixels, kernel_size=blur_kernel, stride=1, padding=padding
-        ).clamp(0.0, 1.0)
 
-    raise ValueError(f"Unsupported replacement mode: {mode}")
+def create_replacement_image(image_pixels, blur_kernel):
+    if cv2 is None:
+        raise ImportError(
+            "SEDC-T Gaussian-blur replacement requires OpenCV. "
+            "Install opencv-python with `pip install -r requirements.txt`."
+        )
+
+    blur_kernel = normalize_blur_kernel(blur_kernel)
+    image_np = image_pixels[0].detach().cpu().permute(1, 2, 0).numpy()
+    blurred_np = cv2.GaussianBlur(image_np, (blur_kernel, blur_kernel), 0)
+    blurred_np = np.clip(blurred_np, 0.0, 1.0)
+    return (
+        torch.from_numpy(blurred_np)
+        .permute(2, 0, 1)
+        .unsqueeze(0)
+        .to(device=image_pixels.device, dtype=image_pixels.dtype)
+    )
 
 
 def replace_segments(image_pixels, replacement_pixels, segments, selected_segments):
@@ -216,42 +248,19 @@ def create_roi_mask(shape, roi_mode):
         mask[y_min:y_max, right_x_min:right_x_max] = True
         return mask
 
-    if roi_mode == "central_chest":
-        y_min = int(height * 0.10)
-        y_max = int(height * 0.90)
-        x_min = int(width * 0.08)
-        x_max = int(width * 0.92)
-
-        mask[y_min:y_max, x_min:x_max] = True
-        return mask
-
     raise ValueError(f"Unsupported ROI mode: {roi_mode}")
 
 
-def get_allowed_segments(segments, border_fraction, roi_mode, roi_min_overlap):
-    all_segments = set(int(segment_id) for segment_id in torch.unique(torch.as_tensor(segments)))
-    height, width = segments.shape
-    min_y = int(height * border_fraction)
-    max_y = int(height * (1.0 - border_fraction))
-    min_x = int(width * border_fraction)
-    max_x = int(width * (1.0 - border_fraction))
+def get_allowed_segments(segments, roi_mode, roi_min_overlap):
+    all_segments = set(
+        int(segment_id) for segment_id in torch.unique(torch.as_tensor(segments))
+    )
     segments_tensor = torch.as_tensor(segments)
     roi_mask = create_roi_mask(segments.shape, roi_mode)
 
     allowed = set()
     for segment_id in all_segments:
         segment_mask = segments_tensor == segment_id
-        ys, xs = torch.where(segment_mask)
-
-        inside_border = (
-            int(ys.min()) >= min_y
-            and int(ys.max()) < max_y
-            and int(xs.min()) >= min_x
-            and int(xs.max()) < max_x
-        )
-        if not inside_border:
-            continue
-
         roi_overlap = float((segment_mask & roi_mask).float().sum().item())
         roi_overlap /= float(segment_mask.float().sum().item())
         if roi_overlap >= roi_min_overlap:
@@ -263,7 +272,10 @@ def get_allowed_segments(segments, border_fraction, roi_mode, roi_min_overlap):
 def evaluate_segment_set(
     model,
     image_pixels,
+    original_class,
     target_class,
+    original_original_class_probability,
+    original_target_probability,
     segments,
     replacement_pixels,
     selected_segments,
@@ -274,101 +286,27 @@ def evaluate_segment_set(
     )
     prediction, probabilities = predict(model, candidate_pixels)
     target_probability = float(probabilities[target_class])
+    original_class_probability = float(probabilities[original_class])
+    target_score_increase = target_probability - original_target_probability
+    original_class_score_decrease = (
+        original_original_class_probability - original_class_probability
+    )
+    expansion_score = target_probability - original_class_probability
 
     return {
         "segment_id": added_segment,
-        "segments": list(selected_segments),
+        "segments": sorted(int(segment_id) for segment_id in selected_segments),
         "prediction": prediction,
         "probabilities": probabilities,
         "target_probability": target_probability,
+        "original_class_probability": original_class_probability,
+        "target_score_increase": target_score_increase,
+        "original_class_score_decrease": original_class_score_decrease,
+        "expansion_score": expansion_score,
         "pixels": candidate_pixels,
         "changed_pixel_fraction": compute_segment_pixel_fraction(
             segments, selected_segments
         ),
-    }
-
-
-def generate_sedc_t_greedy_minimal_counterfactual(
-    model,
-    image_pixels,
-    target_class,
-    segments,
-    replacement_pixels,
-    max_segments,
-    allowed_segments,
-):
-    start_time = time.time()
-    available_segments = set(allowed_segments)
-    selected_segments = []
-    search_history = []
-    best_result = None
-
-    if not available_segments:
-        raise RuntimeError("No segments available for SEDC-T search.")
-
-    for step in range(max_segments):
-        best_candidate = None
-        valid_candidates = []
-
-        for segment_id in sorted(available_segments):
-            candidate_segments = selected_segments + [segment_id]
-            candidate = evaluate_segment_set(
-                model=model,
-                image_pixels=image_pixels,
-                target_class=target_class,
-                segments=segments,
-                replacement_pixels=replacement_pixels,
-                selected_segments=candidate_segments,
-                added_segment=segment_id,
-            )
-
-            if candidate["prediction"] == target_class:
-                valid_candidates.append(candidate)
-
-            if (
-                best_candidate is None
-                or candidate["target_probability"] > best_candidate["target_probability"]
-            ):
-                best_candidate = candidate
-
-        if valid_candidates:
-            best_candidate = sorted(
-                valid_candidates,
-                key=lambda item: (
-                    item["changed_pixel_fraction"],
-                    -item["target_probability"],
-                ),
-            )[0]
-
-        selected_segments = best_candidate["segments"]
-        available_segments.remove(best_candidate["segment_id"])
-        search_history.append(
-            {
-                "step": step + 1,
-                "added_segment": best_candidate["segment_id"],
-                "selected_segments": selected_segments,
-                "prediction": best_candidate["prediction"],
-                "target_probability": best_candidate["target_probability"],
-            }
-        )
-        best_result = best_candidate
-
-        if best_candidate["prediction"] == target_class:
-            break
-
-        if not available_segments:
-            break
-
-    runtime = time.time() - start_time
-
-    return {
-        "image": best_result["pixels"],
-        "selected_segments": selected_segments,
-        "prediction": best_result["prediction"],
-        "probabilities": best_result["probabilities"],
-        "valid": best_result["prediction"] == target_class,
-        "runtime_seconds": runtime,
-        "search_history": search_history,
     }
 
 
@@ -378,17 +316,16 @@ def generate_sedc_t_original_best_first_counterfactual(
     target_class,
     segments,
     replacement_pixels,
-    max_segments,
     allowed_segments,
     timeout_seconds,
 ):
-    """Original-style SEDC-T best-first search by target-score increase.
+    """Original-style SEDC-T best-first search by class-margin expansion.
 
     This mirrors the reference implementation's core search more closely than
     the project-specific greedy-minimal variant: evaluate all one-segment
     removals/replacements, repeatedly expand the pending segment set with the
-    largest target-score increase, and choose the valid result with the highest
-    target score increase.
+    largest target-vs-original class probability margin, and choose valid
+    results by minimal segment evidence first.
     """
 
     start_time = time.time()
@@ -396,7 +333,8 @@ def generate_sedc_t_original_best_first_counterfactual(
     if not allowed_segments:
         raise RuntimeError("No segments available for SEDC-T search.")
 
-    _, original_probabilities = predict(model, image_pixels)
+    original_class, original_probabilities = predict(model, image_pixels)
+    original_original_class_probability = float(original_probabilities[original_class])
     original_target_probability = float(original_probabilities[target_class])
     pending = []
     valid_candidates = []
@@ -405,12 +343,11 @@ def generate_sedc_t_original_best_first_counterfactual(
     search_history = []
 
     def timed_out():
-        return timeout_seconds is not None and time.time() - start_time > timeout_seconds
+        return (
+            timeout_seconds is not None and time.time() - start_time > timeout_seconds
+        )
 
     def add_candidate(candidate, step_label):
-        candidate["score_increase"] = (
-            candidate["target_probability"] - original_target_probability
-        )
         evaluated_candidates.append(candidate)
         search_history.append(
             {
@@ -419,7 +356,12 @@ def generate_sedc_t_original_best_first_counterfactual(
                 "selected_segments": candidate["segments"],
                 "prediction": candidate["prediction"],
                 "target_probability": candidate["target_probability"],
-                "score_increase": candidate["score_increase"],
+                "original_class_probability": candidate["original_class_probability"],
+                "target_score_increase": candidate["target_score_increase"],
+                "original_class_score_decrease": candidate[
+                    "original_class_score_decrease"
+                ],
+                "expansion_score": candidate["expansion_score"],
             }
         )
 
@@ -434,7 +376,10 @@ def generate_sedc_t_original_best_first_counterfactual(
         candidate = evaluate_segment_set(
             model=model,
             image_pixels=image_pixels,
+            original_class=original_class,
             target_class=target_class,
+            original_original_class_probability=original_original_class_probability,
+            original_target_probability=original_target_probability,
             segments=segments,
             replacement_pixels=replacement_pixels,
             selected_segments=list(segment_set),
@@ -445,17 +390,13 @@ def generate_sedc_t_original_best_first_counterfactual(
             break
 
     while not valid_candidates and pending and not timed_out():
-        expandable_indices = [
-            idx
-            for idx, candidate in enumerate(pending)
-            if len(candidate["segments"]) < max_segments
-        ]
+        expandable_indices = list(range(len(pending)))
         if not expandable_indices:
             break
 
         best_pending_idx = max(
             expandable_indices,
-            key=lambda idx: pending[idx]["score_increase"],
+            key=lambda idx: pending[idx]["expansion_score"],
         )
         base_candidate = pending.pop(best_pending_idx)
         base_segments = set(base_candidate["segments"])
@@ -472,7 +413,10 @@ def generate_sedc_t_original_best_first_counterfactual(
             candidate = evaluate_segment_set(
                 model=model,
                 image_pixels=image_pixels,
+                original_class=original_class,
                 target_class=target_class,
+                original_original_class_probability=original_original_class_probability,
+                original_target_probability=original_target_probability,
                 segments=segments,
                 replacement_pixels=replacement_pixels,
                 selected_segments=list(segment_set),
@@ -483,16 +427,30 @@ def generate_sedc_t_original_best_first_counterfactual(
                 break
 
     runtime = time.time() - start_time
+    timed_out_flag = timed_out()
+
+    if not evaluated_candidates:
+        raise RuntimeError("SEDC-T best-first search did not evaluate any candidates.")
 
     if valid_candidates:
+        # The reference SEDC-T implementation stops as soon as a valid
+        # expansion level is found and then selects the candidate with the
+        # highest target-score increase within that level.
         best_result = max(
             valid_candidates,
-            key=lambda candidate: candidate["score_increase"],
+            key=lambda candidate: (
+                candidate["target_score_increase"],
+                candidate["target_probability"],
+                candidate["expansion_score"],
+            ),
         )
     else:
         best_result = max(
             evaluated_candidates,
-            key=lambda candidate: candidate["target_probability"],
+            key=lambda candidate: (
+                candidate["expansion_score"],
+                candidate["target_probability"],
+            ),
         )
 
     return {
@@ -504,47 +462,15 @@ def generate_sedc_t_original_best_first_counterfactual(
         "runtime_seconds": runtime,
         "search_history": search_history,
         "search_diagnostics": {
+            "original_class": original_class,
+            "original_original_class_probability": original_original_class_probability,
             "original_target_probability": original_target_probability,
             "evaluated_candidates": len(evaluated_candidates),
             "valid_candidates": len(valid_candidates),
             "pending_candidates": len(pending),
-            "timed_out": timed_out(),
+            "timed_out": timed_out_flag,
         },
     }
-
-
-def generate_sedc_t_counterfactual(
-    model,
-    image_pixels,
-    target_class,
-    segments,
-    replacement_pixels,
-    max_segments,
-    allowed_segments,
-    search_mode,
-    timeout_seconds,
-):
-    if search_mode == "original_best_first":
-        return generate_sedc_t_original_best_first_counterfactual(
-            model=model,
-            image_pixels=image_pixels,
-            target_class=target_class,
-            segments=segments,
-            replacement_pixels=replacement_pixels,
-            max_segments=max_segments,
-            allowed_segments=allowed_segments,
-            timeout_seconds=timeout_seconds,
-        )
-
-    return generate_sedc_t_greedy_minimal_counterfactual(
-        model=model,
-        image_pixels=image_pixels,
-        target_class=target_class,
-        segments=segments,
-        replacement_pixels=replacement_pixels,
-        max_segments=max_segments,
-        allowed_segments=allowed_segments,
-    )
 
 
 def compute_change_metrics(original_pixels, cf_pixels, selected_segments, segments):
@@ -579,7 +505,9 @@ def save_sedc_t_visualization(
     counterfactual_confidence,
     valid_counterfactual,
 ):
-    utils.save_image(torch.cat([original_pixels, cf_pixels], dim=0), output_path, nrow=2)
+    utils.save_image(
+        torch.cat([original_pixels, cf_pixels], dim=0), output_path, nrow=2
+    )
 
     figure_path = output_path.with_suffix(".summary.png")
     fig, axes = plt.subplots(1, 4, figsize=(13, 4.8))
@@ -606,7 +534,9 @@ def save_sedc_t_visualization(
     fig.colorbar(diff_plot, ax=axes[2], fraction=0.046, pad=0.04)
 
     axes[3].imshow(original_gray, cmap="gray", vmin=0.0, vmax=1.0)
-    selected_overlay = np.ma.masked_where(selected_mask.numpy() == 0, selected_mask.numpy())
+    selected_overlay = np.ma.masked_where(
+        selected_mask.numpy() == 0, selected_mask.numpy()
+    )
     overlay_plot = axes[3].imshow(
         selected_overlay,
         cmap="autumn",
@@ -668,6 +598,26 @@ def compute_aggregate_metrics(records):
     return aggregate
 
 
+def is_original_style_reference(args):
+    return args.roi_mode == "none"
+
+
+def method_fidelity_note(args):
+    if is_original_style_reference(args):
+        return (
+            "Original-style SEDC-T reference: best-first search, quickshift "
+            "segmentation, gaussian blur replacement, no ROI restriction, "
+            "no explicit segment-count cap."
+        )
+    return (
+        "Project-specific SEDC-T ROI ablation: same best-first search, "
+        "quickshift segmentation, and gaussian blur replacement as the "
+        "original-style reference, but candidate segments are restricted to "
+        "a geometric lung-field ROI. This is not part of the original SEDC-T "
+        "setup."
+    )
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_path", type=str, required=True)
@@ -686,19 +636,12 @@ def main():
         default=None,
         help="Optional cap for manifest mode. By default all manifest records are used.",
     )
-    parser.add_argument("--target_strategy", choices=["second_best", "all"], default="all")
-    parser.add_argument("--n_segments", type=int, default=40)
-    parser.add_argument("--compactness", type=float, default=10.0)
-    parser.add_argument("--max_segments", type=int, default=6)
     parser.add_argument(
-        "--search_mode",
-        choices=["greedy_minimal", "original_best_first"],
-        default="greedy_minimal",
-        help=(
-            "greedy_minimal keeps the previous project variant. "
-            "original_best_first follows the SEDC-T reference search more closely."
-        ),
+        "--target_strategy", choices=["second_best", "all"], default="all"
     )
+    parser.add_argument("--quickshift_kernel_size", type=int, default=4)
+    parser.add_argument("--quickshift_max_dist", type=float, default=200.0)
+    parser.add_argument("--quickshift_ratio", type=float, default=0.2)
     parser.add_argument(
         "--search_timeout_seconds",
         type=float,
@@ -708,14 +651,15 @@ def main():
             "Use 0 or a negative value to disable the timeout."
         ),
     )
-    parser.add_argument("--replacement_mode", choices=["blur", "mean"], default="blur")
     parser.add_argument("--blur_kernel", type=int, default=31)
-    parser.add_argument("--exclude_border_fraction", type=float, default=0.0)
     parser.add_argument(
         "--roi_mode",
-        choices=["none", "central_chest", "lung_fields"],
+        choices=["none", "lung_fields"],
         default="none",
-        help="Restrict candidate segments to a simple geometric region of interest.",
+        help=(
+            "none is the original-style reference. lung_fields is the retained "
+            "Pneumonia ROI ablation."
+        ),
     )
     parser.add_argument(
         "--roi_min_overlap",
@@ -739,6 +683,10 @@ def main():
 
     print(f"Device: {device}")
     print(f"Classes: {classes}")
+    if is_original_style_reference(args):
+        print("Running original-style SEDC-T reference.")
+    else:
+        print(f"Running project-specific SEDC-T ablation: {method_fidelity_note(args)}")
     manifest = None
     if args.manifest_path:
         print(f"Loading fixed evaluation manifest: {args.manifest_path}")
@@ -764,16 +712,23 @@ def main():
     for sample_idx, sample in enumerate(samples):
         image = sample["image"]
         original_pixels = denormalize(image).detach()
-        replacement_pixels = create_replacement_image(
-            original_pixels, args.replacement_mode, args.blur_kernel
+        replacement_pixels = create_replacement_image(original_pixels, args.blur_kernel)
+        segments = create_segments(
+            image_pixels=original_pixels,
+            quickshift_kernel_size=args.quickshift_kernel_size,
+            quickshift_max_dist=args.quickshift_max_dist,
+            quickshift_ratio=args.quickshift_ratio,
         )
-        segments = create_segments(original_pixels, args.n_segments, args.compactness)
         allowed_segments, roi_mask = get_allowed_segments(
             segments,
-            args.exclude_border_fraction,
             args.roi_mode,
             args.roi_min_overlap,
         )
+        if not allowed_segments:
+            raise RuntimeError(
+                "No allowed SEDC-T segments remain after ROI filtering. "
+                "Use --roi_mode none or lower --roi_min_overlap."
+            )
 
         original_class = sample["prediction"]
         original_confidence = float(sample["probabilities"][original_class])
@@ -790,15 +745,13 @@ def main():
             print(
                 f"Sample {sample_idx}: {classes[original_class]} -> {classes[target_class]}"
             )
-            result = generate_sedc_t_counterfactual(
+            result = generate_sedc_t_original_best_first_counterfactual(
                 model=model,
                 image_pixels=original_pixels,
                 target_class=target_class,
                 segments=segments,
                 replacement_pixels=replacement_pixels,
-                max_segments=args.max_segments,
                 allowed_segments=allowed_segments,
-                search_mode=args.search_mode,
                 timeout_seconds=timeout_seconds,
             )
             attempt = {
@@ -812,9 +765,13 @@ def main():
                 best_attempt = attempt
                 break
 
-            if best_attempt is None or result["probabilities"][target_class] > best_attempt[
-                "result"
-            ]["probabilities"][best_attempt["target_class_index"]]:
+            if (
+                best_attempt is None
+                or result["probabilities"][target_class]
+                > best_attempt["result"]["probabilities"][
+                    best_attempt["target_class_index"]
+                ]
+            ):
                 best_attempt = attempt
 
         target_class = best_attempt["target_class_index"]
@@ -894,21 +851,22 @@ def main():
     metadata = {
         "method": (
             "SEDC-T original-style best-first segment replacement"
-            if args.search_mode == "original_best_first"
-            else "SEDC-T-style targeted segment replacement"
+            if is_original_style_reference(args)
+            else "SEDC-T-style lung-field ROI ablation"
         ),
         "model_path": args.model_path,
         "dataset_path": args.dataset_path,
         "classes": classes,
+        "method_fidelity_note": method_fidelity_note(args),
         "parameters": {
-            "n_segments": args.n_segments,
-            "compactness": args.compactness,
-            "max_segments": args.max_segments,
-            "search_mode": args.search_mode,
+            "segmentation_method": "quickshift",
+            "quickshift_kernel_size": args.quickshift_kernel_size,
+            "quickshift_max_dist": args.quickshift_max_dist,
+            "quickshift_ratio": args.quickshift_ratio,
+            "search_mode": "original_best_first",
             "search_timeout_seconds": timeout_seconds,
-            "replacement_mode": args.replacement_mode,
+            "replacement_mode": "gaussian_blur",
             "blur_kernel": args.blur_kernel,
-            "exclude_border_fraction": args.exclude_border_fraction,
             "roi_mode": args.roi_mode,
             "roi_min_overlap": args.roi_min_overlap,
             "target_strategy": args.target_strategy,
