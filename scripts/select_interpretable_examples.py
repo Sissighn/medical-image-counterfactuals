@@ -57,23 +57,8 @@ def infer_method(metadata):
             and parameters.get("c_search_mode") == "adaptive_binary"
             and parameters.get("selection_metric") == "elastic_net"
         ):
-            return "cfproto_encoder_knn final CFProto-nearer prototype-guided method"
-        if parameters.get("prototype_space") == "encoder":
-            return "Prototype-guided encoder-space CFProto-near ablation"
-        if (
-            parameters.get("attack_loss") == "cw_hinge"
-            or parameters.get("lambda_l1", 0) > 0
-            or parameters.get("c_steps", 1) > 1
-            or parameters.get("target_strategy") == "prototype_distance"
-        ):
-            return "Prototype-guided legacy CFProto-aligned ablation"
-        if (
-            parameters.get("lambda_l2", 0) > 5.0
-            or parameters.get("lambda_tv", 0) > 0.2
-            or parameters.get("max_delta", 1.0) < 0.12
-        ):
-            return "Prototype-guided plausibility ablation"
-        return "Prototype-guided legacy ResNet/class-mean baseline"
+            return "CFProto-nearer prototype-guided optimization baseline"
+        return "Removed non-final prototype-guided result"
 
     return method
 
@@ -103,7 +88,7 @@ def record_primary_change(record, method):
     if method.startswith("Retrieval-based"):
         if "embedding_distance" in record:
             return float(record["embedding_distance"])
-    if method.startswith("Prototype-guided"):
+    if method.startswith("CFProto-nearer"):
         if "l1_mean" in change_metrics:
             return float(change_metrics["l1_mean"])
         if "mean_absolute_difference" in record:
@@ -211,7 +196,7 @@ def normalize_record(metadata_path, metadata, record):
             "embedding_distance"
             if method.startswith("Retrieval-based")
             else "l1_mean"
-            if method.startswith("Prototype-guided")
+            if method.startswith("CFProto-nearer")
             else "changed_pixel_fraction"
         ),
         "embedding_distance": embedding_distance,
@@ -451,12 +436,8 @@ def write_tradeoff_table(summaries, output_dir):
     ]
     for summary in summaries:
         method = summary["method"]
-        if method.startswith("cfproto_encoder_knn"):
+        if method.startswith("CFProto-nearer"):
             note = "Final CFProto-nearer prototype-guided run; model-valid but not full Alibi CFProto."
-        elif "Prototype-guided plausibility" in method:
-            note = "Ablation; same validity with stronger regularization and less changed area."
-        elif "Prototype" in method:
-            note = "Legacy or ablation; often diffuse, retained for comparison."
         elif "Retrieval-based" in method:
             note = "Real target-class examples; intuitive case baseline but not a minimal edit."
         elif "SEDC-T original" in method:
@@ -488,9 +469,8 @@ def write_readme(output_dir):
         "",
         "## Main Story",
         "",
-        "- The `cfproto_encoder_knn` run is the final CFProto-nearer prototype-guided method.",
-        "- Earlier prototype-guided ResNet/class-mean runs are retained as legacy baselines or ablations.",
-        "- Prototype-guided methods can reach high model validity, but their changes are often diffuse.",
+        "- The CFProto-nearer prototype-guided run is the only retained prototype-guided result.",
+        "- Its changes can be model-valid without being medically plausible.",
         "- Retrieval-NUN retrieves real target-class cases and is visually intuitive, but it is not a minimal image edit.",
         "- SEDC-T provides localized region changes and is the clearest region-based method, but validity is lower, especially on Pneumonia.",
         "- SEDC-T tuning improves Pneumonia only slightly, suggesting a method/data limitation rather than a simple parameter issue.",

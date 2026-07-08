@@ -28,11 +28,7 @@ CATEGORY_ORDER = [
 ]
 
 METHOD_ORDER = [
-    "cfproto_encoder_knn final CFProto-nearer prototype-guided method",
-    "Prototype-guided legacy ResNet/class-mean baseline",
-    "Prototype-guided plausibility ablation",
-    "Prototype-guided legacy CFProto-aligned ablation",
-    "Prototype-guided encoder-space CFProto-near ablation",
+    "CFProto-nearer prototype-guided optimization baseline",
     "Retrieval-based nearest-unlike-neighbor baseline",
     "SEDC-T original-style best-first",
     "SEDC-T project variant",
@@ -512,7 +508,7 @@ def write_readme(
             "large.",
             "",
             "For method-level interpretation and the trade-offs between "
-            "Prototype-guided optimization, Retrieval-NUN, SEDC-T, and DVCE, see:",
+            "CFProto-nearer prototype-guided optimization, Retrieval-NUN, SEDC-T, and DVCE, see:",
             "",
             "- `results/qualitative_figures/qualitative_results_interpretation.md`",
             "",
