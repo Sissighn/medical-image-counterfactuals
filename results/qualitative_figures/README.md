@@ -17,24 +17,19 @@ The comparison script does not recompute, stretch, or per-image normalize the em
 
 This is intentional: very dark difference maps indicate genuinely small absolute changes on a fixed scale, not a plotting error. Stronger colors would only be appropriate with an explicitly labelled alternate scale, because otherwise tiny differences could appear misleadingly large.
 
-For method-level interpretation and the trade-offs between Prototype-guided optimization, Retrieval-NUN, SEDC-T, and DVCE, see:
+For method-level interpretation and the trade-offs between CFProto-nearer prototype-guided optimization, Retrieval-NUN, SEDC-T, and DVCE, see:
 
 - `results/qualitative_figures/qualitative_results_interpretation.md`
 
 Generated per-method figures:
 
-- `results/qualitative_figures/per_method/busi/cfproto_encoder_knn_final_cfproto_nearer_prototype_guided_method.png`
-- `results/qualitative_figures/per_method/busi/prototype_guided_legacy_resnet_class_mean_baseline.png`
-- `results/qualitative_figures/per_method/busi/prototype_guided_plausibility_ablation.png`
-- `results/qualitative_figures/per_method/busi/prototype_guided_legacy_cfproto_aligned_ablation.png`
+- `results/qualitative_figures/per_method/busi/cfproto_nearer_prototype_guided_optimization_baseline.png`
 - `results/qualitative_figures/per_method/busi/retrieval_based_nearest_unlike_neighbor_baseline.png`
 - `results/qualitative_figures/per_method/busi/sedc_t_original_style_best_first.png`
 - `results/qualitative_figures/per_method/busi/sedc_t_project_variant.png`
 - `results/qualitative_figures/per_method/busi/sedc_t_tuned_project_variant_none_max_10.png`
 - `results/qualitative_figures/per_method/busi/dvce_style_openai_checkpoint.png`
-- `results/qualitative_figures/per_method/pneumonia/cfproto_encoder_knn_final_cfproto_nearer_prototype_guided_method.png`
-- `results/qualitative_figures/per_method/pneumonia/prototype_guided_legacy_resnet_class_mean_baseline.png`
-- `results/qualitative_figures/per_method/pneumonia/prototype_guided_plausibility_ablation.png`
+- `results/qualitative_figures/per_method/pneumonia/cfproto_nearer_prototype_guided_optimization_baseline.png`
 - `results/qualitative_figures/per_method/pneumonia/retrieval_based_nearest_unlike_neighbor_baseline.png`
 - `results/qualitative_figures/per_method/pneumonia/sedc_t_original_style_best_first.png`
 - `results/qualitative_figures/per_method/pneumonia/sedc_t_project_variant_lung_fields.png`

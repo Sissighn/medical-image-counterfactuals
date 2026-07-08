@@ -8,14 +8,9 @@ CFProto-nearer prototype-guided method.
 - Method name: `cfproto_encoder_knn`
 - Description: CFProto-nearer prototype-guided optimization baseline
 - Main variant: `prototype_space=encoder`, `prototype_mode=knn_mean`
-- Legacy variant: earlier ResNet/class-mean prototype-guided runs, retained only
-  as legacy baselines or ablations
-
 The final variant uses local target-class prototypes in the frozen
-ConvAutoencoder encoder space. This is closer to the CFProto idea than the
-earlier ResNet18 classifier-feature prototype space. It is still a
-PyTorch-based CFProto-nearer implementation, not a full Alibi
-`CounterfactualProto` reproduction.
+ConvAutoencoder encoder space. It is a PyTorch-based CFProto-nearer
+implementation, not a full Alibi `CounterfactualProto` reproduction.
 
 ## Dataset-Specific Paths
 
@@ -62,10 +57,8 @@ elastic-net selection score, and polynomial learning-rate schedule are included
 as CFProto-nearer mechanisms after small method checks showed no obvious
 technical instability.
 
-`gamma=0.0` is kept because the autoencoder reconstruction term was evaluated
-as an ablation and did not show robust additional benefit as a main
-configuration. This keeps the final method focused on encoder-space prototype
-guidance rather than adding another tuned plausibility term.
+`gamma=0.0` keeps the final method focused on encoder-space prototype guidance
+rather than adding a separate reconstruction penalty.
 
 The fixed evaluation manifests are not changed by this method. In manifest
 mode, samples and target classes come directly from the manifest, and invalid
