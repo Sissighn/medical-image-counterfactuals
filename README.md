@@ -28,7 +28,7 @@ Retained counterfactual directions:
 | CFProto-nearer prototype-guided optimization baseline | Optimized image perturbation with encoder-kNN prototypes |
 | Retrieval-based nearest-unlike-neighbor baseline | Case-based real target-class comparison |
 | SEDC-T-style segment replacement | Region-based/localized explanation |
-| DVCE-style diffusion-guided generation | Generative feasibility method |
+| DVCE original-style diffusion-guided generation | Generative feasibility method; final rows need regeneration, including optional Cone Projection with robust second classifiers |
 
 Central summaries:
 
@@ -112,6 +112,12 @@ PYTHONPATH=. python src/train_model.py \
   --pretrained
 ```
 
+Robust ResNet18 checkpoints for DVCE Cone Projection can be trained with:
+
+```text
+scripts/train_robust_resnet18_pgd.py
+```
+
 ## Fixed Evaluation Manifests
 
 The comparison uses fixed correctly classified test samples and fixed target
@@ -184,9 +190,9 @@ baseline, not a minimal edit.
 PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/final/sedc_t_original_style_quickshift_gaussian/busi \
+  --output_dir results/fixed_evaluation/sedc_t_busi_original_style \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
-  --roi_mode none
+  --search_timeout_seconds 30
 ```
 
 For the retained Pneumonia ROI ablation, use the same SEDC-T search and
@@ -196,23 +202,50 @@ replacement mechanism but restrict candidate segments to the lung-field ROI:
 PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --dataset_path data/processed/Pneumonia \
-  --output_dir results/final/sedc_t_lung_field_roi_quickshift_gaussian/pneumonia \
+  --output_dir results/fixed_evaluation/sedc_t_pneumonia_lung_field_roi \
   --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json \
-  --roi_mode lung_fields
+  --roi_mode lung_fields \
+  --search_timeout_seconds 30
 ```
 
-### DVCE-Style Generation
+Full run commands and method fidelity documentation are in:
+
+```text
+results/final_configs/sedc_t_run_commands.md
+results/final_configs/sedc_t_method_documentation.md
+```
+
+### DVCE Original-Style Generation
 
 ```bash
 PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/fixed_evaluation/dvce_busi_manifest_5_current_checkpoint \
+  --output_dir results/final/dvce_original_style/openai/busi \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
-  --manifest_max_samples 5 \
   --run_generation \
-  --timestep_respacing 50 \
-  --skip_timesteps 44
+  --device cuda \
+  --timestep_respacing 200 \
+  --skip_timesteps 100 \
+  --classifier_lambda 0.1 \
+  --lp_custom 1.0 \
+  --lp_custom_value 0.15 \
+  --denoise_dist_input \
+  --no-clip_denoised \
+  --diffusion_checkpoint_path external/DVCEs/checkpoints/256x256_diffusion_uncond.pt
+```
+
+Additional OpenAI/Pneumonia-medical/BUSI-medical checkpoint commands are stored in:
+
+```text
+results/final_configs/dvce_original_style_commands.md
+```
+
+Cone Projection setup, robust classifier training commands, smoke tests, and
+full fixed-manifest DVCE commands for the Uni GPU are stored in:
+
+```text
+results/final_configs/dvce_cone_projection_for_paul.md
 ```
 
 ## Current Fixed Evaluation Results
@@ -227,12 +260,14 @@ PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
 | CFProto bottleneck1024 ablation | Pneumonia | 20 | 0.55 | 0.7292 | 0.6312 | 13.78s |
 | Retrieval-NUN | BUSI | 15 | 1.00 | 0.8191 | 0.8516 | 0.01s |
 | Retrieval-NUN | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 | 0.01s |
-| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 7.51s |
-| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6702 | 0.3377 | 14.41s |
-| SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7775 | 0.1843 | 15.48s |
-| DVCE-style OpenAI checkpoint | BUSI | 5 | 1.00 | 0.7034 | 0.3569 | 8.86s |
-| DVCE-style OpenAI checkpoint | Pneumonia | 5 | 0.80 | 0.7219 | 0.1654 | 9.49s |
-| DVCE-style Pneumonia fine-tuned checkpoint | Pneumonia | 5 | 0.80 | 0.6937 | 0.2469 | 15.63s |
+| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 6.71s |
+| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 | 13.92s |
+| SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 | 15.23s |
+
+DVCE rows from the earlier free-guidance prototype were removed. New DVCE
+original-style fixed-manifest results should be generated with the commands in
+`results/final_configs/dvce_original_style_commands.md` and, for Cone
+Projection, `results/final_configs/dvce_cone_projection_for_paul.md`.
 
 Validity means target-class model prediction. It does not imply medical
 plausibility or clinical causality.
