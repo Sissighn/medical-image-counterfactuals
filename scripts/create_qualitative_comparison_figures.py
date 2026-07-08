@@ -28,8 +28,11 @@ CATEGORY_ORDER = [
 ]
 
 METHOD_ORDER = [
-    "Prototype-guided optimization baseline",
+    "cfproto_encoder_knn final CFProto-nearer prototype-guided method",
+    "Prototype-guided legacy ResNet/class-mean baseline",
     "Prototype-guided plausibility ablation",
+    "Prototype-guided legacy CFProto-aligned ablation",
+    "Prototype-guided encoder-space CFProto-near ablation",
     "Retrieval-based nearest-unlike-neighbor baseline",
     "SEDC-T original-style best-first",
     "SEDC-T project variant",
