@@ -105,8 +105,14 @@ def summarize_metadata(path):
         prefix = (
             "DVCE original-style medical generation"
             if original_style
-            else "DVCE medical multi-sample generation evaluation"
+            else "Removed legacy DVCE free-guidance result"
         )
+        if original_style:
+            prefix = (
+                f"{prefix} with Cone Projection"
+                if metadata.get("cone_projection_enabled")
+                else f"{prefix} without Cone Projection"
+            )
 
         if "ema_0.9999_005000" in checkpoint_lower or "pneumonia" in checkpoint_lower:
             method = f"{prefix} with Pneumonia fine-tuned checkpoint"
@@ -176,9 +182,9 @@ def write_markdown(rows, output_path):
             "- Validity only checks whether the model prediction changed to the target class.",
             "- Mean change is method-dependent and should be interpreted together with the qualitative images.",
             "- Medical plausibility must be discussed separately from model validity.",
-            "- DVCE original-style rows use the original-code-nearer pred_xstart guidance core without Cone Projection unless explicitly stated otherwise.",
+            "- DVCE rows should use the original-code-nearer pred_xstart guidance core without Cone Projection unless explicitly stated otherwise.",
             "- For DVCE rows, Mean change prioritizes the existing project metric and falls back to original-style L1 norm only when needed.",
-            "- The CFProto-nearer row is the only retained prototype-guided result.",
+            "- The CFProto-nearer encoder feature-map row is the main prototype-guided result; bottleneck rows are retained only as ablations.",
             "- The CFProto-nearer implementation still is not a full Alibi CFProto reproduction; FISTA/shrinkage, TrustScore, the original TensorFlow graph, and original Alibi k-d-tree machinery are not fully reproduced.",
         ]
     )
