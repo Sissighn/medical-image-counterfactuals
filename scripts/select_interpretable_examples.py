@@ -27,11 +27,24 @@ def infer_method(metadata):
     parameters = metadata.get("parameters", {})
 
     if method == "DVCE medical multi-sample generation evaluation":
-        if "ema_0.9999_005000" in checkpoint:
-            return "DVCE-style, Pneumonia fine-tuned checkpoint"
-        if "256x256_diffusion_uncond" in checkpoint:
-            return "DVCE-style, OpenAI checkpoint"
-        return "DVCE-style"
+        checkpoint_lower = checkpoint.lower()
+        runner_settings = metadata.get("runner_settings", {}) or {}
+        guidance_space = runner_settings.get("guidance_space") or metadata.get(
+            "guidance_space"
+        )
+        original_style = (
+            guidance_space == "pred_xstart"
+            or runner_settings.get("gen_type") == "p_sample"
+        )
+        prefix = "DVCE original-style" if original_style else "DVCE-style"
+
+        if "ema_0.9999_005000" in checkpoint_lower or "pneumonia" in checkpoint_lower:
+            return f"{prefix}, Pneumonia fine-tuned checkpoint"
+        if "busi" in checkpoint_lower:
+            return f"{prefix}, BUSI fine-tuned checkpoint"
+        if "256x256_diffusion_uncond" in checkpoint_lower:
+            return f"{prefix}, OpenAI checkpoint"
+        return prefix
 
     if method == "SEDC-T-style targeted segment replacement":
         return "Removed non-final SEDC-T result"
@@ -109,6 +122,8 @@ def record_l1(record):
         return float(change_metrics["l1_mean"])
     if "mean_absolute_difference" in record:
         return float(record["mean_absolute_difference"])
+    if "l1_norm" in record:
+        return float(record["l1_norm"])
     return None
 
 
@@ -116,6 +131,10 @@ def record_l2(record):
     change_metrics = record.get("change_metrics") or {}
     if "l2_mean" in change_metrics:
         return float(change_metrics["l2_mean"])
+    if "mean_l2_distance" in record:
+        return float(record["mean_l2_distance"])
+    if "l2_norm" in record:
+        return float(record["l2_norm"])
     return None
 
 
@@ -123,6 +142,8 @@ def record_linf(record):
     change_metrics = record.get("change_metrics") or {}
     if "linf" in change_metrics:
         return float(change_metrics["linf"])
+    if "linf_distance" in record:
+        return float(record["linf_distance"])
     diff_stats = record.get("diff_stats") or {}
     if "max" in diff_stats:
         return float(diff_stats["max"])
@@ -153,7 +174,12 @@ def record_segments(record):
 
 
 def record_image_path(record):
-    for key in ["summary_path", "visualization_path", "image_path", "counterfactual_path"]:
+    for key in [
+        "summary_path",
+        "visualization_path",
+        "image_path",
+        "counterfactual_path",
+    ]:
         value = record.get(key)
         if value:
             return value
@@ -202,9 +228,11 @@ def normalize_record(metadata_path, metadata, record):
         "change_metric": (
             "embedding_distance"
             if method.startswith("Retrieval-based")
-            else "l1_mean"
-            if method.startswith("CFProto-nearer")
-            else "changed_pixel_fraction"
+            else (
+                "l1_mean"
+                if method.startswith("CFProto-nearer")
+                else "changed_pixel_fraction"
+            )
         ),
         "embedding_distance": embedding_distance,
         "changed_pixel_fraction": changed_pixel_fraction,
@@ -356,6 +384,7 @@ def method_summary(metadata_path, metadata):
             aggregate_value(aggregate, "changed_pixel_fraction")
             or aggregate.get("mean_changed_pixels_threshold_0_05")
             or aggregate.get("mean_absolute_difference")
+            or aggregate.get("mean_l1_norm")
             or aggregate_value(aggregate, "l1_mean")
         ),
         "mean_runtime": (
@@ -376,8 +405,7 @@ def copy_image(record, category, output_dir):
     images_dir = output_dir / "images"
     images_dir.mkdir(parents=True, exist_ok=True)
     stem = (
-        f"{record['dataset']}_{record['method']}_sample_{record['sample_index']}_{category}"
-        .lower()
+        f"{record['dataset']}_{record['method']}_sample_{record['sample_index']}_{category}".lower()
         .replace(" ", "_")
         .replace("/", "_")
         .replace("(", "")
@@ -448,7 +476,9 @@ def write_tradeoff_table(summaries, output_dir):
         elif "Retrieval-based" in method:
             note = "Real target-class examples; intuitive case baseline but not a minimal edit."
         elif "SEDC-T original" in method:
-            note = "Localized and method-faithful; moderate validity and slower runtime."
+            note = (
+                "Localized and method-faithful; moderate validity and slower runtime."
+            )
         elif "SEDC-T lung-field ROI" in method:
             note = "Pneumonia-only ROI ablation; restricts candidate segments to approximate lung fields."
         elif "SEDC-T project" in method:
