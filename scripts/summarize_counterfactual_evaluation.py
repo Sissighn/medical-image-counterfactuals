@@ -61,32 +61,19 @@ def summarize_metadata(path):
 
     method = metadata.get("method") or metadata.get("purpose") or "unknown"
     parameters = metadata.get("parameters", {})
-    if method == "PyTorch prototype-guided optimization baseline":
+    if method in {
+        "PyTorch prototype-guided optimization baseline",
+        "CFProto-nearer prototype-guided optimization baseline",
+    }:
         if (
             parameters.get("prototype_space") == "encoder"
             and parameters.get("prototype_mode") == "knn_mean"
             and parameters.get("c_search_mode") == "adaptive_binary"
             and parameters.get("selection_metric") == "elastic_net"
         ):
-            method = "cfproto_encoder_knn final CFProto-nearer prototype-guided method"
-        elif parameters.get("prototype_space") == "encoder":
-            method = "Prototype-guided encoder-space CFProto-near ablation"
-        elif (
-            parameters.get("lambda_l2", 0) > 5.0
-            or parameters.get("lambda_tv", 0) > 0.2
-            or parameters.get("max_delta", 1.0) < 0.12
-        ):
-            method = "Prototype-guided plausibility ablation"
-        if (
-            parameters.get("attack_loss") == "cw_hinge"
-            or parameters.get("lambda_l1", 0) > 0
-            or parameters.get("c_steps", 1) > 1
-            or parameters.get("target_strategy") == "prototype_distance"
-        ):
-            if method == "PyTorch prototype-guided optimization baseline":
-                method = "Prototype-guided legacy CFProto-aligned ablation"
-        elif method == "PyTorch prototype-guided optimization baseline":
-            method = "Prototype-guided legacy ResNet/class-mean baseline"
+            method = "CFProto-nearer prototype-guided optimization baseline"
+        else:
+            method = "Removed non-final prototype-guided result"
     if method == "SEDC-T-style targeted segment replacement":
         search_mode = parameters.get("search_mode")
         roi_mode = parameters.get("roi_mode") or "none"
@@ -170,7 +157,7 @@ def write_markdown(rows, output_path):
             "- Validity only checks whether the model prediction changed to the target class.",
             "- Mean change is method-dependent and should be interpreted together with the qualitative images.",
             "- Medical plausibility must be discussed separately from model validity.",
-            "- The `cfproto_encoder_knn` rows are the final CFProto-nearer prototype-guided runs. Earlier prototype-guided rows are legacy baselines or ablations and should not be treated as replacements for the final method.",
+            "- The CFProto-nearer row is the only retained prototype-guided result.",
             "- The CFProto-nearer implementation still is not a full Alibi CFProto reproduction; FISTA/shrinkage, TrustScore, the original TensorFlow graph, and original Alibi k-d-tree machinery are not fully reproduced.",
         ]
     )
