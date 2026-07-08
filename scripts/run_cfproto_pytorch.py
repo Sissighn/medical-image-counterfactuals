@@ -14,8 +14,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.autoencoder import ARCHITECTURE_NAME, ConvAutoencoder
-from src.data_utils import create_dataloaders
+from src.autoencoder import (
+    ARCHITECTURE_NAME,
+    BOTTLENECK_ARCHITECTURE_NAME,
+    ConvAutoencoder,
+    ConvAutoencoderBottleneck,
+)
+from src.data_utils import IMAGE_SIZE, create_dataloaders
 from src.evaluation_manifest import (
     load_image_from_manifest_record,
     load_manifest_records,
@@ -77,16 +82,24 @@ def load_checkpoint_model(model_path, device):
 def load_autoencoder_model(autoencoder_path, device):
     checkpoint = torch.load(autoencoder_path, map_location=device)
     architecture = checkpoint.get("architecture")
-    if architecture != ARCHITECTURE_NAME:
+    if architecture == ARCHITECTURE_NAME:
+        autoencoder = ConvAutoencoder(
+            input_channels=checkpoint.get("input_channels", 3),
+            base_channels=checkpoint.get("base_channels", 32),
+        ).to(device)
+    elif architecture == BOTTLENECK_ARCHITECTURE_NAME:
+        autoencoder = ConvAutoencoderBottleneck(
+            input_channels=checkpoint.get("input_channels", 3),
+            base_channels=checkpoint.get("base_channels", 32),
+            image_size=checkpoint.get("image_size", IMAGE_SIZE),
+            latent_dim=checkpoint.get("latent_dim", 256),
+        ).to(device)
+    else:
         raise ValueError(
             f"Unsupported autoencoder architecture: {architecture}. "
-            f"Expected {ARCHITECTURE_NAME}."
+            f"Expected {ARCHITECTURE_NAME} or {BOTTLENECK_ARCHITECTURE_NAME}."
         )
 
-    autoencoder = ConvAutoencoder(
-        input_channels=checkpoint.get("input_channels", 3),
-        base_channels=checkpoint.get("base_channels", 32),
-    ).to(device)
     autoencoder.load_state_dict(checkpoint["model_state_dict"])
     autoencoder.eval()
     for parameter in autoencoder.parameters():
@@ -1077,10 +1090,12 @@ def main():
         "autoencoder_checkpoint": (
             {
                 "architecture": autoencoder_checkpoint.get("architecture"),
+                "latent_dim": autoencoder_checkpoint.get("latent_dim"),
                 "dataset_path": autoencoder_checkpoint.get("dataset_path"),
                 "image_size": autoencoder_checkpoint.get("image_size"),
                 "base_channels": autoencoder_checkpoint.get("base_channels"),
                 "pixel_range": autoencoder_checkpoint.get("pixel_range"),
+                "autoencoder_path": args.autoencoder_path,
             }
             if autoencoder_checkpoint is not None
             else None
@@ -1101,6 +1116,10 @@ def main():
             "prototype_k": args.prototype_k,
             "prototype_source": prototype_source,
             "latent_bank_shape": list(latent_bank.shape),
+            "prototype_latent_shape": [int(latent_bank.shape[1])],
+            "autoencoder_architecture": autoencoder_checkpoint.get("architecture"),
+            "autoencoder_latent_dim": autoencoder_checkpoint.get("latent_dim"),
+            "autoencoder_path": args.autoencoder_path,
             "autoencoder_prototypes_used": True,
             "local_knn_prototypes_used": True,
             "preferred_cfproto_near_configuration": "encoder kNN mean prototypes",
