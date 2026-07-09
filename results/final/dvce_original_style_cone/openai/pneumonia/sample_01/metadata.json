@@ -1,0 +1,185 @@
+{
+    "sample_index": 1,
+    "dataset_index": 1,
+    "manifest_sample_index": 1,
+    "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0003-0001.jpeg",
+    "true_label_index": 0,
+    "true_label": "NORMAL",
+    "original_prediction_index": 0,
+    "original_prediction": "NORMAL",
+    "original_confidence_before_resize": 0.875252366065979,
+    "target_class_index": 1,
+    "target_class": "PNEUMONIA",
+    "target_initial_confidence_before_resize": 0.12474760413169861,
+    "adapter_forward_check": {
+        "logits_shape": [
+            1,
+            2
+        ],
+        "prediction_index": 0,
+        "confidence": 0.8902312517166138,
+        "probabilities": [
+            0.8902312517166138,
+            0.10976875573396683
+        ]
+    },
+    "classifier_guidance_gradient_check": {
+        "target_loss": 2.2093794345855713,
+        "gradient_available": true,
+        "gradient_stats": {
+            "shape": [
+                1,
+                3,
+                256,
+                256
+            ],
+            "min": -1.861809253692627,
+            "max": 1.1467835903167725,
+            "mean": 3.5532731999410316e-05,
+            "std": 0.09465702623128891
+        },
+        "has_nonzero_gradient": true
+    },
+    "second_classifier_path": "models/pneumonia_resnet18_robust_pgd.pth",
+    "cone_projection_requested": true,
+    "input_01_stats": {
+        "shape": [
+            1,
+            3,
+            224,
+            224
+        ],
+        "min": 0.06666666269302368,
+        "max": 0.9921568632125854,
+        "mean": 0.5587130188941956,
+        "std": 0.23605208098888397
+    },
+    "input_256_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 0.06960783898830414,
+        "max": 0.981081485748291,
+        "mean": 0.5586726665496826,
+        "std": 0.2354816049337387
+    },
+    "sample_preview_path": "results\\final\\dvce_original_style_cone\\openai\\pneumonia\\sample_01\\dvce_medical_input_256.png",
+    "ok": true,
+    "error": null,
+    "runtime_seconds": 743.986,
+    "steps_seen": 100,
+    "seed": 2,
+    "model_output_size": 256,
+    "timestep_respacing": "200",
+    "skip_timesteps": 100,
+    "use_ddim": false,
+    "gen_type": "p_sample",
+    "use_fp16": false,
+    "clip_denoised": false,
+    "classifier_lambda": 0.1,
+    "lp_custom": 1.0,
+    "lp_custom_value": 0.15,
+    "enforce_same_norms": true,
+    "denoise_dist_input": true,
+    "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+    "deg_cone_projection": 30.0,
+    "classifier_size": 224,
+    "cone_projection_enabled": true,
+    "aug_num": 16,
+    "guidance_space": "pred_xstart",
+    "distance_target": "init_image",
+    "sampling_backbone": {
+        "checkpoint_path": "C:\\Users\\Nik\\Desktop\\counterfactuals-job\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\256x256_diffusion_uncond.pt",
+        "model_config": {
+            "image_size": 256,
+            "num_channels": 256,
+            "num_res_blocks": 2,
+            "num_heads": 4,
+            "num_heads_upsample": -1,
+            "num_head_channels": 64,
+            "attention_resolutions": "32, 16, 8",
+            "channel_mult": "",
+            "dropout": 0.0,
+            "class_cond": false,
+            "use_checkpoint": false,
+            "use_scale_shift_norm": true,
+            "resblock_updown": true,
+            "use_fp16": false,
+            "use_new_attention_order": false,
+            "learn_sigma": true,
+            "diffusion_steps": 1000,
+            "noise_schedule": "linear",
+            "timestep_respacing": "200",
+            "use_kl": false,
+            "predict_xstart": false,
+            "rescale_timesteps": true,
+            "rescale_learned_sigmas": false
+        },
+        "diffusion_num_timesteps": 200,
+        "gradient_parameter_count": 96,
+        "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+    },
+    "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+    "original_confidence": 0.8902312517166138,
+    "counterfactual_prediction_index": 1,
+    "counterfactual_prediction": "PNEUMONIA",
+    "counterfactual_confidence": 0.9937942028045654,
+    "valid_counterfactual": true,
+    "original_probabilities": [
+        0.8902312517166138,
+        0.10976875573396683
+    ],
+    "counterfactual_probabilities": [
+        0.0062057399190962315,
+        0.9937942028045654
+    ],
+    "counterfactual_path": "results\\final\\dvce_original_style_cone\\openai\\pneumonia\\sample_01\\dvce_counterfactual_candidate.png",
+    "difference_path": "results\\final\\dvce_original_style_cone\\openai\\pneumonia\\sample_01\\dvce_absolute_difference.png",
+    "visualization_path": "results\\final\\dvce_original_style_cone\\openai\\pneumonia\\sample_01\\dvce_counterfactual_visualization.png",
+    "original_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 0.06960783898830414,
+        "max": 0.981081485748291,
+        "mean": 0.5586726665496826,
+        "std": 0.2354816049337387
+    },
+    "counterfactual_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 0.0855034589767456,
+        "max": 0.9260498881340027,
+        "mean": 0.5590009093284607,
+        "std": 0.23525892198085785
+    },
+    "diff_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 1.9371509552001953e-07,
+        "max": 0.6357101202011108,
+        "mean": 0.016400747001171112,
+        "std": 0.020434079691767693
+    },
+    "changed_pixels_threshold_0_05": 0.0456136055290699,
+    "mean_absolute_difference": 0.016400747001171112,
+    "mean_l2_distance": 0.026201792061328888,
+    "linf_distance": 0.6357101202011108,
+    "l1_norm": 3224.523193359375,
+    "l1_5_norm": 69.76666259765625,
+    "l2_norm": 11.617973327636719
+}
