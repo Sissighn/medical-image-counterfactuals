@@ -83,25 +83,6 @@ def infer_method(metadata):
         return "CFProto original-style (encoder feature map)"
 
     if "prototype-guided" in method.lower():
-        parameters = metadata.get("parameters", {})
-        if (
-            parameters.get("prototype_space") == "encoder"
-            and parameters.get("prototype_mode") == "knn_mean"
-            and parameters.get("c_search_mode") == "adaptive_binary"
-            and parameters.get("selection_metric") == "elastic_net"
-        ):
-            checkpoint = metadata.get("autoencoder_checkpoint") or {}
-            architecture = checkpoint.get("architecture")
-            latent_dim = checkpoint.get("latent_dim")
-            if architecture == "conv_autoencoder_bottleneck_v1" and latent_dim:
-                return (
-                    "CFProto-nearer prototype-guided optimization baseline "
-                    f"(bottleneck{latent_dim})"
-                )
-            return (
-                "CFProto-nearer prototype-guided optimization baseline "
-                "(encoder feature map)"
-            )
         return "Removed non-final prototype-guided result"
 
     return method
@@ -128,15 +109,9 @@ def record_change(record):
 
 
 def record_primary_change(record, method):
-    change_metrics = record.get("change_metrics") or {}
     if method.startswith("Retrieval-based"):
         if "embedding_distance" in record:
             return float(record["embedding_distance"])
-    if method.startswith("CFProto-nearer"):
-        if "l1_mean" in change_metrics:
-            return float(change_metrics["l1_mean"])
-        if "mean_absolute_difference" in record:
-            return float(record["mean_absolute_difference"])
     return record_change(record)
 
 
@@ -252,11 +227,7 @@ def normalize_record(metadata_path, metadata, record):
         "change_metric": (
             "embedding_distance"
             if method.startswith("Retrieval-based")
-            else (
-                "l1_mean"
-                if method.startswith("CFProto-nearer")
-                else "changed_pixel_fraction"
-            )
+            else "changed_pixel_fraction"
         ),
         "embedding_distance": embedding_distance,
         "changed_pixel_fraction": changed_pixel_fraction,
@@ -495,8 +466,8 @@ def write_tradeoff_table(summaries, output_dir):
     ]
     for summary in summaries:
         method = summary["method"]
-        if method.startswith("CFProto-nearer"):
-            note = "Final CFProto-nearer prototype-guided run; model-valid but not full Alibi CFProto."
+        if method.startswith("CFProto original-style"):
+            note = "Faithful FISTA/prototype port of alibi's CounterfactualProto; mostly model-valid, changes can be visually subtle."
         elif "Goyal" in method:
             note = "Instance-based feature-cell swaps from a real distractor image; sparse localized edits grounded in real cases."
         elif "Retrieval-based" in method or "retrieval-NUN" in method:
@@ -532,7 +503,7 @@ def write_readme(output_dir):
         "",
         "## Main Story",
         "",
-        "- The CFProto-nearer prototype-guided run is the only retained prototype-guided result.",
+        "- CFProto (original-style) is the retained prototype-guided result, following alibi's CounterfactualProto faithfully.",
         "- Its changes can be model-valid without being medically plausible.",
         "- Goyal 2019 CVE swaps discriminative feature cells from a real target-class distractor; edits are sparse and grounded in real cases.",
         "- SEDC-T provides localized region changes and is the clearest region-based method, but validity is lower, especially on Pneumonia.",

@@ -54,35 +54,12 @@ def record_mean(records, key):
     return float(sum(values) / len(values))
 
 
-def cfproto_variant_label(metadata):
-    checkpoint = metadata.get("autoencoder_checkpoint") or {}
-    architecture = checkpoint.get("architecture")
-    latent_dim = checkpoint.get("latent_dim")
-    if architecture == "conv_autoencoder_bottleneck_v1" and latent_dim:
-        return f"CFProto-nearer prototype-guided optimization baseline (bottleneck{latent_dim})"
-    return "CFProto-nearer prototype-guided optimization baseline (encoder feature map)"
-
-
 def summarize_metadata(path):
     metadata = load_metadata(path)
     aggregate = get_aggregate(metadata)
     records = metadata.get("records", [])
 
     method = metadata.get("method") or metadata.get("purpose") or "unknown"
-    parameters = metadata.get("parameters", {})
-    if method in {
-        "PyTorch prototype-guided optimization baseline",
-        "CFProto-nearer prototype-guided optimization baseline",
-    }:
-        if (
-            parameters.get("prototype_space") == "encoder"
-            and parameters.get("prototype_mode") == "knn_mean"
-            and parameters.get("c_search_mode") == "adaptive_binary"
-            and parameters.get("selection_metric") == "elastic_net"
-        ):
-            method = cfproto_variant_label(metadata)
-        else:
-            method = "Removed non-final prototype-guided result"
     if method == "SEDC-T-style targeted segment replacement":
         method = "Removed non-final SEDC-T result"
     if method == "SEDC-T original-style best-first segment replacement":
@@ -189,8 +166,7 @@ def write_markdown(rows, output_path):
             "- Medical plausibility must be discussed separately from model validity.",
             "- DVCE rows should use the original-code-nearer pred_xstart guidance core without Cone Projection unless explicitly stated otherwise.",
             "- For DVCE rows, Mean change prioritizes the existing project metric and falls back to original-style L1 norm only when needed.",
-            "- The CFProto-nearer encoder feature-map row is the main prototype-guided result; bottleneck rows are retained only as ablations.",
-            "- The CFProto-nearer implementation still is not a full Alibi CFProto reproduction; FISTA/shrinkage, TrustScore, the original TensorFlow graph, and original Alibi k-d-tree machinery are not fully reproduced.",
+            "- CFProto follows `alibi.explainers.cfproto.CounterfactualProto` faithfully (FISTA with shrinkage-thresholding, untargeted hinge attack loss, binary c-search, encoder-space class prototypes); see `results/final_configs/cfproto_encoder_method_documentation.md` for the full Soll-Ist comparison. Not reproduced: the original TensorFlow graph itself (reimplemented in PyTorch), black-box/numerical-gradient mode, categorical variables and k-d-tree prototypes, and TrustScore filtering (disabled by default in alibi too).",
         ]
     )
 
