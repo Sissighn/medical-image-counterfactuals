@@ -33,10 +33,10 @@ Retained counterfactual directions:
 Central summaries:
 
 ```text
-results/fixed_evaluation_summary.md
-results/method_comparison.md
-results/final_method_summary.md
-results/method_variant_rationale.md
+results/docs/fixed_evaluation_summary.md
+results/docs/method_comparison.md
+results/docs/final_method_summary.md
+results/docs/method_variant_rationale.md
 ```
 
 ## Repository Structure
@@ -175,7 +175,7 @@ too). Full method documentation and Soll-Ist comparison:
 PYTHONPATH=. python scripts/run_goyal_cve_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/fixed_evaluation/goyal_cve_busi \
+  --output_dir results/final/goyal_cve_busi \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
 ```
 
@@ -192,7 +192,7 @@ the baseline: https://github.com/facebookresearch/visual-counterfactuals.
 PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/fixed_evaluation/sedc_t_busi_original_style \
+  --output_dir results/final/sedc_t_busi_original_style \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
   --search_timeout_seconds 30
 ```
@@ -204,7 +204,7 @@ replacement mechanism but restrict candidate segments to the lung-field ROI:
 PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --dataset_path data/processed/Pneumonia \
-  --output_dir results/fixed_evaluation/sedc_t_pneumonia_lung_field_roi \
+  --output_dir results/final/sedc_t_pneumonia_lung_field_roi \
   --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json \
   --roi_mode lung_fields \
   --search_timeout_seconds 30
@@ -247,7 +247,7 @@ Cone Projection setup, robust classifier training commands, smoke tests, and
 full fixed-manifest DVCE commands for the Uni GPU are stored in:
 
 ```text
-results/final_configs/dvce_cone_projection_for_paul.md
+results/final_configs/dvce_cone_projection.md
 ```
 
 ## Current Fixed Evaluation Results
@@ -265,7 +265,7 @@ results/final_configs/dvce_cone_projection_for_paul.md
 DVCE rows from the earlier free-guidance prototype were removed. New DVCE
 original-style fixed-manifest results should be generated with the commands in
 `results/final_configs/dvce_original_style_commands.md` and, for Cone
-Projection, `results/final_configs/dvce_cone_projection_for_paul.md`.
+Projection, `results/final_configs/dvce_cone_projection.md`.
 
 Validity means target-class model prediction. It does not imply medical
 plausibility or clinical causality.

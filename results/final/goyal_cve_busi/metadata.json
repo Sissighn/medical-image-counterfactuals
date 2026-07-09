@@ -295,8 +295,8 @@
                     "std": 0.09968975931406021
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_00.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_00.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_00.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_00.summary.png"
         },
         {
             "sample_index": 1,
@@ -642,8 +642,8 @@
                     "std": 0.1834782212972641
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_01.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_01.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_01.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_01.summary.png"
         },
         {
             "sample_index": 2,
@@ -924,8 +924,8 @@
                     "std": 0.12065915763378143
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_02.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_02.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_02.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_02.summary.png"
         },
         {
             "sample_index": 3,
@@ -1219,8 +1219,8 @@
                     "std": 0.13965027034282684
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_03.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_03.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_03.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_03.summary.png"
         },
         {
             "sample_index": 4,
@@ -1488,8 +1488,8 @@
                     "std": 0.09423375129699707
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_04.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_04.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_04.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_04.summary.png"
         },
         {
             "sample_index": 5,
@@ -1809,8 +1809,8 @@
                     "std": 0.14669561386108398
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_05.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_05.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_05.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_05.summary.png"
         },
         {
             "sample_index": 6,
@@ -1974,8 +1974,8 @@
                     "std": 0.09521864354610443
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_06.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_06.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_06.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_06.summary.png"
         },
         {
             "sample_index": 7,
@@ -2178,8 +2178,8 @@
                     "std": 0.11036462336778641
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_07.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_07.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_07.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_07.summary.png"
         },
         {
             "sample_index": 8,
@@ -2447,8 +2447,8 @@
                     "std": 0.15686295926570892
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_08.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_08.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_08.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_08.summary.png"
         },
         {
             "sample_index": 9,
@@ -2859,8 +2859,8 @@
                     "std": 0.2170713096857071
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_09.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_09.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_09.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_09.summary.png"
         },
         {
             "sample_index": 10,
@@ -3076,8 +3076,8 @@
                     "std": 0.10287297517061234
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_10.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_10.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_10.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_10.summary.png"
         },
         {
             "sample_index": 11,
@@ -3241,8 +3241,8 @@
                     "std": 0.12104707211256027
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_11.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_11.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_11.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_11.summary.png"
         },
         {
             "sample_index": 12,
@@ -3510,8 +3510,8 @@
                     "std": 0.09083329141139984
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_12.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_12.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_12.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_12.summary.png"
         },
         {
             "sample_index": 13,
@@ -3701,8 +3701,8 @@
                     "std": 0.08565203845500946
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_13.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_13.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_13.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_13.summary.png"
         },
         {
             "sample_index": 14,
@@ -3879,8 +3879,8 @@
                     "std": 0.1409018337726593
                 }
             },
-            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_14.png",
-            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_14.summary.png"
+            "image_path": "results/final/goyal_cve_busi/sample_14.png",
+            "summary_path": "results/final/goyal_cve_busi/sample_14.summary.png"
         }
     ],
     "aggregate_metrics": {
