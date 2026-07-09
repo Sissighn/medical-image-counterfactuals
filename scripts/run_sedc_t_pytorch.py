@@ -65,12 +65,26 @@ def load_checkpoint_model(model_path, device):
     return model, checkpoint
 
 
-def predict(model, pixels):
+def predict_batch(model, pixels_batch):
+    """Single forward pass over a batch of images.
+
+    Batching all candidates of one search level into one forward pass mirrors
+    the reference implementation's `classifier.predict(cf_candidates)` and is
+    numerically equivalent to predicting each image on its own.
+    """
     with torch.no_grad():
-        logits = model(normalize(pixels))
+        logits = model(normalize(pixels_batch))
         probabilities = F.softmax(logits, dim=1)
-        prediction = int(torch.argmax(probabilities, dim=1).item())
-    return prediction, probabilities[0].detach().cpu().tolist()
+        predictions = torch.argmax(probabilities, dim=1)
+    return (
+        predictions.detach().cpu().tolist(),
+        probabilities.detach().cpu().tolist(),
+    )
+
+
+def predict(model, pixels):
+    predictions, probabilities = predict_batch(model, pixels)
+    return int(predictions[0]), probabilities[0]
 
 
 def choose_samples(model, test_loader, device, max_samples):
@@ -181,19 +195,50 @@ def normalize_blur_kernel(blur_kernel):
     return blur_kernel
 
 
-def create_replacement_image(image_pixels, blur_kernel):
-    if cv2 is None:
-        raise ImportError(
-            "SEDC-T Gaussian-blur replacement requires OpenCV. "
-            "Install opencv-python with `pip install -r requirements.txt`."
-        )
-
-    blur_kernel = normalize_blur_kernel(blur_kernel)
+def create_replacement_image(image_pixels, replacement_mode, blur_kernel, segments):
+    """Build the perturbed image exactly like the reference sedc_t2_fast modes."""
     image_np = image_pixels[0].detach().cpu().permute(1, 2, 0).numpy()
-    blurred_np = cv2.GaussianBlur(image_np, (blur_kernel, blur_kernel), 0)
-    blurred_np = np.clip(blurred_np, 0.0, 1.0)
+
+    if replacement_mode == "mean":
+        perturbed_np = np.zeros_like(image_np)
+        perturbed_np[:, :, 0] = np.mean(image_np[:, :, 0])
+        perturbed_np[:, :, 1] = np.mean(image_np[:, :, 1])
+        perturbed_np[:, :, 2] = np.mean(image_np[:, :, 2])
+    elif replacement_mode == "blur":
+        if cv2 is None:
+            raise ImportError(
+                "SEDC-T Gaussian-blur replacement requires OpenCV. "
+                "Install opencv-python with `pip install -r requirements.txt`."
+            )
+        blur_kernel = normalize_blur_kernel(blur_kernel)
+        perturbed_np = cv2.GaussianBlur(image_np, (blur_kernel, blur_kernel), 0)
+    elif replacement_mode == "random":
+        perturbed_np = np.random.random(image_np.shape)
+    elif replacement_mode == "inpaint":
+        if cv2 is None:
+            raise ImportError(
+                "SEDC-T inpaint replacement requires OpenCV. "
+                "Install opencv-python with `pip install -r requirements.txt`."
+            )
+        perturbed_np = np.zeros_like(image_np)
+        for segment_id in np.unique(segments):
+            image_absolute = (image_np * 255).astype("uint8")
+            mask = np.full(
+                [image_absolute.shape[0], image_absolute.shape[1]], 0
+            ).astype("uint8")
+            mask[segments == segment_id] = 255
+            image_segment_inpainted = cv2.inpaint(
+                image_absolute, mask, 3, cv2.INPAINT_NS
+            )
+            perturbed_np[segments == segment_id] = (
+                image_segment_inpainted[segments == segment_id] / 255.0
+            )
+    else:
+        raise ValueError(f"Unsupported replacement mode: {replacement_mode}")
+
+    perturbed_np = np.clip(perturbed_np, 0.0, 1.0)
     return (
-        torch.from_numpy(blurred_np)
+        torch.from_numpy(perturbed_np)
         .permute(2, 0, 1)
         .unsqueeze(0)
         .to(device=image_pixels.device, dtype=image_pixels.dtype)
@@ -228,6 +273,22 @@ def compute_segment_pixel_fraction(segments, selected_segments):
     return float(segment_mask.float().mean().item())
 
 
+# Geometric lung-field prior for frontal chest X-rays, expressed as image
+# fractions. Two rectangles (left/right lung) with a central gap over the
+# mediastinum/spine. The vertical bounds are set to include the lung apices
+# (top) while excluding the sub-diaphragmatic abdomen (bottom), tuned against
+# the Pneumonia test images. This is a coarse, content-agnostic prior, not a
+# per-image lung segmentation, and is not part of the original SEDC-T setup.
+LUNG_FIELD_ROI = {
+    "y_min": 0.10,
+    "y_max": 0.82,
+    "left_x_min": 0.08,
+    "left_x_max": 0.47,
+    "right_x_min": 0.53,
+    "right_x_max": 0.92,
+}
+
+
 def create_roi_mask(shape, roi_mode):
     height, width = shape
     mask = torch.zeros(height, width, dtype=torch.bool)
@@ -237,12 +298,13 @@ def create_roi_mask(shape, roi_mode):
         return mask
 
     if roi_mode == "lung_fields":
-        y_min = int(height * 0.15)
-        y_max = int(height * 0.88)
-        left_x_min = int(width * 0.08)
-        left_x_max = int(width * 0.47)
-        right_x_min = int(width * 0.53)
-        right_x_max = int(width * 0.92)
+        roi = LUNG_FIELD_ROI
+        y_min = int(height * roi["y_min"])
+        y_max = int(height * roi["y_max"])
+        left_x_min = int(width * roi["left_x_min"])
+        left_x_max = int(width * roi["left_x_max"])
+        right_x_min = int(width * roi["right_x_min"])
+        right_x_max = int(width * roi["right_x_max"])
 
         mask[y_min:y_max, left_x_min:left_x_max] = True
         mask[y_min:y_max, right_x_min:right_x_max] = True
@@ -269,7 +331,7 @@ def get_allowed_segments(segments, roi_mode, roi_min_overlap):
     return allowed, roi_mask
 
 
-def evaluate_segment_set(
+def evaluate_segment_sets_batch(
     model,
     image_pixels,
     original_class,
@@ -278,36 +340,59 @@ def evaluate_segment_set(
     original_target_probability,
     segments,
     replacement_pixels,
-    selected_segments,
-    added_segment=None,
+    segment_sets,
+    added_segments,
+    max_batch=128,
 ):
-    candidate_pixels = replace_segments(
-        image_pixels, replacement_pixels, segments, selected_segments
-    )
-    prediction, probabilities = predict(model, candidate_pixels)
-    target_probability = float(probabilities[target_class])
-    original_class_probability = float(probabilities[original_class])
-    target_score_increase = target_probability - original_target_probability
-    original_class_score_decrease = (
-        original_original_class_probability - original_class_probability
-    )
-    expansion_score = target_probability - original_class_probability
+    """Evaluate every candidate segment set of one search level in one batch.
 
-    return {
-        "segment_id": added_segment,
-        "segments": sorted(int(segment_id) for segment_id in selected_segments),
-        "prediction": prediction,
-        "probabilities": probabilities,
-        "target_probability": target_probability,
-        "original_class_probability": original_class_probability,
-        "target_score_increase": target_score_increase,
-        "original_class_score_decrease": original_class_score_decrease,
-        "expansion_score": expansion_score,
-        "pixels": candidate_pixels,
-        "changed_pixel_fraction": compute_segment_pixel_fraction(
-            segments, selected_segments
-        ),
-    }
+    The candidate order is preserved so that the downstream ``max`` selections
+    break ties on the first candidate exactly like the sequential version and
+    the reference ``np.argmax``.
+    """
+    if not segment_sets:
+        return []
+
+    candidate_tensors = [
+        replace_segments(image_pixels, replacement_pixels, segments, selected)
+        for selected in segment_sets
+    ]
+    batch = torch.cat(candidate_tensors, dim=0)
+
+    predictions = []
+    probabilities = []
+    for start in range(0, batch.shape[0], max_batch):
+        chunk_predictions, chunk_probabilities = predict_batch(
+            model, batch[start : start + max_batch]
+        )
+        predictions.extend(chunk_predictions)
+        probabilities.extend(chunk_probabilities)
+
+    candidates = []
+    for selected, added_segment, prediction, probs in zip(
+        segment_sets, added_segments, predictions, probabilities
+    ):
+        target_probability = float(probs[target_class])
+        original_class_probability = float(probs[original_class])
+        candidates.append(
+            {
+                "segment_id": added_segment,
+                "segments": sorted(int(segment_id) for segment_id in selected),
+                "prediction": int(prediction),
+                "probabilities": probs,
+                "target_probability": target_probability,
+                "original_class_probability": original_class_probability,
+                "target_score_increase": target_probability
+                - original_target_probability,
+                "original_class_score_decrease": original_original_class_probability
+                - original_class_probability,
+                "expansion_score": target_probability - original_class_probability,
+                "changed_pixel_fraction": compute_segment_pixel_fraction(
+                    segments, selected
+                ),
+            }
+        )
+    return candidates
 
 
 def generate_sedc_t_original_best_first_counterfactual(
@@ -319,13 +404,14 @@ def generate_sedc_t_original_best_first_counterfactual(
     allowed_segments,
     timeout_seconds,
 ):
-    """Original-style SEDC-T best-first search by class-margin expansion.
+    """Port of the reference implementation sedc_t2_fast (best-first SEDC-T).
 
-    This mirrors the reference implementation's core search more closely than
-    the project-specific greedy-minimal variant: evaluate all one-segment
-    removals/replacements, repeatedly expand the pending segment set with the
-    largest target-vs-original class probability margin, and choose valid
-    results by minimal segment evidence first.
+    Mirrors the reference search: evaluate all one-segment perturbations,
+    then repeatedly expand the pending segment set with the largest
+    target-vs-original class score difference until a valid expansion level
+    is found. Like the reference, duplicate segment sets are not deduplicated,
+    the timeout is only checked once per expansion level, and the loop also
+    stops when an expansion produces no children.
     """
 
     start_time = time.time()
@@ -339,7 +425,6 @@ def generate_sedc_t_original_best_first_counterfactual(
     pending = []
     valid_candidates = []
     evaluated_candidates = []
-    seen_sets = set()
     search_history = []
 
     def timed_out():
@@ -370,10 +455,45 @@ def generate_sedc_t_original_best_first_counterfactual(
         else:
             pending.append(candidate)
 
-    for segment_id in allowed_segments:
-        segment_set = (segment_id,)
-        seen_sets.add(segment_set)
-        candidate = evaluate_segment_set(
+    initial_candidates = evaluate_segment_sets_batch(
+        model=model,
+        image_pixels=image_pixels,
+        original_class=original_class,
+        target_class=target_class,
+        original_original_class_probability=original_original_class_probability,
+        original_target_probability=original_target_probability,
+        segments=segments,
+        replacement_pixels=replacement_pixels,
+        segment_sets=[[segment_id] for segment_id in allowed_segments],
+        added_segments=list(allowed_segments),
+    )
+    for candidate in initial_candidates:
+        add_candidate(candidate, "initial")
+
+    expansion_produced_children = True
+    while (
+        not valid_candidates
+        and pending
+        and expansion_produced_children
+        and not timed_out()
+    ):
+        best_pending_idx = max(
+            range(len(pending)),
+            key=lambda idx: pending[idx]["expansion_score"],
+        )
+        base_candidate = pending.pop(best_pending_idx)
+        base_segments = set(base_candidate["segments"])
+
+        child_segment_sets = []
+        child_added_segments = []
+        for segment_id in allowed_segments:
+            if segment_id in base_segments:
+                continue
+            child_segment_sets.append(sorted([*base_segments, segment_id]))
+            child_added_segments.append(segment_id)
+
+        expansion_produced_children = bool(child_segment_sets)
+        child_candidates = evaluate_segment_sets_batch(
             model=model,
             image_pixels=image_pixels,
             original_class=original_class,
@@ -382,49 +502,11 @@ def generate_sedc_t_original_best_first_counterfactual(
             original_target_probability=original_target_probability,
             segments=segments,
             replacement_pixels=replacement_pixels,
-            selected_segments=list(segment_set),
-            added_segment=segment_id,
+            segment_sets=child_segment_sets,
+            added_segments=child_added_segments,
         )
-        add_candidate(candidate, "initial")
-        if timed_out():
-            break
-
-    while not valid_candidates and pending and not timed_out():
-        expandable_indices = list(range(len(pending)))
-        if not expandable_indices:
-            break
-
-        best_pending_idx = max(
-            expandable_indices,
-            key=lambda idx: pending[idx]["expansion_score"],
-        )
-        base_candidate = pending.pop(best_pending_idx)
-        base_segments = set(base_candidate["segments"])
-
-        for segment_id in allowed_segments:
-            if segment_id in base_segments:
-                continue
-
-            segment_set = tuple(sorted([*base_segments, segment_id]))
-            if segment_set in seen_sets:
-                continue
-
-            seen_sets.add(segment_set)
-            candidate = evaluate_segment_set(
-                model=model,
-                image_pixels=image_pixels,
-                original_class=original_class,
-                target_class=target_class,
-                original_original_class_probability=original_original_class_probability,
-                original_target_probability=original_target_probability,
-                segments=segments,
-                replacement_pixels=replacement_pixels,
-                selected_segments=list(segment_set),
-                added_segment=segment_id,
-            )
+        for candidate in child_candidates:
             add_candidate(candidate, "expand")
-            if timed_out():
-                break
 
     runtime = time.time() - start_time
     timed_out_flag = timed_out()
@@ -433,18 +515,16 @@ def generate_sedc_t_original_best_first_counterfactual(
         raise RuntimeError("SEDC-T best-first search did not evaluate any candidates.")
 
     if valid_candidates:
-        # The reference SEDC-T implementation stops as soon as a valid
-        # expansion level is found and then selects the candidate with the
-        # highest target-score increase within that level.
+        # Reference: best_explanation = np.argmax(P - p), i.e. the valid
+        # candidate with the highest target-score increase (first on ties).
         best_result = max(
             valid_candidates,
-            key=lambda candidate: (
-                candidate["target_score_increase"],
-                candidate["target_probability"],
-                candidate["expansion_score"],
-            ),
+            key=lambda candidate: candidate["target_score_increase"],
         )
     else:
+        # The reference returns no counterfactual in this case; the best
+        # non-valid attempt is kept here for reporting purposes only.
+        print("No CF found on the requested parameters")
         best_result = max(
             evaluated_candidates,
             key=lambda candidate: (
@@ -453,8 +533,18 @@ def generate_sedc_t_original_best_first_counterfactual(
             ),
         )
 
+    best_pixels = replace_segments(
+        image_pixels, replacement_pixels, segments, best_result["segments"]
+    )
+    segments_tensor = torch.as_tensor(segments, device=image_pixels.device)
+    explanation_pixels = torch.zeros_like(image_pixels)
+    for segment_id in best_result["segments"]:
+        segment_mask = segments_tensor == segment_id
+        explanation_pixels[0, :, segment_mask] = image_pixels[0, :, segment_mask]
+
     return {
-        "image": best_result["pixels"],
+        "image": best_pixels,
+        "explanation": explanation_pixels,
         "selected_segments": best_result["segments"],
         "prediction": best_result["prediction"],
         "probabilities": best_result["probabilities"],
@@ -606,15 +696,15 @@ def method_fidelity_note(args):
     if is_original_style_reference(args):
         return (
             "Original-style SEDC-T reference: best-first search, quickshift "
-            "segmentation, gaussian blur replacement, no ROI restriction, "
-            "no explicit segment-count cap."
+            f"segmentation, {args.replacement_mode} replacement, no ROI "
+            "restriction, no explicit segment-count cap."
         )
     return (
         "Project-specific SEDC-T ROI ablation: same best-first search, "
-        "quickshift segmentation, and gaussian blur replacement as the "
-        "original-style reference, but candidate segments are restricted to "
-        "a geometric lung-field ROI. This is not part of the original SEDC-T "
-        "setup."
+        f"quickshift segmentation, and {args.replacement_mode} replacement as "
+        "the original-style reference, but candidate segments are restricted "
+        "to a geometric lung-field ROI. This is not part of the original "
+        "SEDC-T setup."
     )
 
 
@@ -647,9 +737,21 @@ def main():
         type=float,
         default=30.0,
         help=(
-            "Per-image timeout for original_best_first search. "
-            "Use 0 or a negative value to disable the timeout."
+            "Per-target timeout for the best-first search, checked once per "
+            "expansion level like the reference max_time. The reference uses "
+            "600; on these 224x224 medical images every valid counterfactual "
+            "is found within ~3s, so the default 30 bounds the wait on "
+            "no-counterfactual samples with a wide margin and does not drop "
+            "any counterfactual. Use 0 or a negative value to disable it, or "
+            "600 to match the reference exactly. Keep it identical across "
+            "datasets for a fair comparison."
         ),
+    )
+    parser.add_argument(
+        "--replacement_mode",
+        choices=["mean", "blur", "random", "inpaint"],
+        default="blur",
+        help="Perturbation mode from the reference implementation.",
     )
     parser.add_argument("--blur_kernel", type=int, default=31)
     parser.add_argument(
@@ -712,12 +814,14 @@ def main():
     for sample_idx, sample in enumerate(samples):
         image = sample["image"]
         original_pixels = denormalize(image).detach()
-        replacement_pixels = create_replacement_image(original_pixels, args.blur_kernel)
         segments = create_segments(
             image_pixels=original_pixels,
             quickshift_kernel_size=args.quickshift_kernel_size,
             quickshift_max_dist=args.quickshift_max_dist,
             quickshift_ratio=args.quickshift_ratio,
+        )
+        replacement_pixels = create_replacement_image(
+            original_pixels, args.replacement_mode, args.blur_kernel, segments
         )
         allowed_segments, roi_mask = get_allowed_segments(
             segments,
@@ -780,6 +884,8 @@ def main():
         valid_counterfactual = result["prediction"] == target_class
 
         output_path = output_dir / f"sample_{sample_idx:02d}.png"
+        explanation_path = output_path.with_suffix(".explanation.png")
+        utils.save_image(result["explanation"], explanation_path)
         save_sedc_t_visualization(
             original_pixels=original_pixels,
             cf_pixels=result["image"],
@@ -845,6 +951,7 @@ def main():
             },
             "image_path": str(output_path),
             "summary_path": str(output_path.with_suffix(".summary.png")),
+            "explanation_path": str(explanation_path),
         }
         records.append(record)
 
@@ -865,10 +972,13 @@ def main():
             "quickshift_ratio": args.quickshift_ratio,
             "search_mode": "original_best_first",
             "search_timeout_seconds": timeout_seconds,
-            "replacement_mode": "gaussian_blur",
+            "replacement_mode": args.replacement_mode,
             "blur_kernel": args.blur_kernel,
             "roi_mode": args.roi_mode,
             "roi_min_overlap": args.roi_min_overlap,
+            "roi_lung_field_geometry": (
+                LUNG_FIELD_ROI if args.roi_mode == "lung_fields" else None
+            ),
             "target_strategy": args.target_strategy,
             "manifest_path": args.manifest_path,
             "manifest_max_samples": args.manifest_max_samples,
