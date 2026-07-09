@@ -1,0 +1,27 @@
+{
+    "model_path": "models/pneumonia_resnet18_robust_pgd.pth",
+    "dataset_path": "data/processed/Pneumonia",
+    "classes": [
+        "NORMAL",
+        "PNEUMONIA"
+    ],
+    "class_to_idx": {
+        "NORMAL": 0,
+        "PNEUMONIA": 1
+    },
+    "accuracy": 0.625,
+    "f1_weighted": 0.4807692307692308,
+    "precision_weighted": 0.390625,
+    "recall_weighted": 0.625,
+    "classification_report": "              precision    recall  f1-score   support\n\n      NORMAL       0.00      0.00      0.00       234\n   PNEUMONIA       0.62      1.00      0.77       390\n\n    accuracy                           0.62       624\n   macro avg       0.31      0.50      0.38       624\nweighted avg       0.39      0.62      0.48       624\n",
+    "confusion_matrix": [
+        [
+            0,
+            234
+        ],
+        [
+            0,
+            390
+        ]
+    ]
+}
