@@ -123,7 +123,7 @@ they should not collapse.
 Pneumonia:
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --second_model_path models/pneumonia_resnet18_robust_pgd.pth \
   --dataset_path data/processed/Pneumonia \
@@ -146,7 +146,7 @@ PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
 BUSI:
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --second_model_path models/busi_resnet18_robust_pgd.pth \
   --dataset_path data/processed/BUSI \
@@ -188,7 +188,7 @@ note the deviation in the results.
 BUSI, OpenAI checkpoint:
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --second_model_path models/busi_resnet18_robust_pgd.pth \
   --dataset_path data/processed/BUSI \
@@ -211,7 +211,7 @@ PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
 BUSI, BUSI fine-tuned checkpoint:
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --second_model_path models/busi_resnet18_robust_pgd.pth \
   --dataset_path data/processed/BUSI \
@@ -234,7 +234,7 @@ PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
 Pneumonia, OpenAI checkpoint:
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --second_model_path models/pneumonia_resnet18_robust_pgd.pth \
   --dataset_path data/processed/Pneumonia \
@@ -257,7 +257,7 @@ PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
 Pneumonia, Pneumonia fine-tuned checkpoint:
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --second_model_path models/pneumonia_resnet18_robust_pgd.pth \
   --dataset_path data/processed/Pneumonia \

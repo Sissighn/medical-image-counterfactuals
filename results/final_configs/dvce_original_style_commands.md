@@ -49,7 +49,7 @@ leave it off on MPS.
 BUSI:
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
   --output_dir results/final/dvce_original_style/openai/busi \
@@ -69,7 +69,7 @@ PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
 Pneumonia:
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --dataset_path data/processed/Pneumonia \
   --output_dir results/final/dvce_original_style/openai/pneumonia \
@@ -89,7 +89,7 @@ PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
 ## 2. Pneumonia Fine-Tuned Medical Checkpoint
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --dataset_path data/processed/Pneumonia \
   --output_dir results/final/dvce_original_style/pneumonia_medical_checkpoint/pneumonia \
@@ -109,7 +109,7 @@ PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
 ## 3. BUSI Fine-Tuned Medical Checkpoint
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
   --output_dir results/final/dvce_original_style/busi_medical_checkpoint/busi \
@@ -144,7 +144,7 @@ original readme command `python imagenet_VCEs.py ... --denoise_dist_input`,
 where the explained classifier itself is robust:
 
 ```bash
-PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/pneumonia_resnet18_robust_pgd.pth \
   --dataset_path data/processed/Pneumonia \
   --output_dir results/final/dvce_original_style_robust/openai/pneumonia \

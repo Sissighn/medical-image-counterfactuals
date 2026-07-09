@@ -13,7 +13,7 @@ autoencoder, with `gamma`/`theta` calibrated per dataset.
 | CFProto (original-style) prototype-guided optimization | Final prototype-guided method | FISTA + shrinkage-thresholding, untargeted hinge attack loss, encoder-space class prototypes, binary c-search, elastic-net selection |
 | Goyal et al. 2019 CVE | Instance-based feature-space edit | Greedy cell swaps from a nearest-unlike distractor; sparse localized edits; validity guaranteed by construction |
 | SEDC-T | Region-based/localized counterfactuals | Original-style best-first plus Pneumonia lung-field ROI ablation |
-| DVCE | Generative counterfactual feasibility | One original-style method family with no-cone and Cone Projection states; diffusion checkpoints are OpenAI, Pneumonia-medical, and BUSI-medical |
+| DVCE | Generative diffusion-guided counterfactuals | Cone Projection (original-faithful for the non-robust ResNet18) + no-cone ablation; diffusion checkpoints OpenAI, Pneumonia-medical, BUSI-medical; full fixed manifests |
 
 ## CFProto (Original-Style Prototype-Guided Optimization)
 
@@ -84,31 +84,29 @@ segmentation.
 
 ## DVCE
 
-DVCE generation is retained as the generative feasibility method. The older
-free-guidance prototype variants have been removed. The retained implementation
-uses the original-code-nearer `src/dvce_core.py` path: `p_sample`,
-`pred_xstart` guidance, separate classifier and LP-distance gradients,
-`enforce_same_norms=True`, and `clip_denoised=False`.
+DVCE generation is the generative method. The implementation uses the
+original-code-nearer `src/dvce_core.py` path: `p_sample`, `pred_xstart`
+guidance (unclamped `_map_img`), separate classifier and LP-distance gradients,
+eps-norm rebalancing (`enforce_same_norms=True`), `clip_denoised=False`, and
+Cone Projection matching the original `dff_attack.py` argument order.
 
-There is one DVCE original-style method family:
+There is one DVCE method family with two guidance states:
 
-```text
-DVCE original-style medical generation
-```
+- **Cone Projection** using a PGD-robust second medical ResNet18 classifier —
+  this is the **original-faithful** variant for the non-robust explained
+  ResNet18 (the original explains non-robust models only via cone projection);
+- **without Cone Projection** — kept only as an explicitly marked **ablation**,
+  since original no-cone is defined for robust classifiers.
 
-The retained DVCE states are:
+The diffusion checkpoint states (a separate axis) are:
 
-- without Cone Projection, mainly as original-style baseline,
-- with Cone Projection using a PGD-robust second medical ResNet18 classifier.
-
-The diffusion checkpoint states are:
-
-- OpenAI 256x256 unconditional checkpoint,
+- OpenAI 256x256 unconditional checkpoint (original backbone),
 - Pneumonia fine-tuned medical checkpoint,
-- BUSI fine-tuned medical checkpoint once available.
+- BUSI fine-tuned medical checkpoint.
 
-These states should not be reported with old free-guidance numbers. They need
-fresh fixed-manifest runs with `src/dvce_core.py`.
+All states were run on the full fixed manifests (BUSI 15, Pneumonia 20) with
+`src/dvce_core.py`. Results and the full matrix:
+`results/final_configs/dvce_method_documentation.md`.
 
 ## Reporting Principle
 
