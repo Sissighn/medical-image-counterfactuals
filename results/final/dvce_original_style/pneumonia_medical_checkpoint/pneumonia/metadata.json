@@ -1,0 +1,3789 @@
+{
+    "purpose": "DVCE medical multi-sample generation evaluation",
+    "status": "multi_sample_generation_completed",
+    "dvce_variant": "original_style_medical_no_cone",
+    "guidance_core": "pred_xstart_eps_norm_lp_custom",
+    "cone_projection_requested": false,
+    "cone_projection_enabled": false,
+    "python": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+    "device": "cuda",
+    "dvce_repo": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs",
+    "dvce_default_checkpoint": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\256x256_diffusion_uncond.pt",
+    "diffusion_checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+    "runner_settings": {
+        "timestep_respacing": "200",
+        "skip_timesteps": 100,
+        "model_output_size": 256,
+        "batch_size": 16,
+        "num_generation_samples": 1,
+        "manifest_path": "results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json",
+        "manifest_max_samples": null,
+        "classifier_lambda": 0.1,
+        "lp_custom": 1.0,
+        "lp_custom_value": 0.15,
+        "enforce_same_norms": true,
+        "gen_type": "p_sample",
+        "clip_denoised": false,
+        "denoise_dist_input": true,
+        "deg_cone_projection": 0.0,
+        "aug_num": 1,
+        "use_ddim": false,
+        "diffusion_fp16": true,
+        "seed": 1,
+        "diffusion_checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+        "diffusion_checkpoint_arg": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
+        "second_model_path": null
+    },
+    "classifier_adapter": {
+        "model_path": "models/pneumonia_resnet18_pretrained.pth",
+        "dataset_path": "data/processed/Pneumonia",
+        "classes": [
+            "NORMAL",
+            "PNEUMONIA"
+        ]
+    },
+    "second_classifier_adapter": {
+        "model_path": null,
+        "classes": null,
+        "num_classes": null,
+        "role": null
+    },
+    "evaluation_manifest": {
+        "path": "results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json",
+        "num_records_available": 20,
+        "num_records_used": 20,
+        "target_strategy": "second_best"
+    },
+    "dvce_core_initialization": {
+        "ok": true,
+        "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+        "checkpoint_exists": true,
+        "model_output_size": 256,
+        "timestep_respacing": "200",
+        "diffusion_num_timesteps": 200,
+        "model_parameter_count": 552814086,
+        "loaded_on_device": "cpu",
+        "elapsed_seconds": 2.301,
+        "note": "This initializes the DVCE/OpenAI diffusion backbone only. No denoising loop or counterfactual image is generated in this step."
+    },
+    "aggregate_metrics": {
+        "num_samples": 20,
+        "successful_generations": 20,
+        "failed_generations": 0,
+        "valid_count": 20,
+        "generation_success_rate": 1.0,
+        "validity": 1.0,
+        "validity_among_successful_generations": 1.0,
+        "mean_counterfactual_confidence": 0.9951183795928955,
+        "mean_runtime_seconds": 33.214749999999995,
+        "mean_absolute_difference": 0.017048058053478598,
+        "mean_l2_distance": 0.026866220775991677,
+        "mean_linf_distance": 0.5499342024326325,
+        "mean_l1_norm": 3351.784948730469,
+        "mean_l1_5_norm": 72.54069271087647,
+        "mean_l2_norm": 11.912588691711425,
+        "mean_changed_pixels_threshold_0_05": 0.052045186422765254
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "dataset_index": 0,
+            "manifest_sample_index": 0,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0001-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.6364450454711914,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.3635549545288086,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.5832618474960327,
+                "probabilities": [
+                    0.5832618474960327,
+                    0.4167381525039673
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 0.8752972483634949,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -0.754865825176239,
+                    "max": 0.5937194228172302,
+                    "mean": 3.559021934051998e-05,
+                    "std": 0.039246365427970886
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.047058820724487305,
+                "max": 0.9529411792755127,
+                "mean": 0.5138252377510071,
+                "std": 0.2218317836523056
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.04852940887212753,
+                "max": 0.9455575942993164,
+                "mean": 0.5138214826583862,
+                "std": 0.22115056216716766
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_00\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.046,
+            "steps_seen": 100,
+            "seed": 1,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.5832618474960327,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9967865943908691,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.5832618474960327,
+                0.4167381525039673
+            ],
+            "counterfactual_probabilities": [
+                0.003213442163541913,
+                0.9967865943908691
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_00\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_00\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_00\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.04852940887212753,
+                "max": 0.9455575942993164,
+                "mean": 0.5138214826583862,
+                "std": 0.22115056216716766
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.034375786781311035,
+                "max": 0.9505573511123657,
+                "mean": 0.5136745572090149,
+                "std": 0.22206062078475952
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 5.960464477539063e-08,
+                "max": 0.7003816366195679,
+                "mean": 0.01769866980612278,
+                "std": 0.019853636622428894
+            },
+            "changed_pixels_threshold_0_05": 0.0529429130256176,
+            "mean_absolute_difference": 0.01769866980612278,
+            "mean_l2_distance": 0.02659713849425316,
+            "linf_distance": 0.7003816366195679,
+            "l1_norm": 3479.70263671875,
+            "l1_5_norm": 73.43708038330078,
+            "l2_norm": 11.793286323547363
+        },
+        {
+            "sample_index": 1,
+            "dataset_index": 1,
+            "manifest_sample_index": 1,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0003-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.8753173351287842,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.12468267232179642,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.8903964757919312,
+                "probabilities": [
+                    0.8903964757919312,
+                    0.10960351675748825
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 2.210885763168335,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -1.8810027837753296,
+                    "max": 1.1555352210998535,
+                    "mean": 3.602163269533776e-05,
+                    "std": 0.09492233395576477
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.06666666269302368,
+                "max": 0.9921568632125854,
+                "mean": 0.5587130188941956,
+                "std": 0.23605208098888397
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06960783898830414,
+                "max": 0.981081485748291,
+                "mean": 0.5586726665496826,
+                "std": 0.2354816049337387
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_01\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 32.502,
+            "steps_seen": 100,
+            "seed": 2,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.8903964757919312,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9994654059410095,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.8903964757919312,
+                0.10960351675748825
+            ],
+            "counterfactual_probabilities": [
+                0.0005346276448108256,
+                0.9994654059410095
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_01\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_01\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_01\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06960783898830414,
+                "max": 0.981081485748291,
+                "mean": 0.5586726665496826,
+                "std": 0.2354816049337387
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.07542246580123901,
+                "max": 0.9628746509552002,
+                "mean": 0.5587949156761169,
+                "std": 0.23585888743400574
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.5519485473632812,
+                "mean": 0.01675388030707836,
+                "std": 0.01957651600241661
+            },
+            "changed_pixels_threshold_0_05": 0.0522664375603199,
+            "mean_absolute_difference": 0.01675388030707836,
+            "mean_l2_distance": 0.025766851380467415,
+            "linf_distance": 0.5519485473632812,
+            "l1_norm": 3293.946044921875,
+            "l1_5_norm": 70.77803039550781,
+            "l2_norm": 11.425119400024414
+        },
+        {
+            "sample_index": 2,
+            "dataset_index": 2,
+            "manifest_sample_index": 2,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0005-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.7859358191490173,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.21406419575214386,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.7408574819564819,
+                "probabilities": [
+                    0.7408574819564819,
+                    0.2591424882411957
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 1.3503773212432861,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -0.5786330699920654,
+                    "max": 0.5511640310287476,
+                    "mean": 1.5572475604130886e-05,
+                    "std": 0.046291448175907135
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.047058820724487305,
+                "max": 0.9411765336990356,
+                "mean": 0.5344192385673523,
+                "std": 0.2149660736322403
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0505974255502224,
+                "max": 0.937775731086731,
+                "mean": 0.5343912839889526,
+                "std": 0.21424691379070282
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_02\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 32.673,
+            "steps_seen": 100,
+            "seed": 3,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.7408574819564819,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9983410835266113,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.7408574819564819,
+                0.2591424882411957
+            ],
+            "counterfactual_probabilities": [
+                0.0016589416190981865,
+                0.9983410835266113
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_02\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_02\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_02\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0505974255502224,
+                "max": 0.937775731086731,
+                "mean": 0.5343912839889526,
+                "std": 0.21424691379070282
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.007096648216247559,
+                "max": 0.9350122213363647,
+                "mean": 0.5345037579536438,
+                "std": 0.21416671574115753
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 5.960464477539063e-08,
+                "max": 0.7403908967971802,
+                "mean": 0.018133914098143578,
+                "std": 0.019968820735812187
+            },
+            "changed_pixels_threshold_0_05": 0.0565999336540699,
+            "mean_absolute_difference": 0.018133914098143578,
+            "mean_l2_distance": 0.026973888278007507,
+            "linf_distance": 0.7403908967971802,
+            "l1_norm": 3565.26806640625,
+            "l1_5_norm": 74.9133529663086,
+            "l2_norm": 11.960325241088867
+        },
+        {
+            "sample_index": 3,
+            "dataset_index": 3,
+            "manifest_sample_index": 3,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0006-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.5727820992469788,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.42721793055534363,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.5747864246368408,
+                "probabilities": [
+                    0.5747864246368408,
+                    0.42521360516548157
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 0.8551636934280396,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -0.652220606803894,
+                    "max": 0.8442416787147522,
+                    "mean": 3.0115479603409767e-05,
+                    "std": 0.06598255038261414
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0156862735748291,
+                "max": 0.9450980424880981,
+                "mean": 0.5832229256629944,
+                "std": 0.16324013471603394
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.01617646962404251,
+                "max": 0.9337928891181946,
+                "mean": 0.5832114219665527,
+                "std": 0.16263651847839355
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_03\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.069,
+            "steps_seen": 100,
+            "seed": 4,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.5747864246368408,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9990874528884888,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.5747864246368408,
+                0.42521360516548157
+            ],
+            "counterfactual_probabilities": [
+                0.0009125663200393319,
+                0.9990874528884888
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_03\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_03\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_03\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.01617646962404251,
+                "max": 0.9337928891181946,
+                "mean": 0.5832114219665527,
+                "std": 0.16263651847839355
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.02372211217880249,
+                "max": 0.8888970613479614,
+                "mean": 0.5819913744926453,
+                "std": 0.1622428596019745
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.7881393432617188e-07,
+                "max": 0.1482866108417511,
+                "mean": 0.018236955627799034,
+                "std": 0.01595728099346161
+            },
+            "changed_pixels_threshold_0_05": 0.0500539131462574,
+            "mean_absolute_difference": 0.018236955627799034,
+            "mean_l2_distance": 0.024232622236013412,
+            "linf_distance": 0.1482866108417511,
+            "l1_norm": 3585.53173828125,
+            "l1_5_norm": 72.0531234741211,
+            "l2_norm": 10.744848251342773
+        },
+        {
+            "sample_index": 4,
+            "dataset_index": 4,
+            "manifest_sample_index": 4,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0007-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.8357948660850525,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.1642051488161087,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.7984817624092102,
+                "probabilities": [
+                    0.7984817624092102,
+                    0.2015182375907898
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 1.6018754243850708,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -0.7484692335128784,
+                    "max": 0.5930252075195312,
+                    "mean": 3.1060673791216686e-05,
+                    "std": 0.0555599145591259
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0627450942993164,
+                "max": 0.9647059440612793,
+                "mean": 0.5401108860969543,
+                "std": 0.2093123495578766
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06323529034852982,
+                "max": 0.9611213207244873,
+                "mean": 0.5401121377944946,
+                "std": 0.2085568606853485
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_04\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.002,
+            "steps_seen": 100,
+            "seed": 5,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.7984817624092102,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9980717897415161,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.7984817624092102,
+                0.2015182375907898
+            ],
+            "counterfactual_probabilities": [
+                0.0019281647400930524,
+                0.9980717897415161
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_04\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_04\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_04\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06323529034852982,
+                "max": 0.9611213207244873,
+                "mean": 0.5401121377944946,
+                "std": 0.2085568606853485
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.045851826667785645,
+                "max": 0.9622822999954224,
+                "mean": 0.5401015281677246,
+                "std": 0.20930781960487366
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.4901161193847656e-08,
+                "max": 0.4758208394050598,
+                "mean": 0.019688846543431282,
+                "std": 0.01942809484899044
+            },
+            "changed_pixels_threshold_0_05": 0.0697021484375,
+            "mean_absolute_difference": 0.019688846543431282,
+            "mean_l2_distance": 0.027660435065627098,
+            "linf_distance": 0.4758208394050598,
+            "l1_norm": 3870.999267578125,
+            "l1_5_norm": 79.65399932861328,
+            "l2_norm": 12.264755249023438
+        },
+        {
+            "sample_index": 5,
+            "dataset_index": 5,
+            "manifest_sample_index": 5,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0009-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.9566135406494141,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.043386463075876236,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.947115957736969,
+                "probabilities": [
+                    0.947115957736969,
+                    0.052884045988321304
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 2.9396536350250244,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -1.3049116134643555,
+                    "max": 1.2516244649887085,
+                    "mean": 6.0663656768156216e-05,
+                    "std": 0.1026172786951065
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.09411764144897461,
+                "max": 0.9607843160629272,
+                "mean": 0.5636793971061707,
+                "std": 0.18929585814476013
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.09980084747076035,
+                "max": 0.9529411792755127,
+                "mean": 0.5636918544769287,
+                "std": 0.18853691220283508
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_05\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.371,
+            "steps_seen": 100,
+            "seed": 6,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.947115957736969,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9952870607376099,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.947115957736969,
+                0.052884045988321304
+            ],
+            "counterfactual_probabilities": [
+                0.004712953697890043,
+                0.9952870607376099
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_05\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_05\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_05\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.09980084747076035,
+                "max": 0.9529411792755127,
+                "mean": 0.5636918544769287,
+                "std": 0.18853691220283508
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.09399908781051636,
+                "max": 0.9360647797584534,
+                "mean": 0.5632115006446838,
+                "std": 0.1879672110080719
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.1920928955078125e-07,
+                "max": 0.41015303134918213,
+                "mean": 0.017368104308843613,
+                "std": 0.018103616312146187
+            },
+            "changed_pixels_threshold_0_05": 0.0531667061150074,
+            "mean_absolute_difference": 0.017368104308843613,
+            "mean_l2_distance": 0.02508765272796154,
+            "linf_distance": 0.41015303134918213,
+            "l1_norm": 3414.7099609375,
+            "l1_5_norm": 71.4219741821289,
+            "l2_norm": 11.12397289276123
+        },
+        {
+            "sample_index": 6,
+            "dataset_index": 6,
+            "manifest_sample_index": 6,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0010-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.9521523714065552,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.04784761369228363,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.939974308013916,
+                "probabilities": [
+                    0.939974308013916,
+                    0.0600256510078907
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 2.812983274459839,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -1.0605195760726929,
+                    "max": 0.9763827919960022,
+                    "mean": 3.256621710079344e-07,
+                    "std": 0.06431137025356293
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.9372549057006836,
+                "mean": 0.5201249122619629,
+                "std": 0.2286263108253479
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.9355086088180542,
+                "mean": 0.5201172828674316,
+                "std": 0.22808130085468292
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_06\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.394,
+            "steps_seen": 100,
+            "seed": 7,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.939974308013916,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9974284768104553,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.939974308013916,
+                0.0600256510078907
+            ],
+            "counterfactual_probabilities": [
+                0.0025714917574077845,
+                0.9974284768104553
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_06\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_06\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_06\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.9355086088180542,
+                "mean": 0.5201172828674316,
+                "std": 0.22808130085468292
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.9205647706985474,
+                "mean": 0.5195767879486084,
+                "std": 0.22741733491420746
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.6044013500213623,
+                "mean": 0.0174873024225235,
+                "std": 0.018570663407444954
+            },
+            "changed_pixels_threshold_0_05": 0.0513203926384449,
+            "mean_absolute_difference": 0.0174873024225235,
+            "mean_l2_distance": 0.025508305057883263,
+            "linf_distance": 0.6044013500213623,
+            "l1_norm": 3438.146728515625,
+            "l1_5_norm": 71.94741821289062,
+            "l2_norm": 11.310484886169434
+        },
+        {
+            "sample_index": 7,
+            "dataset_index": 7,
+            "manifest_sample_index": 7,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0011-0001-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.716064453125,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.2839355170726776,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.6878696084022522,
+                "probabilities": [
+                    0.6878696084022522,
+                    0.3121303617954254
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 1.1643342971801758,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -0.8827546834945679,
+                    "max": 0.6999274492263794,
+                    "mean": 1.7249025404453278e-05,
+                    "std": 0.060421377420425415
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.003921538591384888,
+                "max": 0.9254902601242065,
+                "mean": 0.5376198291778564,
+                "std": 0.20562058687210083
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.005989567376673222,
+                "max": 0.9195159673690796,
+                "mean": 0.5375996828079224,
+                "std": 0.20503206551074982
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_07\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.065,
+            "steps_seen": 100,
+            "seed": 8,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.6878696084022522,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.997835099697113,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.6878696084022522,
+                0.3121303617954254
+            ],
+            "counterfactual_probabilities": [
+                0.0021649482659995556,
+                0.997835099697113
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_07\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_07\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_07\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.005989567376673222,
+                "max": 0.9195159673690796,
+                "mean": 0.5375996828079224,
+                "std": 0.20503206551074982
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.9047011137008667,
+                "mean": 0.5377929210662842,
+                "std": 0.20507299900054932
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.40224334597587585,
+                "mean": 0.018216049298644066,
+                "std": 0.018008191138505936
+            },
+            "changed_pixels_threshold_0_05": 0.0554351806640625,
+            "mean_absolute_difference": 0.018216049298644066,
+            "mean_l2_distance": 0.025614796206355095,
+            "linf_distance": 0.40224334597587585,
+            "l1_norm": 3581.42724609375,
+            "l1_5_norm": 73.78599548339844,
+            "l2_norm": 11.357719421386719
+        },
+        {
+            "sample_index": 8,
+            "dataset_index": 9,
+            "manifest_sample_index": 8,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0011-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.889955997467041,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.11004402488470078,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.8656898140907288,
+                "probabilities": [
+                    0.8656898140907288,
+                    0.13431018590927124
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 2.007603406906128,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -2.0326220989227295,
+                    "max": 1.9409672021865845,
+                    "mean": 5.590675209532492e-05,
+                    "std": 0.11877831816673279
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.011764705181121826,
+                "max": 0.8784314393997192,
+                "mean": 0.4950324296951294,
+                "std": 0.20477697253227234
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.01348039135336876,
+                "max": 0.8772978782653809,
+                "mean": 0.4950314462184906,
+                "std": 0.20421423017978668
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_08\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 32.924,
+            "steps_seen": 100,
+            "seed": 9,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.8656898140907288,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9993597865104675,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.8656898140907288,
+                0.13431018590927124
+            ],
+            "counterfactual_probabilities": [
+                0.0006401930586434901,
+                0.9993597865104675
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_08\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_08\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_08\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.01348039135336876,
+                "max": 0.8772978782653809,
+                "mean": 0.4950314462184906,
+                "std": 0.20421423017978668
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.015296906232833862,
+                "max": 0.8637992739677429,
+                "mean": 0.4948408305644989,
+                "std": 0.20402641594409943
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.1920928955078125e-07,
+                "max": 0.6733980178833008,
+                "mean": 0.01656928099691868,
+                "std": 0.019168101251125336
+            },
+            "changed_pixels_threshold_0_05": 0.0428263358771801,
+            "mean_absolute_difference": 0.01656928099691868,
+            "mean_l2_distance": 0.025336837396025658,
+            "linf_distance": 0.6733980178833008,
+            "l1_norm": 3257.65087890625,
+            "l1_5_norm": 69.04483032226562,
+            "l2_norm": 11.234465599060059
+        },
+        {
+            "sample_index": 9,
+            "dataset_index": 10,
+            "manifest_sample_index": 9,
+            "source_image_path": "data/processed/Pneumonia/test/NORMAL/IM-0013-0001.jpeg",
+            "true_label_index": 0,
+            "true_label": "NORMAL",
+            "original_prediction_index": 0,
+            "original_prediction": "NORMAL",
+            "original_confidence_before_resize": 0.8354745507240295,
+            "target_class_index": 1,
+            "target_class": "PNEUMONIA",
+            "target_initial_confidence_before_resize": 0.16452549397945404,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 0,
+                "confidence": 0.8133543133735657,
+                "probabilities": [
+                    0.8133543133735657,
+                    0.18664564192295074
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 1.6785434484481812,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -1.0441374778747559,
+                    "max": 0.8400871157646179,
+                    "mean": 6.390473572537303e-07,
+                    "std": 0.05616316571831703
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.9411765336990356,
+                "mean": 0.5336176753044128,
+                "std": 0.21813777089118958
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.00413602264598012,
+                "max": 0.9370405673980713,
+                "mean": 0.5336218476295471,
+                "std": 0.21742640435695648
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_09\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.109,
+            "steps_seen": 100,
+            "seed": 10,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.8133543133735657,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "PNEUMONIA",
+            "counterfactual_confidence": 0.9967954754829407,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.8133543133735657,
+                0.18664564192295074
+            ],
+            "counterfactual_probabilities": [
+                0.003204532666131854,
+                0.9967954754829407
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_09\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_09\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_09\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.00413602264598012,
+                "max": 0.9370405673980713,
+                "mean": 0.5336218476295471,
+                "std": 0.21742640435695648
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0010835826396942139,
+                "max": 0.9403848648071289,
+                "mean": 0.5339151620864868,
+                "std": 0.21739496290683746
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.1920928955078125e-07,
+                "max": 0.5783449411392212,
+                "mean": 0.019109949469566345,
+                "std": 0.01899794489145279
+            },
+            "changed_pixels_threshold_0_05": 0.0621185302734375,
+            "mean_absolute_difference": 0.019109949469566345,
+            "mean_l2_distance": 0.026946434751152992,
+            "linf_distance": 0.5783449411392212,
+            "l1_norm": 3757.165283203125,
+            "l1_5_norm": 77.4242172241211,
+            "l2_norm": 11.948163032531738
+        },
+        {
+            "sample_index": 10,
+            "dataset_index": 234,
+            "manifest_sample_index": 10,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_475.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence_before_resize": 0.9994057416915894,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "target_initial_confidence_before_resize": 0.0005943102878518403,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9995163679122925,
+                "probabilities": [
+                    0.0004836171574424952,
+                    0.9995163679122925
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 7.634217262268066,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -1.2872681617736816,
+                    "max": 1.894966959953308,
+                    "mean": 2.692948328331113e-06,
+                    "std": 0.1557779163122177
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.9647059440612793,
+                "mean": 0.4336337745189667,
+                "std": 0.21710920333862305
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.9451900124549866,
+                "mean": 0.43362534046173096,
+                "std": 0.21637274324893951
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_10\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.312,
+            "steps_seen": 100,
+            "seed": 11,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9995163679122925,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9920349717140198,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.0004836171574424952,
+                0.9995163679122925
+            ],
+            "counterfactual_probabilities": [
+                0.9920349717140198,
+                0.007965091615915298
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_10\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_10\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_10\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.9451900124549866,
+                "mean": 0.43362534046173096,
+                "std": 0.21637274324893951
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 1.0,
+                "mean": 0.43295666575431824,
+                "std": 0.21700793504714966
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.6586931943893433,
+                "mean": 0.01949949748814106,
+                "std": 0.023411232978105545
+            },
+            "changed_pixels_threshold_0_05": 0.0758819580078125,
+            "mean_absolute_difference": 0.01949949748814106,
+            "mean_l2_distance": 0.030468236654996872,
+            "linf_distance": 0.6586931943893433,
+            "l1_norm": 3833.75830078125,
+            "l1_5_norm": 83.2158203125,
+            "l2_norm": 13.509727478027344
+        },
+        {
+            "sample_index": 11,
+            "dataset_index": 235,
+            "manifest_sample_index": 11,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_477.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence_before_resize": 0.9999871253967285,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "target_initial_confidence_before_resize": 1.2932595382153522e-05,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9999847412109375,
+                "probabilities": [
+                    1.5264959074556828e-05,
+                    0.9999847412109375
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 11.089950561523438,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -2.5031135082244873,
+                    "max": 3.0291104316711426,
+                    "mean": 3.8565991417272016e-05,
+                    "std": 0.2197228968143463
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.8196078538894653,
+                "mean": 0.2863876223564148,
+                "std": 0.15757054090499878
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.7762255072593689,
+                "mean": 0.2864121198654175,
+                "std": 0.1569049060344696
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_11\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.466,
+            "steps_seen": 100,
+            "seed": 12,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9999847412109375,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9977920055389404,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                1.5264959074556828e-05,
+                0.9999847412109375
+            ],
+            "counterfactual_probabilities": [
+                0.9977920055389404,
+                0.002207960933446884
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_11\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_11\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_11\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.7762255072593689,
+                "mean": 0.2864121198654175,
+                "std": 0.1569049060344696
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.9743597507476807,
+                "mean": 0.2863198220729828,
+                "std": 0.15649643540382385
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.7009222507476807,
+                "mean": 0.016089243814349174,
+                "std": 0.022968042641878128
+            },
+            "changed_pixels_threshold_0_05": 0.0504506416618824,
+            "mean_absolute_difference": 0.016089243814349174,
+            "mean_l2_distance": 0.028042683377861977,
+            "linf_distance": 0.7009222507476807,
+            "l1_norm": 3163.271484375,
+            "l1_5_norm": 71.98177337646484,
+            "l2_norm": 12.43423080444336
+        },
+        {
+            "sample_index": 12,
+            "dataset_index": 236,
+            "manifest_sample_index": 12,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_478.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence_before_resize": 0.9999337196350098,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "target_initial_confidence_before_resize": 6.626880349358544e-05,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9999393224716187,
+                "probabilities": [
+                    6.0623704484896734e-05,
+                    0.9999393224716187
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 9.710824966430664,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -2.805053234100342,
+                    "max": 3.2564706802368164,
+                    "mean": -2.3658503778278828e-06,
+                    "std": 0.25842317938804626
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.9254902601242065,
+                "mean": 0.5305048227310181,
+                "std": 0.20197537541389465
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.8793351650238037,
+                "mean": 0.5305025577545166,
+                "std": 0.201347216963768
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_12\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.181,
+            "steps_seen": 100,
+            "seed": 13,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9999393224716187,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9925522804260254,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                6.0623704484896734e-05,
+                0.9999393224716187
+            ],
+            "counterfactual_probabilities": [
+                0.9925522804260254,
+                0.007447773590683937
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_12\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_12\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_12\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.8793351650238037,
+                "mean": 0.5305025577545166,
+                "std": 0.201347216963768
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0003860592842102051,
+                "max": 0.998170793056488,
+                "mean": 0.5312200784683228,
+                "std": 0.2022729218006134
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 5.960464477539063e-08,
+                "max": 0.4666869044303894,
+                "mean": 0.017808469012379646,
+                "std": 0.022214306518435478
+            },
+            "changed_pixels_threshold_0_05": 0.0636342391371727,
+            "mean_absolute_difference": 0.017808469012379646,
+            "mean_l2_distance": 0.028471292927861214,
+            "linf_distance": 0.4666869044303894,
+            "l1_norm": 3501.27734375,
+            "l1_5_norm": 76.70858764648438,
+            "l2_norm": 12.624277114868164
+        },
+        {
+            "sample_index": 13,
+            "dataset_index": 237,
+            "manifest_sample_index": 13,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_479.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence_before_resize": 0.9999376535415649,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "target_initial_confidence_before_resize": 6.23344603809528e-05,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9999417066574097,
+                "probabilities": [
+                    5.824214531457983e-05,
+                    0.9999417066574097
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 9.750901222229004,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -3.041416883468628,
+                    "max": 4.949667930603027,
+                    "mean": -1.650088233873248e-05,
+                    "std": 0.23478908836841583
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.8745098114013672,
+                "mean": 0.4403727054595947,
+                "std": 0.17669877409934998
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.7915594577789307,
+                "mean": 0.44038382172584534,
+                "std": 0.1761532425880432
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_13\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.238,
+            "steps_seen": 100,
+            "seed": 14,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9999417066574097,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9956316947937012,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                5.824214531457983e-05,
+                0.9999417066574097
+            ],
+            "counterfactual_probabilities": [
+                0.9956316947937012,
+                0.004368292633444071
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_13\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_13\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_13\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.7915594577789307,
+                "mean": 0.44038382172584534,
+                "std": 0.1761532425880432
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0012507736682891846,
+                "max": 0.8792126178741455,
+                "mean": 0.4389190673828125,
+                "std": 0.17622317373752594
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.1920928955078125e-07,
+                "max": 0.5658665895462036,
+                "mean": 0.016017040237784386,
+                "std": 0.024520916864275932
+            },
+            "changed_pixels_threshold_0_05": 0.0465087890625,
+            "mean_absolute_difference": 0.016017040237784386,
+            "mean_l2_distance": 0.029288528487086296,
+            "linf_distance": 0.5658665895462036,
+            "l1_norm": 3149.0732421875,
+            "l1_5_norm": 72.65521240234375,
+            "l2_norm": 12.986651420593262
+        },
+        {
+            "sample_index": 14,
+            "dataset_index": 238,
+            "manifest_sample_index": 14,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_480.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence_before_resize": 0.9999282360076904,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "target_initial_confidence_before_resize": 7.17394141247496e-05,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9999710321426392,
+                "probabilities": [
+                    2.900998151744716e-05,
+                    0.9999710321426392
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 10.447870254516602,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -2.327465534210205,
+                    "max": 2.2599141597747803,
+                    "mean": 3.455922706052661e-05,
+                    "std": 0.23708750307559967
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.9333333969116211,
+                "mean": 0.4485655426979065,
+                "std": 0.1904713213443756
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.002113970462232828,
+                "max": 0.8455729484558105,
+                "mean": 0.44856658577919006,
+                "std": 0.18998518586158752
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_14\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.211,
+            "steps_seen": 100,
+            "seed": 15,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9999710321426392,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9909046292304993,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                2.900998151744716e-05,
+                0.9999710321426392
+            ],
+            "counterfactual_probabilities": [
+                0.9909046292304993,
+                0.009095445275306702
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_14\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_14\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_14\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.002113970462232828,
+                "max": 0.8455729484558105,
+                "mean": 0.44856658577919006,
+                "std": 0.18998518586158752
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.00040283799171447754,
+                "max": 0.7728612422943115,
+                "mean": 0.44642773270606995,
+                "std": 0.19081296026706696
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.4901161193847656e-07,
+                "max": 0.5598167181015015,
+                "mean": 0.015781767666339874,
+                "std": 0.0227536391466856
+            },
+            "changed_pixels_threshold_0_05": 0.0416514091193676,
+            "mean_absolute_difference": 0.015781767666339874,
+            "mean_l2_distance": 0.027690967544913292,
+            "linf_distance": 0.5598167181015015,
+            "l1_norm": 3102.82275390625,
+            "l1_5_norm": 70.32172393798828,
+            "l2_norm": 12.278285026550293
+        },
+        {
+            "sample_index": 15,
+            "dataset_index": 239,
+            "manifest_sample_index": 15,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_481.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence_before_resize": 0.9999769926071167,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "target_initial_confidence_before_resize": 2.302745087945368e-05,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 1,
+                "confidence": 0.999987006187439,
+                "probabilities": [
+                    1.2978666745766532e-05,
+                    0.999987006187439
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 11.252203941345215,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -3.2907896041870117,
+                    "max": 3.248084545135498,
+                    "mean": 4.6233839384512976e-05,
+                    "std": 0.26269635558128357
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.7960784435272217,
+                "mean": 0.4237474203109741,
+                "std": 0.18677948415279388
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.7503829598426819,
+                "mean": 0.42374420166015625,
+                "std": 0.18625006079673767
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_15\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.479,
+            "steps_seen": 100,
+            "seed": 16,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.999987006187439,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9858196973800659,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                1.2978666745766532e-05,
+                0.999987006187439
+            ],
+            "counterfactual_probabilities": [
+                0.9858196973800659,
+                0.01418028399348259
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_15\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_15\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_15\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.7503829598426819,
+                "mean": 0.42374420166015625,
+                "std": 0.18625006079673767
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.00043261051177978516,
+                "max": 0.842120349407196,
+                "mean": 0.42419862747192383,
+                "std": 0.18668830394744873
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 5.960464477539063e-08,
+                "max": 0.4573342204093933,
+                "mean": 0.015768712386488914,
+                "std": 0.022230640053749084
+            },
+            "changed_pixels_threshold_0_05": 0.0509897880256176,
+            "mean_absolute_difference": 0.015768712386488914,
+            "mean_l2_distance": 0.02725529670715332,
+            "linf_distance": 0.4573342204093933,
+            "l1_norm": 3100.260498046875,
+            "l1_5_norm": 70.63407897949219,
+            "l2_norm": 12.08509635925293
+        },
+        {
+            "sample_index": 16,
+            "dataset_index": 240,
+            "manifest_sample_index": 16,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person100_bacteria_482.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence_before_resize": 0.9999990463256836,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "target_initial_confidence_before_resize": 9.08090783013904e-07,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9999986886978149,
+                "probabilities": [
+                    1.363192268399871e-06,
+                    0.9999986886978149
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 13.505681037902832,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -3.3952276706695557,
+                    "max": 3.1159615516662598,
+                    "mean": 6.029296855558641e-05,
+                    "std": 0.2940872609615326
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.886274516582489,
+                "mean": 0.41767415404319763,
+                "std": 0.21615956723690033
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0009344291174784303,
+                "max": 0.8204350471496582,
+                "mean": 0.4176750183105469,
+                "std": 0.21572279930114746
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_16\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.553,
+            "steps_seen": 100,
+            "seed": 17,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9999986886978149,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9910972118377686,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                1.363192268399871e-06,
+                0.9999986886978149
+            ],
+            "counterfactual_probabilities": [
+                0.9910972118377686,
+                0.00890275463461876
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_16\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_16\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_16\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0009344291174784303,
+                "max": 0.8204350471496582,
+                "mean": 0.4176750183105469,
+                "std": 0.21572279930114746
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0013588964939117432,
+                "max": 0.9953072667121887,
+                "mean": 0.4177822172641754,
+                "std": 0.21693535149097443
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.4901161193847656e-07,
+                "max": 0.5440622568130493,
+                "mean": 0.01461789757013321,
+                "std": 0.023027846589684486
+            },
+            "changed_pixels_threshold_0_05": 0.0405832938849926,
+            "mean_absolute_difference": 0.01461789757013321,
+            "mean_l2_distance": 0.02727566659450531,
+            "linf_distance": 0.5440622568130493,
+            "l1_norm": 2873.994140625,
+            "l1_5_norm": 67.56059265136719,
+            "l2_norm": 12.094103813171387
+        },
+        {
+            "sample_index": 17,
+            "dataset_index": 241,
+            "manifest_sample_index": 17,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_483.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence_before_resize": 0.9968994855880737,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "target_initial_confidence_before_resize": 0.0031005546916276217,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9974265694618225,
+                "probabilities": [
+                    0.002573455683887005,
+                    0.9974265694618225
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 5.96250581741333,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -4.076573848724365,
+                    "max": 3.4036900997161865,
+                    "mean": 1.3786368072032928e-05,
+                    "std": 0.3052559196949005
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.00784313678741455,
+                "max": 0.8392156958580017,
+                "mean": 0.6121209263801575,
+                "std": 0.17260751128196716
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.00784313678741455,
+                "max": 0.8137255311012268,
+                "mean": 0.6121079921722412,
+                "std": 0.17212362587451935
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_17\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.518,
+            "steps_seen": 100,
+            "seed": 18,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9974265694618225,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9923322200775146,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.002573455683887005,
+                0.9974265694618225
+            ],
+            "counterfactual_probabilities": [
+                0.9923322200775146,
+                0.00766776455566287
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_17\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_17\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_17\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.00784313678741455,
+                "max": 0.8137255311012268,
+                "mean": 0.6121079921722412,
+                "std": 0.17212362587451935
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.004772007465362549,
+                "max": 0.8759641647338867,
+                "mean": 0.6116884350776672,
+                "std": 0.17242898046970367
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.7881393432617188e-07,
+                "max": 0.6556658744812012,
+                "mean": 0.01372530683875084,
+                "std": 0.018755460157990456
+            },
+            "changed_pixels_threshold_0_05": 0.029998779296875,
+            "mean_absolute_difference": 0.01372530683875084,
+            "mean_l2_distance": 0.023241117596626282,
+            "linf_distance": 0.6556658744812012,
+            "l1_norm": 2698.50439453125,
+            "l1_5_norm": 60.02336502075195,
+            "l2_norm": 10.305204391479492
+        },
+        {
+            "sample_index": 18,
+            "dataset_index": 242,
+            "manifest_sample_index": 18,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_484.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence_before_resize": 0.9987903237342834,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "target_initial_confidence_before_resize": 0.0012097603175789118,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9982814788818359,
+                "probabilities": [
+                    0.0017185400938615203,
+                    0.9982814788818359
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 6.3662800788879395,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -1.7855253219604492,
+                    "max": 1.9894376993179321,
+                    "mean": -5.8099773013964295e-05,
+                    "std": 0.1754133552312851
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.8392156958580017,
+                "mean": 0.5592045783996582,
+                "std": 0.20438863337039948
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0004901960492134094,
+                "max": 0.8314491510391235,
+                "mean": 0.5591817498207092,
+                "std": 0.2036556452512741
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_18\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.552,
+            "steps_seen": 100,
+            "seed": 19,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9982814788818359,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9914765954017639,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.0017185400938615203,
+                0.9982814788818359
+            ],
+            "counterfactual_probabilities": [
+                0.9914765954017639,
+                0.008523371070623398
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_18\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_18\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_18\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0004901960492134094,
+                "max": 0.8314491510391235,
+                "mean": 0.5591817498207092,
+                "std": 0.2036556452512741
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.007784456014633179,
+                "max": 1.0,
+                "mean": 0.5582519173622131,
+                "std": 0.20463180541992188
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.5929156541824341,
+                "mean": 0.0172822754830122,
+                "std": 0.02261956036090851
+            },
+            "changed_pixels_threshold_0_05": 0.0552419014275074,
+            "mean_absolute_difference": 0.0172822754830122,
+            "mean_l2_distance": 0.028466099873185158,
+            "linf_distance": 0.5929156541824341,
+            "l1_norm": 3397.837158203125,
+            "l1_5_norm": 75.18045806884766,
+            "l2_norm": 12.621977806091309
+        },
+        {
+            "sample_index": 19,
+            "dataset_index": 243,
+            "manifest_sample_index": 19,
+            "source_image_path": "data/processed/Pneumonia/test/PNEUMONIA/person101_bacteria_485.jpeg",
+            "true_label_index": 1,
+            "true_label": "PNEUMONIA",
+            "original_prediction_index": 1,
+            "original_prediction": "PNEUMONIA",
+            "original_confidence_before_resize": 0.986639678478241,
+            "target_class_index": 0,
+            "target_class": "NORMAL",
+            "target_initial_confidence_before_resize": 0.013360358774662018,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    2
+                ],
+                "prediction_index": 1,
+                "confidence": 0.993055522441864,
+                "probabilities": [
+                    0.0069445157423615456,
+                    0.993055522441864
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 4.9698028564453125,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -2.962301731109619,
+                    "max": 2.869746446609497,
+                    "mean": -8.321099448949099e-05,
+                    "std": 0.21853868663311005
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": null,
+            "cone_projection_requested": false,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.8274509906768799,
+                "mean": 0.4449092745780945,
+                "std": 0.16951227188110352
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.7465533018112183,
+                "mean": 0.44490373134613037,
+                "std": 0.16896328330039978
+            },
+            "sample_preview_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_19\\dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 33.63,
+            "steps_seen": 100,
+            "seed": 20,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": true,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 0.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": false,
+            "aug_num": 1,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": true,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.993055522441864,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "NORMAL",
+            "counterfactual_confidence": 0.9942680597305298,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.0069445157423615456,
+                0.993055522441864
+            ],
+            "counterfactual_probabilities": [
+                0.9942680597305298,
+                0.0057319151237607
+            ],
+            "counterfactual_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_19\\dvce_counterfactual_candidate.png",
+            "difference_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_19\\dvce_absolute_difference.png",
+            "visualization_path": "results\\final\\dvce_original_style\\pneumonia_medical_checkpoint\\pneumonia\\sample_19\\dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.7465533018112183,
+                "mean": 0.44490373134613037,
+                "std": 0.16896328330039978
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.9996761083602905,
+                "mean": 0.44408443570137024,
+                "std": 0.17075572907924652
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 8.940696716308594e-08,
+                "max": 0.5113511681556702,
+                "mean": 0.015107997693121433,
+                "std": 0.02285797894001007
+            },
+            "changed_pixels_threshold_0_05": 0.0395304374396801,
+            "mean_absolute_difference": 0.015107997693121433,
+            "mean_l2_distance": 0.027399564161896706,
+            "linf_distance": 0.5113511681556702,
+            "l1_norm": 2970.351806640625,
+            "l1_5_norm": 68.07221984863281,
+            "l2_norm": 12.149079322814941
+        }
+    ]
+}

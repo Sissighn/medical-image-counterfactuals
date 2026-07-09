@@ -1,0 +1,188 @@
+{
+    "sample_index": 13,
+    "dataset_index": 101,
+    "manifest_sample_index": 13,
+    "source_image_path": "data/processed/BUSI/test/normal/normal (13).png",
+    "true_label_index": 2,
+    "true_label": "normal",
+    "original_prediction_index": 2,
+    "original_prediction": "normal",
+    "original_confidence_before_resize": 0.9961806535720825,
+    "target_class_index": 1,
+    "target_class": "malignant",
+    "target_initial_confidence_before_resize": 0.0019439839525148273,
+    "adapter_forward_check": {
+        "logits_shape": [
+            1,
+            3
+        ],
+        "prediction_index": 2,
+        "confidence": 0.9977871179580688,
+        "probabilities": [
+            0.0016111532459035516,
+            0.0006016998668201268,
+            0.9977871179580688
+        ]
+    },
+    "classifier_guidance_gradient_check": {
+        "target_loss": 7.415751934051514,
+        "gradient_available": true,
+        "gradient_stats": {
+            "shape": [
+                1,
+                3,
+                256,
+                256
+            ],
+            "min": -3.5921483039855957,
+            "max": 4.53913688659668,
+            "mean": -6.815742381149903e-05,
+            "std": 0.3264639377593994
+        },
+        "has_nonzero_gradient": true
+    },
+    "second_classifier_path": null,
+    "cone_projection_requested": false,
+    "input_01_stats": {
+        "shape": [
+            1,
+            3,
+            224,
+            224
+        ],
+        "min": 0.003921538591384888,
+        "max": 1.0,
+        "mean": 0.44933515787124634,
+        "std": 0.21039430797100067
+    },
+    "input_256_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 0.003921538591384888,
+        "max": 0.995772123336792,
+        "mean": 0.4493633508682251,
+        "std": 0.2092994600534439
+    },
+    "sample_preview_path": "results\\final\\dvce_original_style\\busi_medical_checkpoint\\busi\\sample_13\\dvce_medical_input_256.png",
+    "ok": true,
+    "error": null,
+    "runtime_seconds": 33.409,
+    "steps_seen": 100,
+    "seed": 14,
+    "model_output_size": 256,
+    "timestep_respacing": "200",
+    "skip_timesteps": 100,
+    "use_ddim": false,
+    "gen_type": "p_sample",
+    "use_fp16": true,
+    "clip_denoised": false,
+    "classifier_lambda": 0.1,
+    "lp_custom": 1.0,
+    "lp_custom_value": 0.15,
+    "enforce_same_norms": true,
+    "denoise_dist_input": true,
+    "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+    "deg_cone_projection": 0.0,
+    "classifier_size": 224,
+    "cone_projection_enabled": false,
+    "aug_num": 1,
+    "guidance_space": "pred_xstart",
+    "distance_target": "init_image",
+    "sampling_backbone": {
+        "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_busi_ema.pt",
+        "model_config": {
+            "image_size": 256,
+            "num_channels": 256,
+            "num_res_blocks": 2,
+            "num_heads": 4,
+            "num_heads_upsample": -1,
+            "num_head_channels": 64,
+            "attention_resolutions": "32, 16, 8",
+            "channel_mult": "",
+            "dropout": 0.0,
+            "class_cond": false,
+            "use_checkpoint": false,
+            "use_scale_shift_norm": true,
+            "resblock_updown": true,
+            "use_fp16": true,
+            "use_new_attention_order": false,
+            "learn_sigma": true,
+            "diffusion_steps": 1000,
+            "noise_schedule": "linear",
+            "timestep_respacing": "200",
+            "use_kl": false,
+            "predict_xstart": false,
+            "rescale_timesteps": true,
+            "rescale_learned_sigmas": false
+        },
+        "diffusion_num_timesteps": 200,
+        "gradient_parameter_count": 96,
+        "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+    },
+    "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+    "original_confidence": 0.9977871179580688,
+    "counterfactual_prediction_index": 1,
+    "counterfactual_prediction": "malignant",
+    "counterfactual_confidence": 0.9954256415367126,
+    "valid_counterfactual": true,
+    "original_probabilities": [
+        0.0016111532459035516,
+        0.0006016998668201268,
+        0.9977871179580688
+    ],
+    "counterfactual_probabilities": [
+        0.003322873031720519,
+        0.9954256415367126,
+        0.0012514962581917644
+    ],
+    "counterfactual_path": "results\\final\\dvce_original_style\\busi_medical_checkpoint\\busi\\sample_13\\dvce_counterfactual_candidate.png",
+    "difference_path": "results\\final\\dvce_original_style\\busi_medical_checkpoint\\busi\\sample_13\\dvce_absolute_difference.png",
+    "visualization_path": "results\\final\\dvce_original_style\\busi_medical_checkpoint\\busi\\sample_13\\dvce_counterfactual_visualization.png",
+    "original_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 0.003921538591384888,
+        "max": 0.995772123336792,
+        "mean": 0.4493633508682251,
+        "std": 0.2092994600534439
+    },
+    "counterfactual_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 0.008678346872329712,
+        "max": 1.0,
+        "mean": 0.4477103054523468,
+        "std": 0.2091633528470993
+    },
+    "diff_stats": {
+        "shape": [
+            1,
+            3,
+            256,
+            256
+        ],
+        "min": 5.21540641784668e-08,
+        "max": 0.382880836725235,
+        "mean": 0.03093019686639309,
+        "std": 0.02719718962907791
+    },
+    "changed_pixels_threshold_0_05": 0.1931915283203125,
+    "mean_absolute_difference": 0.03093019686639309,
+    "mean_l2_distance": 0.041186895221471786,
+    "linf_distance": 0.382880836725235,
+    "l1_norm": 6081.12548828125,
+    "l1_5_norm": 122.22388458251953,
+    "l2_norm": 18.262447357177734
+}
