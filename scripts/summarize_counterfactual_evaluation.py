@@ -90,7 +90,12 @@ def summarize_metadata(path):
     if method == "SEDC-T-style lung-field ROI ablation":
         method = "SEDC-T lung-field ROI ablation"
     if method == "Retrieval-based nearest-unlike-neighbor baseline":
-        method = "Retrieval-based nearest-unlike-neighbor baseline"
+        method = "Removed retrieval-NUN baseline"
+    if method == (
+        "Goyal et al. 2019 counterfactual visual explanations "
+        "(greedy exhaustive search)"
+    ):
+        method = "Goyal 2019 counterfactual visual explanations"
     diffusion_checkpoint_path = str(metadata.get("diffusion_checkpoint_path") or "")
     if method == "DVCE medical multi-sample generation evaluation":
         checkpoint_lower = diffusion_checkpoint_path.lower()

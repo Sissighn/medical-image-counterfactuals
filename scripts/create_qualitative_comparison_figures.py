@@ -32,7 +32,7 @@ METHOD_ORDER = [
     "CFProto-nearer prototype-guided optimization baseline (bottleneck256)",
     "CFProto-nearer prototype-guided optimization baseline (bottleneck1024)",
     "CFProto-nearer prototype-guided optimization baseline",
-    "Retrieval-based nearest-unlike-neighbor baseline",
+    "Goyal 2019 counterfactual visual explanations",
     "SEDC-T original-style best-first",
     "SEDC-T lung-field ROI ablation",
     "DVCE original-style without Cone Projection, OpenAI checkpoint",
@@ -512,7 +512,7 @@ def write_readme(
             "large.",
             "",
             "For method-level interpretation and the trade-offs between "
-            "CFProto-nearer prototype-guided optimization, Retrieval-NUN, SEDC-T, and DVCE, see:",
+            "CFProto-nearer prototype-guided optimization, Goyal 2019 CVE, SEDC-T, and DVCE, see:",
             "",
             "- `results/qualitative_figures/qualitative_results_interpretation.md`",
             "",

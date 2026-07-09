@@ -66,7 +66,13 @@ def infer_method(metadata):
         return "SEDC-T lung-field ROI ablation"
 
     if method == "Retrieval-based nearest-unlike-neighbor baseline":
-        return "Retrieval-based nearest-unlike-neighbor baseline"
+        return "Removed retrieval-NUN baseline"
+
+    if method == (
+        "Goyal et al. 2019 counterfactual visual explanations "
+        "(greedy exhaustive search)"
+    ):
+        return "Goyal 2019 counterfactual visual explanations"
 
     if method == "CFProto original-style prototype-guided counterfactuals":
         checkpoint = metadata.get("autoencoder_checkpoint") or {}
@@ -491,7 +497,9 @@ def write_tradeoff_table(summaries, output_dir):
         method = summary["method"]
         if method.startswith("CFProto-nearer"):
             note = "Final CFProto-nearer prototype-guided run; model-valid but not full Alibi CFProto."
-        elif "Retrieval-based" in method:
+        elif "Goyal" in method:
+            note = "Instance-based feature-cell swaps from a real distractor image; sparse localized edits grounded in real cases."
+        elif "Retrieval-based" in method or "retrieval-NUN" in method:
             note = "Real target-class examples; intuitive case baseline but not a minimal edit."
         elif "SEDC-T original" in method:
             note = (
@@ -526,7 +534,7 @@ def write_readme(output_dir):
         "",
         "- The CFProto-nearer prototype-guided run is the only retained prototype-guided result.",
         "- Its changes can be model-valid without being medically plausible.",
-        "- Retrieval-NUN retrieves real target-class cases and is visually intuitive, but it is not a minimal image edit.",
+        "- Goyal 2019 CVE swaps discriminative feature cells from a real target-class distractor; edits are sparse and grounded in real cases.",
         "- SEDC-T provides localized region changes and is the clearest region-based method, but validity is lower, especially on Pneumonia.",
         "- The retained SEDC-T variants are the original-style reference and a Pneumonia-only lung-field ROI ablation.",
         "- DVCE covers the generative method category, but outputs remain sensitive to checkpoint and guidance settings.",
