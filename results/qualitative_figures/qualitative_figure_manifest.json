@@ -5,8 +5,46 @@
     {
       "type": "per_method",
       "dataset": "BUSI",
+      "method": "CFProto original-style (bottleneck256)",
+      "figure_path": "results/qualitative_figures/per_method/busi/cfproto_original_style_bottleneck256.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
       "method": "Goyal 2019 counterfactual visual explanations",
       "figure_path": "results/qualitative_figures/per_method/busi/goyal_2019_counterfactual_visual_explanations.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "SEDC-T original-style best-first",
+      "figure_path": "results/qualitative_figures/per_method/busi/sedc_t_original_style_best_first.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "CFProto original-style (bottleneck256)",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/cfproto_original_style_bottleneck256.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
@@ -23,6 +61,32 @@
         "Most balanced valid case",
         "Highest-confidence valid case",
         "Low-plausibility valid case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "SEDC-T original-style best-first",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/sedc_t_original_style_best_first.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "SEDC-T lung-field ROI ablation",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/sedc_t_lung_field_roi_ablation.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
       ],
       "warnings": []
     }
