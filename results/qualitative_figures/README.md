@@ -26,9 +26,16 @@ Generated per-method figures:
 - `results/qualitative_figures/per_method/busi/cfproto_original_style_bottleneck256.png`
 - `results/qualitative_figures/per_method/busi/goyal_2019_counterfactual_visual_explanations.png`
 - `results/qualitative_figures/per_method/busi/sedc_t_original_style_best_first.png`
+- `results/qualitative_figures/per_method/busi/dvce_original_style_with_cone_projection_openai_checkpoint.png`
+- `results/qualitative_figures/per_method/busi/dvce_original_style_with_cone_projection_busi_fine_tuned_checkpoint.png`
+- `results/qualitative_figures/per_method/busi/dvce_original_style_without_cone_projection_busi_fine_tuned_checkpoint.png`
 - `results/qualitative_figures/per_method/pneumonia/cfproto_original_style_bottleneck256.png`
 - `results/qualitative_figures/per_method/pneumonia/goyal_2019_counterfactual_visual_explanations.png`
 - `results/qualitative_figures/per_method/pneumonia/sedc_t_original_style_best_first.png`
 - `results/qualitative_figures/per_method/pneumonia/sedc_t_lung_field_roi_ablation.png`
+- `results/qualitative_figures/per_method/pneumonia/dvce_original_style_without_cone_projection_openai_checkpoint.png`
+- `results/qualitative_figures/per_method/pneumonia/dvce_original_style_with_cone_projection_openai_checkpoint.png`
+- `results/qualitative_figures/per_method/pneumonia/dvce_original_style_with_cone_projection_pneumonia_fine_tuned_checkpoint.png`
+- `results/qualitative_figures/per_method/pneumonia/dvce_original_style_without_cone_projection_pneumonia_fine_tuned_checkpoint.png`
 
 Warnings emitted during generation: 0

@@ -18,7 +18,7 @@ scripts below.
 | `run_cfproto_pytorch.py` | Run the CFProto original-style prototype-guided counterfactual method (FISTA with shrinkage-thresholding, hinge attack loss, binary c-search, encoder-space class prototypes) following alibi's `CounterfactualProto`. |
 | `run_goyal_cve_pytorch.py` | Run Goyal et al. 2019 counterfactual visual explanations (greedy exhaustive feature-cell swaps from a nearest-unlike-neighbor distractor). |
 | `run_sedc_t_pytorch.py` | Run SEDC-T original-style best-first, plus the retained Pneumonia lung-field ROI ablation via `--roi_mode lung_fields`. |
-| `run_dvce_medical_prototype.py` | Run the original-style DVCE diffusion-guided counterfactual generation with OpenAI or medical fine-tuned diffusion checkpoints. |
+| `run_dvce_pytorch.py` | Run the original-style DVCE diffusion-guided counterfactual generation with OpenAI or medical fine-tuned diffusion checkpoints. |
 | `summarize_counterfactual_evaluation.py` | Generate compact summary tables from method metadata files. |
 | `select_interpretable_examples.py` | Select good, difficult, and failure examples from existing metadata for qualitative inspection. |
 | `create_qualitative_comparison_figures.py` | Compose selected per-example plots into dataset-level qualitative comparison figures. |
@@ -30,19 +30,11 @@ scripts below.
 | `prepare_diffusion_training_data.py` | Export processed medical images as flat 256x256 RGB folders for diffusion fine-tuning. |
 | `check_diffusion_training_setup.py` | Check training data/checkpoints and generate a guided-diffusion training command. |
 
-These scripts support the DVCE original-style method but are not themselves a
-counterfactual method. If rerunning `prepare_diffusion_training_data.py` with a
-smaller subset, use a clean output folder to avoid leaving stale exported images.
-
-## DVCE Smoke-Test Utilities
-
-| Script | Role |
-| --- | --- |
-| `check_dvce_environment.py` | Check whether the DVCE repository and required imports are available. |
-| `run_dvce_feasibility.py` | Run an early integration smoke test with the medical classifier and one sample. |
-
-These scripts are useful for setup/debugging. The actual DVCE original-style evaluation
-uses `run_dvce_medical_prototype.py`.
+These scripts support the DVCE method but are not themselves a counterfactual
+method. They document how the medical fine-tuned diffusion checkpoints were
+prepared and are kept for reproducibility. If rerunning
+`prepare_diffusion_training_data.py` with a smaller subset, use a clean output
+folder to avoid leaving stale exported images.
 
 ## Lightweight Checks
 
@@ -50,11 +42,9 @@ uses `run_dvce_medical_prototype.py`.
 | --- | --- |
 | `check_dataset.py` | Count processed images per split and class. |
 | `test_data_utils.py` | Smoke-test the central `src.data_utils.create_dataloaders` function. |
-| `test_dataloaders.py` | Older standalone ImageFolder/DataLoader check. Kept for reference, but not part of the main workflow. |
-| `test_saved_model.py` | Quick one-batch checkpoint loading test. For full metrics use `evaluate_model.py`. |
 
-These scripts are intentionally lightweight and may overlap. They should not be
-used as final evaluation scripts for the seminar results.
+These scripts are intentionally lightweight. They should not be used as final
+evaluation scripts for the seminar results.
 
 ## Output Behavior
 
