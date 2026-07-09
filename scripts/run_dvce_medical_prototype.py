@@ -26,11 +26,17 @@ from src.evaluation_manifest import (
     load_manifest_records,
     manifest_record_metadata,
 )
-
+from src.dvce_core import (
+    DVCE_CHECKPOINT_RELATIVE_PATH,
+    add_dvce_to_python_path,
+    build_dvce_model_config,
+    cast_diffusion_numpy_arrays_to_float32,
+    generate_dvce_counterfactual,
+    resolve_diffusion_checkpoint_path,
+)
 
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
 IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
-DVCE_CHECKPOINT_RELATIVE_PATH = Path("checkpoints") / "256x256_diffusion_uncond.pt"
 
 
 def apply_dvce_compatibility_patches():
@@ -53,19 +59,6 @@ def apply_dvce_compatibility_patches():
         pass
 
 
-def add_dvce_to_python_path(repo_path):
-    repo_path = Path(repo_path).resolve()
-    paths = [
-        repo_path,
-        repo_path / "blended_diffusion",
-        repo_path / "blended_diffusion" / "guided_diffusion",
-    ]
-    for path in paths:
-        path_string = str(path)
-        if path_string not in sys.path:
-            sys.path.insert(0, path_string)
-
-
 def resolve_device(device_name):
     if device_name != "auto":
         return torch.device(device_name)
@@ -74,12 +67,6 @@ def resolve_device(device_name):
     if torch.cuda.is_available():
         return torch.device("cuda")
     return torch.device("cpu")
-
-
-def resolve_diffusion_checkpoint_path(repo_path, checkpoint_path=None):
-    if checkpoint_path:
-        return Path(checkpoint_path).resolve()
-    return Path(repo_path).resolve() / DVCE_CHECKPOINT_RELATIVE_PATH
 
 
 def create_resnet18(num_classes):
@@ -99,11 +86,29 @@ def load_medical_model(model_path, device):
     return model, checkpoint
 
 
+def validate_second_classifier_checkpoint(primary_checkpoint, second_checkpoint):
+    primary_classes = list(primary_checkpoint["classes"])
+    second_classes = list(second_checkpoint["classes"])
+    if primary_classes != second_classes:
+        raise ValueError(
+            "Second classifier classes must match the explained classifier. "
+            f"Primary classes={primary_classes}, second classes={second_classes}"
+        )
+    if int(primary_checkpoint["num_classes"]) != int(second_checkpoint["num_classes"]):
+        raise ValueError(
+            "Second classifier num_classes must match the explained classifier. "
+            f"Primary={primary_checkpoint['num_classes']}, "
+            f"second={second_checkpoint['num_classes']}"
+        )
+
+
 class MedicalResNetAdapter(nn.Module):
     """DVCE-facing classifier adapter for project ResNet18 checkpoints.
 
-    The adapter accepts image tensors in [0, 1], resizes them to the medical
-    classifier input size, applies ImageNet normalization, and returns logits.
+    Mirrors the original ResizeAndMeanWrapper: bicubic resize (interpolation=3)
+    to the classifier input size, normalization, no input clamping. Unclamped
+    inputs keep guidance gradients alive for out-of-range pixels, exactly as in
+    the original DVCE cond_fn.
     """
 
     def __init__(self, model):
@@ -113,10 +118,9 @@ class MedicalResNetAdapter(nn.Module):
         self.register_buffer("std", IMAGENET_STD.clone())
 
     def forward(self, images):
-        images = images.clamp(0.0, 1.0)
         if images.shape[-2:] != (224, 224):
             images = F.interpolate(
-                images, size=(224, 224), mode="bilinear", align_corners=False
+                images, size=(224, 224), mode="bicubic", align_corners=False
             )
         normalized = (images - self.mean.to(images.device)) / self.std.to(images.device)
         return self.model(normalized)
@@ -181,13 +185,17 @@ def choose_correct_samples(model, test_loader, device, num_samples):
     return samples
 
 
-def choose_manifest_samples(model, test_dataset, device, manifest_path, max_records=None):
+def choose_manifest_samples(
+    model, test_dataset, device, manifest_path, max_records=None
+):
     manifest, records = load_manifest_records(manifest_path, max_records=max_records)
     samples = []
 
     with torch.no_grad():
         for record in records:
-            image, label, image_path = load_image_from_manifest_record(test_dataset, record)
+            image, label, image_path = load_image_from_manifest_record(
+                test_dataset, record
+            )
             image = image.to(device)
             logits = model(image)
             probabilities = F.softmax(logits, dim=1)
@@ -221,7 +229,9 @@ def choose_manifest_samples(model, test_dataset, device, manifest_path, max_reco
 
 
 def select_target_class(probabilities, original_class):
-    ranked_classes = torch.argsort(torch.tensor(probabilities), descending=True).tolist()
+    ranked_classes = torch.argsort(
+        torch.tensor(probabilities), descending=True
+    ).tolist()
     for class_index in ranked_classes:
         if class_index != original_class:
             return int(class_index)
@@ -267,38 +277,6 @@ def run_classifier_guidance_gradient_check(adapter, image_01, target_class):
     }
 
 
-def build_dvce_model_config(timestep_respacing, model_output_size, use_fp16=True):
-    script_util = importlib.import_module(
-        "blended_diffusion.guided_diffusion.guided_diffusion.script_util"
-    )
-    model_config = script_util.model_and_diffusion_defaults()
-    model_config.update(
-        {
-            "attention_resolutions": "32, 16, 8",
-            "class_cond": model_output_size == 512,
-            "diffusion_steps": 1000,
-            "rescale_timesteps": True,
-            "timestep_respacing": timestep_respacing,
-            "image_size": model_output_size,
-            "learn_sigma": True,
-            "noise_schedule": "linear",
-            "num_channels": 256,
-            "num_head_channels": 64,
-            "num_res_blocks": 2,
-            "resblock_updown": True,
-            "use_fp16": use_fp16,
-            "use_scale_shift_norm": True,
-        }
-    )
-    return model_config
-
-
-def cast_diffusion_numpy_arrays_to_float32(diffusion):
-    for name, value in vars(diffusion).items():
-        if isinstance(value, np.ndarray) and value.dtype == np.float64:
-            setattr(diffusion, name, value.astype(np.float32))
-
-
 def run_dvce_core_initialization(
     repo_path, timestep_respacing, model_output_size, checkpoint_path=None
 ):
@@ -341,33 +319,6 @@ def run_dvce_core_initialization(
     return metadata
 
 
-def load_dvce_diffusion_backbone(
-    repo_path,
-    device,
-    timestep_respacing,
-    model_output_size,
-    use_fp16=False,
-    checkpoint_path=None,
-):
-    checkpoint_path = resolve_diffusion_checkpoint_path(repo_path, checkpoint_path)
-    script_util = importlib.import_module(
-        "blended_diffusion.guided_diffusion.guided_diffusion.script_util"
-    )
-    model_config = build_dvce_model_config(
-        timestep_respacing, model_output_size, use_fp16=use_fp16
-    )
-    model, diffusion = script_util.create_model_and_diffusion(**model_config)
-    cast_diffusion_numpy_arrays_to_float32(diffusion)
-    state_dict = torch.load(checkpoint_path, map_location="cpu")
-    model.load_state_dict(state_dict)
-    model.requires_grad_(False)
-    model.eval()
-    if use_fp16:
-        model.convert_to_fp16()
-    model = model.to(device)
-    return model, diffusion
-
-
 def predict_with_adapter(adapter, image_01, classes):
     with torch.no_grad():
         logits = adapter(image_01)
@@ -382,133 +333,34 @@ def predict_with_adapter(adapter, image_01, classes):
     }
 
 
-def create_medical_guidance_fn(
-    adapter,
-    target_class,
-    original_image_01,
-    classifier_guidance_scale,
-    similarity_guidance_scale,
-):
-    target = torch.tensor([target_class], dtype=torch.long, device=original_image_01.device)
-
-    def cond_fn(x, t, y=None, eps=None, **kwargs):
-        with torch.enable_grad():
-            x = x.detach().requires_grad_(True)
-            image_01 = x.clamp(-1.0, 1.0).add(1.0).div(2.0)
-            logits = adapter(image_01)
-            log_probs = F.log_softmax(logits, dim=1)
-            target_log_probability = log_probs[:, target].mean()
-            similarity_loss = F.mse_loss(image_01, original_image_01)
-            objective = (
-                classifier_guidance_scale * target_log_probability
-                - similarity_guidance_scale * similarity_loss
-            )
-            gradient = torch.autograd.grad(objective, x)[0]
-        return gradient
-
-    return cond_fn
-
-
-def run_single_dvce_generation(
-    repo_path,
-    adapter,
-    original_image_01,
-    target_class,
-    device,
-    timestep_respacing,
-    skip_timesteps,
-    model_output_size,
-    classifier_guidance_scale,
-    similarity_guidance_scale,
-    use_ddim,
-    use_fp16,
-    seed,
-    diffusion_checkpoint_path=None,
-):
-    start_time = time.time()
-    diffusion_model, diffusion = load_dvce_diffusion_backbone(
-        repo_path=repo_path,
-        device=device,
-        timestep_respacing=timestep_respacing,
-        model_output_size=model_output_size,
-        use_fp16=use_fp16,
-        checkpoint_path=diffusion_checkpoint_path,
-    )
-
-    original_256 = F.interpolate(
-        original_image_01,
-        size=(model_output_size, model_output_size),
-        mode="bilinear",
-        align_corners=False,
-    ).to(device)
-    init_image = original_256.mul(2.0).sub(1.0)
-
-    torch.manual_seed(seed)
-    noise = torch.randn_like(init_image)
-    cond_fn = create_medical_guidance_fn(
-        adapter=adapter,
-        target_class=target_class,
-        original_image_01=original_256,
-        classifier_guidance_scale=classifier_guidance_scale,
-        similarity_guidance_scale=similarity_guidance_scale,
-    )
-
-    loop = (
-        diffusion.ddim_sample_loop_progressive
-        if use_ddim
-        else diffusion.p_sample_loop_progressive
-    )
-    final = None
-    steps_seen = 0
-    for sample in loop(
-        diffusion_model,
-        shape=tuple(init_image.shape),
-        noise=noise,
-        clip_denoised=True,
-        cond_fn=cond_fn,
-        model_kwargs={},
-        device=device,
-        progress=False,
-        skip_timesteps=skip_timesteps,
-        init_image=init_image,
-    ):
-        final = sample["sample"]
-        steps_seen += 1
-
-    if final is None:
-        raise RuntimeError("DVCE sampling loop did not return a sample.")
-
-    counterfactual_01 = final.detach().clamp(-1.0, 1.0).add(1.0).div(2.0)
-    runtime_seconds = time.time() - start_time
-
-    del diffusion_model
-    del diffusion
-    gc.collect()
-    if device.type == "mps":
-        torch.mps.empty_cache()
-    if device.type == "cuda":
-        torch.cuda.empty_cache()
-
-    return counterfactual_01, {
-        "runtime_seconds": round(runtime_seconds, 3),
-        "steps_seen": steps_seen,
-        "use_ddim": use_ddim,
-        "use_fp16": use_fp16,
-        "classifier_guidance_scale": classifier_guidance_scale,
-        "similarity_guidance_scale": similarity_guidance_scale,
-        "seed": seed,
-    }
-
-
 def compute_difference_stats(original_01, counterfactual_01):
     diff = torch.abs(original_01 - counterfactual_01)
+    flat_diff = diff.view(diff.shape[0], -1)
     changed_pixels = torch.mean((diff > 0.05).float()).item()
+
+    # Existing project metrics are kept for compatibility with earlier DVCE runs
+    # and the other counterfactual baselines.
+    mean_absolute_difference = diff.mean().detach().cpu().item()
+    mean_l2_distance = torch.sqrt(torch.mean(diff.pow(2))).detach().cpu().item()
+    linf_distance = diff.max().detach().cpu().item()
+
+    # DVCE-paper-style per-image vector norms. The original DVCE code reports
+    # Lp norms over the flattened image difference, not mean-normalized values.
+    l1_norm = flat_diff.norm(p=1, dim=1).detach().cpu()
+    l1_5_norm = flat_diff.norm(p=1.5, dim=1).detach().cpu()
+    l2_norm = flat_diff.norm(p=2, dim=1).detach().cpu()
+
     return diff, {
         "original_stats": tensor_stats(original_01),
         "counterfactual_stats": tensor_stats(counterfactual_01),
         "diff_stats": tensor_stats(diff),
         "changed_pixels_threshold_0_05": float(changed_pixels),
-        "mean_absolute_difference": float(diff.mean().detach().cpu().item()),
+        "mean_absolute_difference": float(mean_absolute_difference),
+        "mean_l2_distance": float(mean_l2_distance),
+        "linf_distance": float(linf_distance),
+        "l1_norm": float(l1_norm.mean().item()),
+        "l1_5_norm": float(l1_5_norm.mean().item()),
+        "l2_norm": float(l2_norm.mean().item()),
     }
 
 
@@ -562,7 +414,9 @@ def save_generation_visualization(
 
 def save_preview(image_01, output_path):
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    resized = F.interpolate(image_01, size=(256, 256), mode="bilinear", align_corners=False)
+    resized = F.interpolate(
+        image_01, size=(256, 256), mode="bilinear", align_corners=False
+    )
     utils.save_image(resized, output_path)
 
 
@@ -585,7 +439,9 @@ def summarize_generation_records(records):
         "successful_generations": len(successful_records),
         "failed_generations": len(records) - len(successful_records),
         "valid_count": len(valid_records),
-        "generation_success_rate": len(successful_records) / len(records) if records else 0.0,
+        "generation_success_rate": (
+            len(successful_records) / len(records) if records else 0.0
+        ),
         "validity": len(valid_records) / len(records) if records else 0.0,
         "validity_among_successful_generations": (
             len(valid_records) / len(successful_records) if successful_records else 0.0
@@ -599,8 +455,26 @@ def summarize_generation_records(records):
         "mean_absolute_difference": mean_or_none(
             [record.get("mean_absolute_difference") for record in successful_records]
         ),
+        "mean_l2_distance": mean_or_none(
+            [record.get("mean_l2_distance") for record in successful_records]
+        ),
+        "mean_linf_distance": mean_or_none(
+            [record.get("linf_distance") for record in successful_records]
+        ),
+        "mean_l1_norm": mean_or_none(
+            [record.get("l1_norm") for record in successful_records]
+        ),
+        "mean_l1_5_norm": mean_or_none(
+            [record.get("l1_5_norm") for record in successful_records]
+        ),
+        "mean_l2_norm": mean_or_none(
+            [record.get("l2_norm") for record in successful_records]
+        ),
         "mean_changed_pixels_threshold_0_05": mean_or_none(
-            [record.get("changed_pixels_threshold_0_05") for record in successful_records]
+            [
+                record.get("changed_pixels_threshold_0_05")
+                for record in successful_records
+            ]
         ),
     }
 
@@ -610,6 +484,7 @@ def run_generation_for_sample(
     sample_output_dir,
     repo_path,
     adapter,
+    second_adapter,
     classes,
     device,
     args,
@@ -651,33 +526,46 @@ def run_generation_for_sample(
         "true_label": classes[sample["true_label_index"]],
         "original_prediction_index": original_class,
         "original_prediction": classes[original_class],
-        "original_confidence_before_resize": float(sample["probabilities"][original_class]),
+        "original_confidence_before_resize": float(
+            sample["probabilities"][original_class]
+        ),
         "target_class_index": target_class,
         "target_class": classes[target_class],
-        "target_initial_confidence_before_resize": float(sample["probabilities"][target_class]),
+        "target_initial_confidence_before_resize": float(
+            sample["probabilities"][target_class]
+        ),
         "adapter_forward_check": adapter_forward,
         "classifier_guidance_gradient_check": gradient_check,
+        "second_classifier_path": args.second_model_path,
+        "cone_projection_requested": args.deg_cone_projection > 0,
         "input_01_stats": tensor_stats(image_01),
         "input_256_stats": tensor_stats(image_256),
         "sample_preview_path": str(preview_path),
     }
 
     try:
-        counterfactual_01, generation_settings = run_single_dvce_generation(
+        counterfactual_01, generation_settings = generate_dvce_counterfactual(
             repo_path=repo_path,
-            adapter=adapter,
+            classifier=adapter,
             original_image_01=image_01,
             target_class=target_class,
             device=device,
+            model_output_size=args.model_output_size,
             timestep_respacing=args.timestep_respacing,
             skip_timesteps=args.skip_timesteps,
-            model_output_size=args.model_output_size,
-            classifier_guidance_scale=args.classifier_guidance_scale,
-            similarity_guidance_scale=args.similarity_guidance_scale,
             use_ddim=args.use_ddim,
             use_fp16=args.diffusion_fp16,
             seed=args.seed + sample["sample_index"],
             diffusion_checkpoint_path=args.diffusion_checkpoint_path,
+            classifier_lambda=args.classifier_lambda,
+            lp_custom=args.lp_custom,
+            lp_custom_value=args.lp_custom_value,
+            enforce_same_norms=args.enforce_same_norms,
+            denoise_dist_input=args.denoise_dist_input,
+            aug_num=args.aug_num,
+            clip_denoised=args.clip_denoised,
+            deg_cone_projection=args.deg_cone_projection,
+            second_classifier=second_adapter,
         )
         original_256 = F.interpolate(
             image_01,
@@ -688,7 +576,9 @@ def run_generation_for_sample(
         counterfactual_prediction = predict_with_adapter(
             adapter, counterfactual_01.to(device), classes
         )
-        original_prediction = predict_with_adapter(adapter, original_256.to(device), classes)
+        original_prediction = predict_with_adapter(
+            adapter, original_256.to(device), classes
+        )
         diff, difference_metadata = compute_difference_stats(
             original_256.detach().cpu(), counterfactual_01.detach().cpu()
         )
@@ -735,9 +625,7 @@ def run_generation_for_sample(
             "counterfactual_confidence": counterfactual_prediction["confidence"],
             "valid_counterfactual": valid_counterfactual,
             "original_probabilities": original_prediction["probabilities"],
-            "counterfactual_probabilities": counterfactual_prediction[
-                "probabilities"
-            ],
+            "counterfactual_probabilities": counterfactual_prediction["probabilities"],
             "counterfactual_path": str(counterfactual_path),
             "difference_path": str(diff_path),
             "visualization_path": str(visualization_path),
@@ -768,17 +656,50 @@ def main():
         help="Optional diffusion checkpoint override. Defaults to the DVCE OpenAI checkpoint.",
     )
     parser.add_argument("--model_path", type=str, required=True)
+    parser.add_argument(
+        "--second_model_path",
+        "--second_classifier_path",
+        dest="second_model_path",
+        type=str,
+        default=None,
+        help=(
+            "Optional robust second classifier checkpoint for DVCE Cone "
+            "Projection. Must use the same classes/checkpoint format as "
+            "--model_path."
+        ),
+    )
     parser.add_argument("--dataset_path", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True)
     parser.add_argument("--device", type=str, default="auto")
     parser.add_argument("--batch_size", type=int, default=16)
-    parser.add_argument("--timestep_respacing", type=str, default="10")
-    parser.add_argument("--skip_timesteps", type=int, default=8)
+    parser.add_argument("--timestep_respacing", type=str, default="200")
+    parser.add_argument("--skip_timesteps", type=int, default=100)
     parser.add_argument("--model_output_size", type=int, default=256)
-    parser.add_argument("--skip_diffusion_core", action="store_true")
+    parser.add_argument(
+        "--skip_diffusion_core",
+        action="store_true",
+        help=(
+            "Skip only the preliminary diffusion initialization check. "
+            "Actual generation still uses src.dvce_core when --run_generation is set."
+        ),
+    )
     parser.add_argument("--run_generation", action="store_true")
-    parser.add_argument("--classifier_guidance_scale", type=float, default=80.0)
-    parser.add_argument("--similarity_guidance_scale", type=float, default=20.0)
+    parser.add_argument("--classifier_lambda", type=float, default=0.1)
+    parser.add_argument("--lp_custom", type=float, default=1.0)
+    parser.add_argument("--lp_custom_value", type=float, default=0.15)
+    parser.add_argument(
+        "--enforce_same_norms",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    parser.add_argument("--denoise_dist_input", action="store_true")
+    parser.add_argument("--deg_cone_projection", type=float, default=0.0)
+    parser.add_argument("--aug_num", type=int, default=1)
+    parser.add_argument(
+        "--clip_denoised",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
     parser.add_argument("--use_ddim", action="store_true")
     parser.add_argument("--diffusion_fp16", action="store_true")
     parser.add_argument("--seed", type=int, default=1)
@@ -810,6 +731,27 @@ def main():
     device = resolve_device(args.device)
     model, checkpoint = load_medical_model(args.model_path, device)
     classes = checkpoint["classes"]
+    second_model = None
+    second_checkpoint = None
+    second_adapter = None
+    if args.second_model_path:
+        second_model, second_checkpoint = load_medical_model(
+            args.second_model_path, device
+        )
+        validate_second_classifier_checkpoint(checkpoint, second_checkpoint)
+        second_adapter = MedicalResNetAdapter(second_model).to(device)
+        second_adapter.eval()
+    if args.deg_cone_projection > 0 and second_adapter is None:
+        raise ValueError(
+            "--deg_cone_projection > 0 requires --second_model_path/"
+            "--second_classifier_path so Cone Projection is actually defined."
+        )
+    cone_projection_enabled = second_adapter is not None and args.deg_cone_projection > 0
+    dvce_variant = (
+        "original_style_medical_cone_projection"
+        if cone_projection_enabled
+        else "original_style_medical_no_cone"
+    )
     data = create_dataloaders(
         args.dataset_path, batch_size=args.batch_size, use_augmentation=False
     )
@@ -835,7 +777,10 @@ def main():
     )
     image_01 = denormalize(sample["image_normalized"]).to(device)
     image_256 = F.interpolate(
-        image_01, size=(args.model_output_size, args.model_output_size), mode="bilinear", align_corners=False
+        image_01,
+        size=(args.model_output_size, args.model_output_size),
+        mode="bilinear",
+        align_corners=False,
     )
 
     adapter = MedicalResNetAdapter(model).to(device)
@@ -845,7 +790,9 @@ def main():
     save_preview(image_01.detach().cpu(), preview_path)
 
     adapter_forward = run_adapter_forward(adapter, image_256)
-    gradient_check = run_classifier_guidance_gradient_check(adapter, image_256, target_class)
+    gradient_check = run_classifier_guidance_gradient_check(
+        adapter, image_256, target_class
+    )
 
     diffusion_core = {
         "ok": False,
@@ -872,7 +819,9 @@ def main():
             )
         records = []
         for current_sample in samples:
-            sample_output_dir = output_dir / f"sample_{current_sample['sample_index']:02d}"
+            sample_output_dir = (
+                output_dir / f"sample_{current_sample['sample_index']:02d}"
+            )
             print(
                 "Running DVCE sample "
                 f"{current_sample['sample_index'] + 1}/{len(samples)} "
@@ -883,6 +832,7 @@ def main():
                 sample_output_dir=sample_output_dir,
                 repo_path=repo_path,
                 adapter=adapter,
+                second_adapter=second_adapter,
                 classes=classes,
                 device=device,
                 args=args,
@@ -899,10 +849,14 @@ def main():
         metadata = {
             "purpose": "DVCE medical multi-sample generation evaluation",
             "status": "multi_sample_generation_completed",
+            "dvce_variant": dvce_variant,
+            "guidance_core": "pred_xstart_eps_norm_lp_custom",
+            "cone_projection_requested": args.deg_cone_projection > 0,
+            "cone_projection_enabled": cone_projection_enabled,
             "python": sys.version,
             "device": str(device),
             "dvce_repo": str(repo_path),
-            "dvce_checkpoint": str(repo_path / DVCE_CHECKPOINT_RELATIVE_PATH),
+            "dvce_default_checkpoint": str(repo_path / DVCE_CHECKPOINT_RELATIVE_PATH),
             "diffusion_checkpoint_path": str(diffusion_checkpoint_path),
             "runner_settings": {
                 "timestep_respacing": args.timestep_respacing,
@@ -912,23 +866,50 @@ def main():
                 "num_generation_samples": args.num_generation_samples,
                 "manifest_path": args.manifest_path,
                 "manifest_max_samples": args.manifest_max_samples,
-                "classifier_guidance_scale": args.classifier_guidance_scale,
-                "similarity_guidance_scale": args.similarity_guidance_scale,
+                "classifier_lambda": args.classifier_lambda,
+                "lp_custom": args.lp_custom,
+                "lp_custom_value": args.lp_custom_value,
+                "enforce_same_norms": args.enforce_same_norms,
+                "gen_type": "ddim" if args.use_ddim else "p_sample",
+                "clip_denoised": args.clip_denoised,
+                "denoise_dist_input": args.denoise_dist_input,
+                "deg_cone_projection": args.deg_cone_projection,
+                "aug_num": args.aug_num,
                 "use_ddim": args.use_ddim,
                 "diffusion_fp16": args.diffusion_fp16,
                 "seed": args.seed,
-                "diffusion_checkpoint_path": args.diffusion_checkpoint_path,
+                "diffusion_checkpoint_path": str(diffusion_checkpoint_path),
+                "diffusion_checkpoint_arg": args.diffusion_checkpoint_path,
+                "second_model_path": args.second_model_path,
             },
             "classifier_adapter": {
                 "model_path": args.model_path,
                 "dataset_path": args.dataset_path,
                 "classes": classes,
             },
+            "second_classifier_adapter": {
+                "model_path": args.second_model_path,
+                "classes": (
+                    second_checkpoint["classes"] if second_checkpoint else None
+                ),
+                "num_classes": (
+                    second_checkpoint["num_classes"] if second_checkpoint else None
+                ),
+                "role": (
+                    "robust classifier for Cone Projection"
+                    if cone_projection_enabled
+                    else None
+                ),
+            },
             "evaluation_manifest": {
                 "path": args.manifest_path,
-                "num_records_available": manifest.get("num_samples") if manifest else None,
+                "num_records_available": (
+                    manifest.get("num_samples") if manifest else None
+                ),
                 "num_records_used": len(samples) if manifest else None,
-                "target_strategy": manifest.get("target_strategy") if manifest else None,
+                "target_strategy": (
+                    manifest.get("target_strategy") if manifest else None
+                ),
             },
             "dvce_core_initialization": diffusion_core,
             "aggregate_metrics": summarize_generation_records(records),
@@ -949,21 +930,28 @@ def main():
     }
     if args.run_generation:
         try:
-            counterfactual_01, generation_settings = run_single_dvce_generation(
+            counterfactual_01, generation_settings = generate_dvce_counterfactual(
                 repo_path=repo_path,
-                adapter=adapter,
+                classifier=adapter,
                 original_image_01=image_01,
                 target_class=target_class,
                 device=device,
+                model_output_size=args.model_output_size,
                 timestep_respacing=args.timestep_respacing,
                 skip_timesteps=args.skip_timesteps,
-                model_output_size=args.model_output_size,
-                classifier_guidance_scale=args.classifier_guidance_scale,
-                similarity_guidance_scale=args.similarity_guidance_scale,
                 use_ddim=args.use_ddim,
                 use_fp16=args.diffusion_fp16,
                 seed=args.seed,
                 diffusion_checkpoint_path=args.diffusion_checkpoint_path,
+                classifier_lambda=args.classifier_lambda,
+                lp_custom=args.lp_custom,
+                lp_custom_value=args.lp_custom_value,
+                enforce_same_norms=args.enforce_same_norms,
+                denoise_dist_input=args.denoise_dist_input,
+                aug_num=args.aug_num,
+                clip_denoised=args.clip_denoised,
+                deg_cone_projection=args.deg_cone_projection,
+                second_classifier=second_adapter,
             )
             original_256 = F.interpolate(
                 image_01,
@@ -974,7 +962,9 @@ def main():
             counterfactual_prediction = predict_with_adapter(
                 adapter, counterfactual_01.to(device), classes
             )
-            original_prediction = predict_with_adapter(adapter, original_256.to(device), classes)
+            original_prediction = predict_with_adapter(
+                adapter, original_256.to(device), classes
+            )
             diff, difference_metadata = compute_difference_stats(
                 original_256.detach().cpu(), counterfactual_01.detach().cpu()
             )
@@ -1058,21 +1048,39 @@ def main():
         )
     else:
         status = "partial"
-        next_step = "Fix the failed adapter, gradient, or diffusion initialization check."
+        next_step = (
+            "Fix the failed adapter, gradient, or diffusion initialization check."
+        )
 
     metadata = {
-        "purpose": "DVCE medical adapter prototype smoke test",
+        "purpose": "DVCE original-style medical single-image smoke test",
         "status": status,
+        "dvce_variant": dvce_variant,
+        "guidance_core": "pred_xstart_eps_norm_lp_custom",
+        "cone_projection_requested": args.deg_cone_projection > 0,
+        "cone_projection_enabled": cone_projection_enabled,
         "python": sys.version,
         "device": str(device),
         "dvce_repo": str(repo_path),
-        "dvce_checkpoint": str(repo_path / DVCE_CHECKPOINT_RELATIVE_PATH),
+        "dvce_default_checkpoint": str(repo_path / DVCE_CHECKPOINT_RELATIVE_PATH),
         "diffusion_checkpoint_path": str(diffusion_checkpoint_path),
         "runner_settings": {
             "timestep_respacing": args.timestep_respacing,
             "skip_timesteps": args.skip_timesteps,
             "model_output_size": args.model_output_size,
             "batch_size": args.batch_size,
+            "classifier_lambda": args.classifier_lambda,
+            "lp_custom": args.lp_custom,
+            "lp_custom_value": args.lp_custom_value,
+            "enforce_same_norms": args.enforce_same_norms,
+            "gen_type": "ddim" if args.use_ddim else "p_sample",
+            "clip_denoised": args.clip_denoised,
+            "denoise_dist_input": args.denoise_dist_input,
+            "deg_cone_projection": args.deg_cone_projection,
+            "aug_num": args.aug_num,
+            "diffusion_checkpoint_path": str(diffusion_checkpoint_path),
+            "diffusion_checkpoint_arg": args.diffusion_checkpoint_path,
+            "second_model_path": args.second_model_path,
         },
         "classifier_adapter": {
             "model_path": args.model_path,
@@ -1090,6 +1098,18 @@ def main():
             "input_256_stats": tensor_stats(image_256),
             "sample_preview_path": str(preview_path),
         },
+        "second_classifier_adapter": {
+            "model_path": args.second_model_path,
+            "classes": second_checkpoint["classes"] if second_checkpoint else None,
+            "num_classes": (
+                second_checkpoint["num_classes"] if second_checkpoint else None
+            ),
+            "role": (
+                "robust classifier for Cone Projection"
+                if cone_projection_enabled
+                else None
+            ),
+        },
         "adapter_forward_check": adapter_forward,
         "classifier_guidance_gradient_check": gradient_check,
         "dvce_core_initialization": diffusion_core,
@@ -1101,7 +1121,7 @@ def main():
     with open(metadata_path, "w") as f:
         json.dump(metadata, f, indent=4)
 
-    print(f"Saved DVCE medical prototype metadata to {metadata_path}")
+    print(f"Saved DVCE original-style medical metadata to {metadata_path}")
     print(
         "Adapter sample: "
         f"{classes[original_class]} ({sample['probabilities'][original_class]:.3f}) -> "
