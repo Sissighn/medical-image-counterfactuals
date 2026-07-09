@@ -30,16 +30,16 @@ BUSI was trained for 15 epochs:
 
 ```text
 models/busi_resnet18_pretrained.pth
-results/busi_pretrained_training_history.json
-results/busi_pretrained_test_evaluation.json
+results/baseline_classifiers/busi_pretrained_training_history.json
+results/baseline_classifiers/busi_pretrained_test_evaluation.json
 ```
 
 Pneumonia was trained for 10 epochs:
 
 ```text
 models/pneumonia_resnet18_pretrained.pth
-results/pneumonia_pretrained_training_history.json
-results/pneumonia_pretrained_test_evaluation.json
+results/baseline_classifiers/pneumonia_pretrained_training_history.json
+results/baseline_classifiers/pneumonia_pretrained_test_evaluation.json
 ```
 
 ## Results

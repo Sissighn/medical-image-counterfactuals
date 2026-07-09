@@ -60,7 +60,7 @@ PYTHONPATH=. .venv/bin/python scripts/train_robust_resnet18_pgd.py \
   --dataset_name Pneumonia_robust_pgd \
   --dataset_path data/processed/Pneumonia \
   --output_model_path models/pneumonia_resnet18_robust_pgd.pth \
-  --history_path results/robust_classifiers/pneumonia_resnet18_robust_pgd_history.json \
+  --history_path results/baseline_classifiers/robust/pneumonia_resnet18_robust_pgd_history.json \
   --epochs 5 \
   --batch_size 16 \
   --learning_rate 1e-4 \
@@ -78,7 +78,7 @@ PYTHONPATH=. .venv/bin/python scripts/train_robust_resnet18_pgd.py \
   --dataset_name BUSI_robust_pgd \
   --dataset_path data/processed/BUSI \
   --output_model_path models/busi_resnet18_robust_pgd.pth \
-  --history_path results/robust_classifiers/busi_resnet18_robust_pgd_history.json \
+  --history_path results/baseline_classifiers/robust/busi_resnet18_robust_pgd_history.json \
   --epochs 5 \
   --batch_size 16 \
   --learning_rate 1e-4 \
@@ -102,7 +102,7 @@ Pneumonia:
 PYTHONPATH=. .venv/bin/python scripts/evaluate_model.py \
   --model_path models/pneumonia_resnet18_robust_pgd.pth \
   --dataset_path data/processed/Pneumonia \
-  --output_path results/robust_classifiers/pneumonia_resnet18_robust_pgd_test_eval.json
+  --output_path results/baseline_classifiers/robust/pneumonia_resnet18_robust_pgd_test_eval.json
 ```
 
 BUSI:
@@ -111,7 +111,7 @@ BUSI:
 PYTHONPATH=. .venv/bin/python scripts/evaluate_model.py \
   --model_path models/busi_resnet18_robust_pgd.pth \
   --dataset_path data/processed/BUSI \
-  --output_path results/robust_classifiers/busi_resnet18_robust_pgd_test_eval.json
+  --output_path results/baseline_classifiers/robust/busi_resnet18_robust_pgd_test_eval.json
 ```
 
 Minimum requirement: the robust classifiers should still classify the medical

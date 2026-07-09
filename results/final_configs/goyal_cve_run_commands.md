@@ -35,7 +35,7 @@ prediction matches the manifest).
 .venv/bin/python scripts/run_goyal_cve_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/fixed_evaluation/goyal_cve_busi \
+  --output_dir results/final/goyal_cve_busi \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
 ```
 
@@ -45,7 +45,7 @@ prediction matches the manifest).
 .venv/bin/python scripts/run_goyal_cve_pytorch.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --dataset_path data/processed/Pneumonia \
-  --output_dir results/fixed_evaluation/goyal_cve_pneumonia \
+  --output_dir results/final/goyal_cve_pneumonia \
   --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json
 ```
 
@@ -55,8 +55,8 @@ prediction matches the manifest).
 .venv/bin/python scripts/select_interpretable_examples.py \
   --copy_assets \
   --metadata \
-    results/fixed_evaluation/goyal_cve_busi/metadata.json \
-    results/fixed_evaluation/goyal_cve_pneumonia/metadata.json
+    results/final/goyal_cve_busi/metadata.json \
+    results/final/goyal_cve_pneumonia/metadata.json
 
 .venv/bin/python scripts/create_qualitative_comparison_figures.py
 ```

@@ -25,8 +25,8 @@ env/
 paper_drafts/
 seminar_paper_outline.md
 evaluation_chapter_plan.md
-results/seminar_paper_outline.md
-results/evaluation_chapter_plan.md
+results/docs/seminar_paper_outline.md
+results/docs/evaluation_chapter_plan.md
 results/dvce_finetuning_plan.md
 results/dvce_feasibility.md
 results/dvce_feasibility/
@@ -82,5 +82,5 @@ results/final/**/*.jpeg
 
 # Notebook checkpoints
 .ipynb_checkpoints/
-results/project_structure_diagram.png
-results/method_implementation_audit.md
+results/docs/project_structure_diagram.png
+results/docs/method_implementation_audit.md
