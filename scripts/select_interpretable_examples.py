@@ -181,7 +181,10 @@ def record_image_path(record):
     ]:
         value = record.get(key)
         if value:
-            return value
+            # Metadata produced on Windows stores relative paths with backslash
+            # separators (e.g. "results\\final\\...\\x.png"). Normalize them so
+            # they resolve on macOS/Linux too.
+            return value.replace("\\", "/")
     return ""
 
 
