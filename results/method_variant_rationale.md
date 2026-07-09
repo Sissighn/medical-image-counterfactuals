@@ -11,7 +11,7 @@ autoencoder/prototype-space ablations.
 | Method family | Retained role | Notes |
 | --- | --- | --- |
 | CFProto-nearer prototype-guided optimization | Final prototype-guided method plus bottleneck ablations | Encoder-kNN prototypes, adaptive c-search, elastic-net selection, polynomial learning-rate decay, targeted margin loss |
-| Retrieval-NUN | Case-based nearest unlike baseline | Retrieves real target-class training images; not a minimal edit |
+| Goyal et al. 2019 CVE | Instance-based feature-space edit | Greedy cell swaps from a nearest-unlike distractor; sparse localized edits; validity guaranteed by construction |
 | SEDC-T | Region-based/localized counterfactuals | Original-style best-first plus Pneumonia lung-field ROI ablation |
 | DVCE | Generative counterfactual feasibility | One original-style method family with no-cone and Cone Projection states; diffusion checkpoints are OpenAI, Pneumonia-medical, and BUSI-medical |
 
@@ -43,15 +43,26 @@ In the current fixed-manifest results they are not improvements: they reduce
 validity and increase changed pixel fraction. No older ResNet/class-mean or
 Cross-Entropy prototype-guided result is retained as a main comparison row.
 
-## Retrieval-NUN
+## Goyal et al. 2019 CVE
 
-Retrieval-NUN retrieves the nearest real training image from the manifest target
-class in ResNet18 penultimate feature space. Candidate images must have the
-target true label and must also be predicted as the target class.
+This method follows Goyal et al. (ICML 2019, arXiv:1904.07451). The ResNet18 is
+split into a spatial extractor (`layer4`, 7x7x512 cells) and a decision head
+(GAP + FC). A distractor image from the target class is retrieved as the nearest
+correctly classified training image in pooled feature space, then a greedy
+exhaustive search swaps query feature cells for distractor cells (each cell used
+at most once) until the prediction flips to the target class.
 
-It is useful because it gives an intuitive nearest unlike case. Its limitation
-is that it does not isolate the minimal image change needed for the original
-sample; differences can reflect anatomy, acquisition, and dataset variation.
+It replaces the former retrieval-NUN baseline, which only retrieved the nearest
+unlike neighbor without editing the query and was not based on an original
+published method. Goyal et al. is image-native, instance-based, and has a
+faithful reference implementation (the baseline in the Meta repo
+`facebookresearch/visual-counterfactuals`). It reuses the same feature-space
+retrieval as the distractor-selection step.
+
+Reporting note: validity is 1.00 by construction (full 49-cell budget), so the
+reported quantity of interest is the number of edited cells (sparsity). Mean CF
+confidence is near 0.5 because the search stops at the first flip. The edits are
+grounded in real target-class content but limited to a coarse 7x7 cell grid.
 
 ## SEDC-T
 

@@ -61,24 +61,24 @@
             "mean_runtime_seconds": 13.783432364463806
         },
         {
-            "metadata_path": "results/fixed_evaluation/retrieval_nun_busi_balanced_manifest/metadata.json",
-            "method": "Retrieval-based nearest-unlike-neighbor baseline",
+            "metadata_path": "results/fixed_evaluation/goyal_cve_busi/metadata.json",
+            "method": "Goyal 2019 counterfactual visual explanations",
             "dataset": "BUSI",
             "samples": 15,
             "validity": 1.0,
-            "mean_counterfactual_confidence": 0.8190803925196329,
-            "mean_change": 0.8516010125478108,
-            "mean_runtime_seconds": 0.007244014739990234
+            "mean_counterfactual_confidence": 0.5278680741786956,
+            "mean_change": 0.2595503787199656,
+            "mean_runtime_seconds": 0.25227354367574056
         },
         {
-            "metadata_path": "results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/metadata.json",
-            "method": "Retrieval-based nearest-unlike-neighbor baseline",
+            "metadata_path": "results/fixed_evaluation/goyal_cve_pneumonia/metadata.json",
+            "method": "Goyal 2019 counterfactual visual explanations",
             "dataset": "Pneumonia",
             "samples": 20,
             "validity": 1.0,
-            "mean_counterfactual_confidence": 0.6496214509010315,
-            "mean_change": 0.8741051316261291,
-            "mean_runtime_seconds": 0.00964205265045166
+            "mean_counterfactual_confidence": 0.5230671286582946,
+            "mean_change": 0.3072165914811194,
+            "mean_runtime_seconds": 0.16718459129333496
         },
         {
             "metadata_path": "results/fixed_evaluation/sedc_t_busi_original_style/metadata.json",

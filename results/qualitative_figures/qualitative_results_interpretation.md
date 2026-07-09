@@ -8,10 +8,10 @@ This document explains the qualitative per-method figures in
 | Dataset | Method | Figure |
 | --- | --- | --- |
 | BUSI | CFProto-nearer prototype-guided optimization baseline | `per_method/busi/cfproto_nearer_prototype_guided_optimization_baseline.png` |
-| BUSI | Retrieval-based nearest-unlike-neighbor baseline | `per_method/busi/retrieval_based_nearest_unlike_neighbor_baseline.png` |
+| BUSI | Goyal 2019 counterfactual visual explanations | `per_method/busi/goyal_2019_counterfactual_visual_explanations.png` |
 | BUSI | SEDC-T original-style best-first | `per_method/busi/sedc_t_original_style_best_first.png` |
 | Pneumonia | CFProto-nearer prototype-guided optimization baseline | `per_method/pneumonia/cfproto_nearer_prototype_guided_optimization_baseline.png` |
-| Pneumonia | Retrieval-based nearest-unlike-neighbor baseline | `per_method/pneumonia/retrieval_based_nearest_unlike_neighbor_baseline.png` |
+| Pneumonia | Goyal 2019 counterfactual visual explanations | `per_method/pneumonia/goyal_2019_counterfactual_visual_explanations.png` |
 | Pneumonia | SEDC-T original-style best-first | `per_method/pneumonia/sedc_t_original_style_best_first.png` |
 | Pneumonia | SEDC-T lung-field ROI ablation | `per_method/pneumonia/sedc_t_lung_field_roi_ablation.png` |
 
@@ -33,12 +33,16 @@ The bottleneck256 and bottleneck1024 CFProto variants are currently documented
 as quantitative ablations. They are not included as retained qualitative
 per-method figures because they are not the main prototype-guided configuration.
 
-## Retrieval-NUN
+## Goyal 2019 CVE
 
-Retrieval-NUN shows the nearest real target-class training case. The method is
-easy to interpret as case-based comparison and avoids generated artifacts, but
-the difference map is not a minimal edit. Large changed areas are expected
-because two different patient images are compared.
+Goyal et al. 2019 CVE composites a counterfactual by swapping discriminative
+spatial feature cells of the query for cells of a real target-class distractor
+image. In the figures the edited cells are boxed on the original and the source
+cells boxed on the distractor, so the swapped regions are directly visible. The
+method is grounded in real cases and localized, but the edits are coarse (7x7
+cell grid) and carry distractor anatomy/acquisition content. Validity is 1.00 by
+construction and the number of edited cells is the sparsity signal; confidence
+sits near the decision boundary because the search stops at the first flip.
 
 ## SEDC-T
 
@@ -68,7 +72,7 @@ The qualitative comparison should emphasize trade-offs:
 | Method | Strength | Limitation |
 | --- | --- | --- |
 | CFProto-nearer optimization | compact model-valid changes | can be visually subtle and not medically causal |
-| Retrieval-NUN | real target-class examples | not a minimal edit |
+| Goyal 2019 CVE | sparse localized edits grounded in real cases | coarse 7x7 cell grid; confidence near decision boundary |
 | SEDC-T | localized segment changes | lower validity, especially on Pneumonia |
 | DVCE | generative counterfactual direction | artifact- and checkpoint-sensitive |
 

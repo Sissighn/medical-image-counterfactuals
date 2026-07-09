@@ -10,8 +10,8 @@ This table is generated from method `metadata.json` files.
 | CFProto-nearer prototype-guided optimization baseline (bottleneck256) | Pneumonia | 20 | 0.5000 | 0.7537 | 0.6666 | 8.73 | `results/final/cfproto_encoder_knn_bottleneck256/pneumonia/metadata.json` |
 | CFProto-nearer prototype-guided optimization baseline (bottleneck1024) | BUSI | 15 | 0.6667 | 0.6590 | 0.7053 | 14.60 | `results/final/cfproto_encoder_knn_bottleneck1024/busi/metadata.json` |
 | CFProto-nearer prototype-guided optimization baseline (bottleneck1024) | Pneumonia | 20 | 0.5500 | 0.7292 | 0.6312 | 13.78 | `results/final/cfproto_encoder_knn_bottleneck1024/pneumonia/metadata.json` |
-| Retrieval-based nearest-unlike-neighbor baseline | BUSI | 15 | 1.0000 | 0.8191 | 0.8516 | 0.01 | `results/fixed_evaluation/retrieval_nun_busi_balanced_manifest/metadata.json` |
-| Retrieval-based nearest-unlike-neighbor baseline | Pneumonia | 20 | 1.0000 | 0.6496 | 0.8741 | 0.01 | `results/fixed_evaluation/retrieval_nun_pneumonia_balanced_manifest/metadata.json` |
+| Goyal 2019 counterfactual visual explanations | BUSI | 15 | 1.0000 | 0.5279 | 0.2596 | 0.25 | `results/fixed_evaluation/goyal_cve_busi/metadata.json` |
+| Goyal 2019 counterfactual visual explanations | Pneumonia | 20 | 1.0000 | 0.5231 | 0.3072 | 0.17 | `results/fixed_evaluation/goyal_cve_pneumonia/metadata.json` |
 | SEDC-T original-style best-first | BUSI | 15 | 0.8000 | 0.6343 | 0.2640 | 6.71 | `results/fixed_evaluation/sedc_t_busi_original_style/metadata.json` |
 | SEDC-T original-style best-first | Pneumonia | 20 | 0.5500 | 0.6759 | 0.3270 | 13.92 | `results/fixed_evaluation/sedc_t_pneumonia_original_style/metadata.json` |
 | SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.5000 | 0.7770 | 0.1745 | 15.23 | `results/fixed_evaluation/sedc_t_pneumonia_lung_field_roi/metadata.json` |

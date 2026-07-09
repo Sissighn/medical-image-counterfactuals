@@ -50,16 +50,27 @@ image areas.
 | Bottleneck1024 | BUSI | 15 | 0.67 | 0.6590 | 0.7053 | 14.60s |
 | Bottleneck1024 | Pneumonia | 20 | 0.55 | 0.7292 | 0.6312 | 13.78s |
 
-## Method 2: Retrieval-Based Nearest-Unlike-Neighbor Baseline
+## Method 2: Goyal et al. 2019 Counterfactual Visual Explanations
 
-Retrieval-NUN retrieves the nearest real training image from the manifest target
-class in ResNet18 penultimate feature space. It is a case-based baseline, not a
-minimal image edit.
+Instance-based feature-space edit after Goyal et al. (ICML 2019,
+arXiv:1904.07451). The ResNet18 is split into a spatial extractor (`layer4`,
+7x7x512 cells) and a decision head (GAP + FC). A distractor image from the
+target class is retrieved as the nearest correctly classified training image in
+pooled feature space, then spatial cells of the query feature map are greedily
+swapped for distractor cells (each cell at most once) until the prediction flips
+to the target class. A reference implementation is the Goyal baseline in the
+Meta repo `facebookresearch/visual-counterfactuals`.
 
-| Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean embedding distance | Mean runtime |
+Validity is 1.00 by construction (the full 49-cell budget converges the pooled
+feature to the distractor's), so the reported quantity of interest is the number
+of edited cells (sparsity). Mean CF confidence sits near 0.5 because the greedy
+search stops at the first flip. See
+`results/final_configs/goyal_cve_method_documentation.md`.
+
+| Dataset | Samples | Validity | Mean CF confidence | Mean edits (of 49) | Mean changed pixel fraction | Mean runtime |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| BUSI | 15 | 1.00 | 0.8191 | 0.8516 | 0.2953 | 0.01s |
-| Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 | 0.2493 | 0.01s |
+| BUSI | 15 | 1.00 | 0.5279 | 14.0 | 0.2596 | 0.25s |
+| Pneumonia | 20 | 1.00 | 0.5231 | 16.15 | 0.3072 | 0.17s |
 
 ## Method 3: SEDC-T-Style Segment Replacement
 
@@ -108,7 +119,9 @@ results/final_configs/dvce_cone_projection_for_paul.md
 ## Main Takeaway
 
 The methods expose different trade-offs. CFProto-nearer optimization is compact
-and model-valid, Retrieval-NUN is intuitive but not minimal, SEDC-T is more
-localized but less consistently valid, and DVCE is generative but still pending
-fresh fixed-manifest results after the original-style core update. Model
-validity must not be equated with medical plausibility.
+and model-valid, Goyal et al. 2019 CVE gives sparse localized edits grounded in
+real target-class images (validity guaranteed by construction, confidence near
+the decision boundary), SEDC-T is more localized but less consistently valid,
+and DVCE is generative but still pending fresh fixed-manifest results after the
+original-style core update. Model validity must not be equated with medical
+plausibility.

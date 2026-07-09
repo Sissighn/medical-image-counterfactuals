@@ -6,7 +6,7 @@ This project compares four counterfactual explanation directions for medical
 image classification:
 
 1. CFProto-nearer prototype-guided optimization baseline
-2. Retrieval-based nearest-unlike-neighbor baseline
+2. Goyal et al. 2019 counterfactual visual explanations (feature-cell swaps)
 3. SEDC-T-style segment replacement
 4. DVCE original-style diffusion-guided generation
 
@@ -26,8 +26,8 @@ quantitative values.
 | CFProto bottleneck256 ablation | Pneumonia | 20 | 0.50 | 0.7537 | 0.6666 changed pixel fraction | 8.73s |
 | CFProto bottleneck1024 ablation | BUSI | 15 | 0.67 | 0.6590 | 0.7053 changed pixel fraction | 14.60s |
 | CFProto bottleneck1024 ablation | Pneumonia | 20 | 0.55 | 0.7292 | 0.6312 changed pixel fraction | 13.78s |
-| Retrieval-based nearest-unlike-neighbor baseline | BUSI | 15 | 1.00 | 0.8191 | 0.8516 changed pixel fraction | 0.01s |
-| Retrieval-based nearest-unlike-neighbor baseline | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 changed pixel fraction | 0.01s |
+| Goyal et al. 2019 counterfactual visual explanations | BUSI | 15 | 1.00 | 0.5279 | 0.2596 changed pixel fraction, 14.0 edits | 0.25s |
+| Goyal et al. 2019 counterfactual visual explanations | Pneumonia | 20 | 1.00 | 0.5231 | 0.3072 changed pixel fraction, 16.15 edits | 0.17s |
 | SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 changed pixel fraction | 6.71s |
 | SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 changed pixel fraction | 13.92s |
 | SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 changed pixel fraction | 15.23s |
@@ -51,9 +51,13 @@ is aligned with CFProto, but it is not a full Alibi `CounterfactualProto`
 reproduction. FISTA/shrinkage, TrustScore, the original TensorFlow graph, and
 the original Alibi k-d-tree machinery are not fully reproduced.
 
-Retrieval-NUN reaches 1.00 validity because it retrieves real target-class
-training images that are correctly classified by the model. It is intuitive as
-a nearest unlike case, but it is not a minimal edit of the original image.
+Goyal et al. 2019 CVE reaches 1.00 validity by construction: with the full
+49-cell budget the pooled feature converges to the distractor's, so the
+prediction is guaranteed to flip. The informative metric is the number of edited
+feature cells (mean 14.0 on BUSI, 16.15 on Pneumonia of 49), i.e. how sparse the
+swap is. Mean CF confidence sits near 0.5 because the greedy search stops at the
+first flip, prioritizing sparsity over margin. The edits are grounded in a real
+target-class distractor image and localized to a coarse 7x7 cell grid.
 
 SEDC-T gives localized segment-level changes and is often easier to discuss
 visually. Its validity is lower, especially on Pneumonia, where diffuse model

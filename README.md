@@ -26,7 +26,7 @@ Retained counterfactual directions:
 | Method | Role |
 | --- | --- |
 | CFProto-nearer prototype-guided optimization baseline | Optimized image perturbation with encoder-kNN prototypes |
-| Retrieval-based nearest-unlike-neighbor baseline | Case-based real target-class comparison |
+| Goyal et al. 2019 counterfactual visual explanations | Instance-based greedy feature-cell swaps from a nearest-unlike distractor |
 | SEDC-T-style segment replacement | Region-based/localized explanation |
 | DVCE original-style diffusion-guided generation | Generative feasibility method; final rows need regeneration, including optional Cone Projection with robust second classifiers |
 
@@ -262,8 +262,8 @@ results/final_configs/dvce_cone_projection_for_paul.md
 | CFProto bottleneck256 ablation | Pneumonia | 20 | 0.50 | 0.7537 | 0.6666 | 8.73s |
 | CFProto bottleneck1024 ablation | BUSI | 15 | 0.67 | 0.6590 | 0.7053 | 14.60s |
 | CFProto bottleneck1024 ablation | Pneumonia | 20 | 0.55 | 0.7292 | 0.6312 | 13.78s |
-| Retrieval-NUN | BUSI | 15 | 1.00 | 0.8191 | 0.8516 | 0.01s |
-| Retrieval-NUN | Pneumonia | 20 | 1.00 | 0.6496 | 0.8741 | 0.01s |
+| Goyal et al. 2019 CVE | BUSI | 15 | 1.00 | 0.5279 | 0.2596 | 0.25s |
+| Goyal et al. 2019 CVE | Pneumonia | 20 | 1.00 | 0.5231 | 0.3072 | 0.17s |
 | SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 6.71s |
 | SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 | 13.92s |
 | SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 | 15.23s |
