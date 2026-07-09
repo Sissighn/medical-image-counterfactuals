@@ -15,7 +15,7 @@ scripts below.
 | `train_autoencoder.py` | Train an unsupervised ConvAutoencoder, including the compact bottleneck variant, on denormalized `[0, 1]` images for the CFProto-nearer encoder-prototype method. |
 | `check_autoencoder_plausibility.py` | Check whether a trained autoencoder assigns higher reconstruction loss to brightness/contrast, blur, patch, and noise perturbations than to original images. |
 | `create_evaluation_manifest.py` | Create fixed correctly classified evaluation samples for counterfactual comparison. |
-| `run_cfproto_pytorch.py` | Run the CFProto-nearer prototype-guided optimization baseline with encoder-kNN prototypes, adaptive c-search, elastic-net selection, polynomial learning-rate decay, and targeted margin loss. |
+| `run_cfproto_pytorch.py` | Run the CFProto original-style prototype-guided counterfactual method (FISTA with shrinkage-thresholding, hinge attack loss, binary c-search, encoder-space class prototypes) following alibi's `CounterfactualProto`. |
 | `run_retrieval_nun_pytorch.py` | Run the retrieval-based nearest-unlike-neighbor case baseline. |
 | `run_sedc_t_pytorch.py` | Run SEDC-T original-style best-first, plus the retained Pneumonia lung-field ROI ablation via `--roi_mode lung_fields`. |
 | `run_dvce_medical_prototype.py` | Run the original-style DVCE diffusion-guided counterfactual generation with OpenAI or medical fine-tuned diffusion checkpoints. |
