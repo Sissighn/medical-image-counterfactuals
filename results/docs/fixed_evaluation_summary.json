@@ -69,6 +69,76 @@
             "mean_counterfactual_confidence": 0.7770165413618088,
             "mean_change": 0.1744658799842,
             "mean_runtime_seconds": 15.228716218471527
+        },
+        {
+            "metadata_path": "results/final/dvce_original_style_cone/openai/busi/metadata.json",
+            "method": "DVCE original-style medical generation with Cone Projection with OpenAI checkpoint",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 0.9333333333333333,
+            "mean_counterfactual_confidence": 0.943906593322754,
+            "mean_change": 0.11568366090456644,
+            "mean_runtime_seconds": 1173.4460666666666
+        },
+        {
+            "metadata_path": "results/final/dvce_original_style_cone/openai/pneumonia/metadata.json",
+            "method": "DVCE original-style medical generation with Cone Projection with OpenAI checkpoint",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 0.8,
+            "mean_counterfactual_confidence": 0.8369280487298966,
+            "mean_change": 0.050975036900490524,
+            "mean_runtime_seconds": 700.1547499999999
+        },
+        {
+            "metadata_path": "results/final/dvce_original_style_cone/busi_medical_checkpoint/busi/metadata.json",
+            "method": "DVCE original-style medical generation with Cone Projection with BUSI fine-tuned checkpoint",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.9983609755833943,
+            "mean_change": 0.15648973286151885,
+            "mean_runtime_seconds": 44.62266666666667
+        },
+        {
+            "metadata_path": "results/final/dvce_original_style_cone/pneumonia_medical_checkpoint/pneumonia/metadata.json",
+            "method": "DVCE original-style medical generation with Cone Projection with Pneumonia fine-tuned checkpoint",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.9799988061189652,
+            "mean_change": 0.06691614743322134,
+            "mean_runtime_seconds": 44.937799999999996
+        },
+        {
+            "metadata_path": "results/final/dvce_original_style/busi_medical_checkpoint/busi/metadata.json",
+            "method": "DVCE original-style medical generation without Cone Projection with BUSI fine-tuned checkpoint",
+            "dataset": "BUSI",
+            "samples": 15,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.9976125597953797,
+            "mean_change": 0.13592631121476492,
+            "mean_runtime_seconds": 33.2386
+        },
+        {
+            "metadata_path": "results/final/dvce_original_style/pneumonia_medical_checkpoint/pneumonia/metadata.json",
+            "method": "DVCE original-style medical generation without Cone Projection with Pneumonia fine-tuned checkpoint",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.9951183795928955,
+            "mean_change": 0.052045186422765254,
+            "mean_runtime_seconds": 33.214749999999995
+        },
+        {
+            "metadata_path": "results/final/dvce_original_style/openai/pneumonia/metadata.json",
+            "method": "DVCE original-style medical generation without Cone Projection with OpenAI checkpoint",
+            "dataset": "Pneumonia",
+            "samples": 20,
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.9972110956907272,
+            "mean_change": 0.05962626114487648,
+            "mean_runtime_seconds": 49.95405
         }
     ]
 }

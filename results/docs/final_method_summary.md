@@ -79,36 +79,43 @@ The only retained ablation is a Pneumonia-specific lung-field ROI constraint.
 | Original-style best-first | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 | 13.92s |
 | Lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 | 15.23s |
 
-## Method 4: DVCE Original-Style Diffusion-Guided Generation
+## Method 4: DVCE Diffusion-Guided Generation
 
-DVCE generation covers the generative direction. The old free-guidance
-prototype runs have been removed. The retained implementation now uses the
-original-code-nearer DVCE core:
+DVCE generation covers the generative direction, using the original-code-nearer
+DVCE core (`src/dvce_core.py`):
 
 - `gen_type=p_sample`,
-- `timestep_respacing=200`,
-- `skip_timesteps=100`,
-- `classifier_lambda=0.1`,
-- `lp_custom=1.0`,
-- `lp_custom_value=0.15`,
-- `enforce_same_norms=True`,
-- `clip_denoised=False`,
-- Cone Projection optional via `--second_model_path` and `--deg_cone_projection`.
+- `timestep_respacing=200`, `skip_timesteps=100`,
+- `classifier_lambda=0.1`, `lp_custom=1.0`, `lp_custom_value=0.15`,
+- `enforce_same_norms=True`, `clip_denoised=False`,
+- Cone Projection via `--second_model_path` (PGD-robust ResNet18) and
+  `--deg_cone_projection 30`, `--aug_num 16`.
 
-The planned checkpoint states are:
+The original-faithful variant for the non-robust explained ResNet18 is **Cone
+Projection**; no-cone on the normal classifier is a marked ablation. Two
+diffusion checkpoints are evaluated: the original **OpenAI** checkpoint and
+medically **fine-tuned** EMA checkpoints. Full fixed manifests (BUSI 15,
+Pneumonia 20).
 
-| State | Dataset | Status |
-| --- | --- | --- |
-| OpenAI checkpoint | BUSI and Pneumonia | rerun needed with original-style core |
-| Pneumonia fine-tuned checkpoint | Pneumonia | rerun needed with original-style core |
-| BUSI fine-tuned checkpoint | BUSI | run after BUSI checkpoint is available |
-| Cone Projection | BUSI and Pneumonia | requires PGD-robust second ResNet18 classifiers |
+| Variant | Checkpoint | Dataset | n | Validity | Mean CF conf. | Mean abs. diff | Changed px (>0.05) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Cone (original-faithful) | OpenAI | BUSI | 15 | 0.93 | 0.944 | 0.024 | 0.116 |
+| Cone (original-faithful) | OpenAI | Pneumonia | 20 | 0.80 | 0.837 | 0.017 | 0.051 |
+| Cone | BUSI fine-tuned | BUSI | 15 | 1.00 | 0.998 | 0.028 | 0.156 |
+| Cone | Pneumonia fine-tuned | Pneumonia | 20 | 1.00 | 0.980 | 0.019 | 0.067 |
+| No-Cone (ablation) | BUSI fine-tuned | BUSI | 15 | 1.00 | 0.998 | 0.026 | 0.136 |
+| No-Cone (ablation) | Pneumonia fine-tuned | Pneumonia | 20 | 1.00 | 0.995 | 0.017 | 0.052 |
+| No-Cone (ablation) | OpenAI | Pneumonia | 20 | 1.00 | 0.997 | 0.018 | 0.060 |
 
-Commands are documented in:
+The fine-tuned checkpoints reach full validity; the generic OpenAI checkpoint is
+lower (0.93 / 0.80), as expected for a diffusion prior trained on natural images.
+
+Method and commands are documented in:
 
 ```text
+results/final_configs/dvce_method_documentation.md
+results/final_configs/dvce_cone_projection.md
 results/final_configs/dvce_original_style_commands.md
-results/final_configs/dvce_cone_projection_for_paul.md
 ```
 
 ## Main Takeaway
@@ -117,6 +124,6 @@ The methods expose different trade-offs. CFProto (original-style) optimization
 is compact and mostly model-valid, Goyal et al. 2019 CVE gives sparse localized edits grounded in
 real target-class images (validity guaranteed by construction, confidence near
 the decision boundary), SEDC-T is more localized but less consistently valid,
-and DVCE is generative but still pending fresh fixed-manifest results after the
-original-style core update. Model validity must not be equated with medical
-plausibility.
+and DVCE is generative, reaching full validity with the medically fine-tuned
+diffusion checkpoints and lower validity (0.80–0.93) with the original OpenAI
+checkpoint. Model validity must not be equated with medical plausibility.
