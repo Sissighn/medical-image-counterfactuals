@@ -1,0 +1,2914 @@
+{
+    "purpose": "DVCE medical multi-sample generation evaluation",
+    "status": "multi_sample_generation_completed",
+    "dvce_variant": "original_style_medical_cone_projection",
+    "guidance_core": "pred_xstart_eps_norm_lp_custom",
+    "cone_projection_requested": true,
+    "cone_projection_enabled": true,
+    "python": "3.14.0 (v3.14.0:ebf955df7a8, Oct  7 2025, 08:20:14) [Clang 16.0.0 (clang-1600.0.26.6)]",
+    "device": "mps",
+    "dvce_repo": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs",
+    "dvce_default_checkpoint": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+    "diffusion_checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+    "runner_settings": {
+        "timestep_respacing": "200",
+        "skip_timesteps": 100,
+        "model_output_size": 256,
+        "batch_size": 16,
+        "num_generation_samples": 1,
+        "manifest_path": "results/evaluation_manifests/busi_balanced_5_per_class_second_best.json",
+        "manifest_max_samples": null,
+        "classifier_lambda": 0.1,
+        "lp_custom": 1.0,
+        "lp_custom_value": 0.15,
+        "enforce_same_norms": true,
+        "gen_type": "p_sample",
+        "clip_denoised": false,
+        "denoise_dist_input": true,
+        "deg_cone_projection": 30.0,
+        "aug_num": 16,
+        "use_ddim": false,
+        "diffusion_fp16": false,
+        "seed": 1,
+        "diffusion_checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+        "diffusion_checkpoint_arg": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+        "second_model_path": "models/busi_resnet18_robust_pgd.pth"
+    },
+    "classifier_adapter": {
+        "model_path": "models/busi_resnet18_pretrained.pth",
+        "dataset_path": "data/processed/BUSI",
+        "classes": [
+            "benign",
+            "malignant",
+            "normal"
+        ]
+    },
+    "second_classifier_adapter": {
+        "model_path": "models/busi_resnet18_robust_pgd.pth",
+        "classes": [
+            "benign",
+            "malignant",
+            "normal"
+        ],
+        "num_classes": 3,
+        "role": "robust classifier for Cone Projection"
+    },
+    "evaluation_manifest": {
+        "path": "results/evaluation_manifests/busi_balanced_5_per_class_second_best.json",
+        "num_records_available": 15,
+        "num_records_used": 15,
+        "target_strategy": "second_best"
+    },
+    "dvce_core_initialization": {
+        "ok": true,
+        "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+        "checkpoint_exists": true,
+        "model_output_size": 256,
+        "timestep_respacing": "200",
+        "diffusion_num_timesteps": 200,
+        "model_parameter_count": 552814086,
+        "loaded_on_device": "cpu",
+        "elapsed_seconds": 1.461,
+        "note": "This initializes the DVCE/OpenAI diffusion backbone only. No denoising loop or counterfactual image is generated in this step."
+    },
+    "aggregate_metrics": {
+        "num_samples": 15,
+        "successful_generations": 15,
+        "failed_generations": 0,
+        "valid_count": 14,
+        "generation_success_rate": 1.0,
+        "validity": 0.9333333333333333,
+        "validity_among_successful_generations": 0.9333333333333333,
+        "mean_counterfactual_confidence": 0.943906593322754,
+        "mean_runtime_seconds": 1173.4460666666666,
+        "mean_absolute_difference": 0.023644222940007845,
+        "mean_l2_distance": 0.034645764529705046,
+        "mean_linf_distance": 0.4536478579044342,
+        "mean_l1_norm": 4648.639973958333,
+        "mean_l1_5_norm": 97.93228759765626,
+        "mean_l2_norm": 15.362014325459798,
+        "mean_changed_pixels_threshold_0_05": 0.11568366090456644
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "dataset_index": 0,
+            "manifest_sample_index": 0,
+            "source_image_path": "data/processed/BUSI/test/benign/benign (1).png",
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence_before_resize": 0.9968323111534119,
+            "target_class_index": 1,
+            "target_class": "malignant",
+            "target_initial_confidence_before_resize": 0.002999682677909732,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 0,
+                "confidence": 0.9988100528717041,
+                "probabilities": [
+                    0.9988100528717041,
+                    0.00101271434687078,
+                    0.0001773350522853434
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 6.895121097564697,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -4.8590497970581055,
+                    "max": 4.5890607833862305,
+                    "mean": -7.402931078104302e-05,
+                    "std": 0.22992441058158875
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.027450978755950928,
+                "max": 1.0,
+                "mean": 0.5191391706466675,
+                "std": 0.2247237116098404
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06643688678741455,
+                "max": 1.0,
+                "mean": 0.5191416144371033,
+                "std": 0.22260776162147522
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_00/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 952.555,
+            "steps_seen": 100,
+            "seed": 1,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9988100528717041,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "malignant",
+            "counterfactual_confidence": 0.9571692943572998,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.9988100528717041,
+                0.00101271434687078,
+                0.0001773350522853434
+            ],
+            "counterfactual_probabilities": [
+                0.03904587775468826,
+                0.9571692943572998,
+                0.003784782253205776
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_00/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_00/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_00/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06643688678741455,
+                "max": 1.0,
+                "mean": 0.5191416144371033,
+                "std": 0.22260776162147522
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.09681949019432068,
+                "max": 1.0,
+                "mean": 0.5176534056663513,
+                "std": 0.21930746734142303
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.7881393432617188e-07,
+                "max": 0.4157848358154297,
+                "mean": 0.030656849965453148,
+                "std": 0.03314778208732605
+            },
+            "changed_pixels_threshold_0_05": 0.1845143586397171,
+            "mean_absolute_difference": 0.030656849965453148,
+            "mean_l2_distance": 0.0451509915292263,
+            "linf_distance": 0.4157848358154297,
+            "l1_norm": 6027.3818359375,
+            "l1_5_norm": 127.40646362304688,
+            "l2_norm": 20.020065307617188
+        },
+        {
+            "sample_index": 1,
+            "dataset_index": 1,
+            "manifest_sample_index": 1,
+            "source_image_path": "data/processed/BUSI/test/benign/benign (100).png",
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence_before_resize": 0.9997206330299377,
+            "target_class_index": 2,
+            "target_class": "normal",
+            "target_initial_confidence_before_resize": 0.00020800784113816917,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 0,
+                "confidence": 0.9994609951972961,
+                "probabilities": [
+                    0.9994609951972961,
+                    0.00016998824139591306,
+                    0.00036898802500218153
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 7.9047465324401855,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -2.474212169647217,
+                    "max": 3.0047519207000732,
+                    "mean": 9.09425853024004e-06,
+                    "std": 0.2109837383031845
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.003921538591384888,
+                "max": 1.0,
+                "mean": 0.35338664054870605,
+                "std": 0.2641431391239166
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.005867014639079571,
+                "max": 1.0,
+                "mean": 0.3533182144165039,
+                "std": 0.2632313072681427
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_01/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1057.936,
+            "steps_seen": 100,
+            "seed": 2,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9994609951972961,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.6006553769111633,
+            "valid_counterfactual": false,
+            "original_probabilities": [
+                0.9994609951972961,
+                0.00016998824139591306,
+                0.00036898802500218153
+            ],
+            "counterfactual_probabilities": [
+                0.6006553769111633,
+                0.11993861198425293,
+                0.27940604090690613
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_01/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_01/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_01/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.005867014639079571,
+                "max": 1.0,
+                "mean": 0.3533182144165039,
+                "std": 0.2632313072681427
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.041327446699142456,
+                "max": 0.9995981454849243,
+                "mean": 0.351899653673172,
+                "std": 0.26288747787475586
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 2.086162567138672e-07,
+                "max": 0.7808784246444702,
+                "mean": 0.02032598853111267,
+                "std": 0.021836508065462112
+            },
+            "changed_pixels_threshold_0_05": 0.0825907364487648,
+            "mean_absolute_difference": 0.02032598853111267,
+            "mean_l2_distance": 0.029832473024725914,
+            "linf_distance": 0.7808784246444702,
+            "l1_norm": 3996.24658203125,
+            "l1_5_norm": 83.82074737548828,
+            "l2_norm": 13.227787971496582
+        },
+        {
+            "sample_index": 2,
+            "dataset_index": 2,
+            "manifest_sample_index": 2,
+            "source_image_path": "data/processed/BUSI/test/benign/benign (105).png",
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence_before_resize": 0.998917818069458,
+            "target_class_index": 2,
+            "target_class": "normal",
+            "target_initial_confidence_before_resize": 0.000859575520735234,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 0,
+                "confidence": 0.9991508722305298,
+                "probabilities": [
+                    0.9991508722305298,
+                    9.77208765107207e-05,
+                    0.0007514148019254208
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 7.193552494049072,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -2.2040317058563232,
+                    "max": 2.0378713607788086,
+                    "mean": -1.6511185094714165e-06,
+                    "std": 0.1731041520833969
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.003921538591384888,
+                "max": 0.988235354423523,
+                "mean": 0.3916735053062439,
+                "std": 0.22036752104759216
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.003921538591384888,
+                "max": 0.9772059321403503,
+                "mean": 0.3916756212711334,
+                "std": 0.21906538307666779
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_02/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1021.585,
+            "steps_seen": 100,
+            "seed": 3,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9991508722305298,
+            "counterfactual_prediction_index": 2,
+            "counterfactual_prediction": "normal",
+            "counterfactual_confidence": 0.9556098580360413,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.9991508722305298,
+                9.77208765107207e-05,
+                0.0007514148019254208
+            ],
+            "counterfactual_probabilities": [
+                0.04312888905405998,
+                0.0012612552382051945,
+                0.9556098580360413
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_02/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_02/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_02/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.003921538591384888,
+                "max": 0.9772059321403503,
+                "mean": 0.3916756212711334,
+                "std": 0.21906538307666779
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.01667875051498413,
+                "max": 0.9113256335258484,
+                "mean": 0.38972124457359314,
+                "std": 0.21509084105491638
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.1920928955078125e-07,
+                "max": 0.40382325649261475,
+                "mean": 0.028216542676091194,
+                "std": 0.029181674122810364
+            },
+            "changed_pixels_threshold_0_05": 0.1588236540555954,
+            "mean_absolute_difference": 0.028216542676091194,
+            "mean_l2_distance": 0.04059235379099846,
+            "linf_distance": 0.40382325649261475,
+            "l1_norm": 5547.59912109375,
+            "l1_5_norm": 115.74905395507812,
+            "l2_norm": 17.998754501342773
+        },
+        {
+            "sample_index": 3,
+            "dataset_index": 3,
+            "manifest_sample_index": 3,
+            "source_image_path": "data/processed/BUSI/test/benign/benign (111).png",
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence_before_resize": 0.9997790455818176,
+            "target_class_index": 2,
+            "target_class": "normal",
+            "target_initial_confidence_before_resize": 0.00016579707153141499,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 0,
+                "confidence": 0.9996577501296997,
+                "probabilities": [
+                    0.9996577501296997,
+                    6.850545469205827e-05,
+                    0.000273683835985139
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 8.203536987304688,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -2.373363494873047,
+                    "max": 2.0263946056365967,
+                    "mean": 3.256730269640684e-05,
+                    "std": 0.17479251325130463
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0313725471496582,
+                "max": 1.0,
+                "mean": 0.3984611928462982,
+                "std": 0.28536707162857056
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.03288909047842026,
+                "max": 1.0,
+                "mean": 0.3984997570514679,
+                "std": 0.2846789062023163
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_03/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1051.452,
+            "steps_seen": 100,
+            "seed": 4,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9996577501296997,
+            "counterfactual_prediction_index": 2,
+            "counterfactual_prediction": "normal",
+            "counterfactual_confidence": 0.6748397350311279,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.9996577501296997,
+                6.850545469205827e-05,
+                0.000273683835985139
+            ],
+            "counterfactual_probabilities": [
+                0.28814634680747986,
+                0.03701401129364967,
+                0.6748397350311279
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_03/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_03/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_03/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.03288909047842026,
+                "max": 1.0,
+                "mean": 0.3984997570514679,
+                "std": 0.2846789062023163
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.05731967091560364,
+                "max": 1.0,
+                "mean": 0.397434800863266,
+                "std": 0.2839769124984741
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.4422599971294403,
+                "mean": 0.019535476341843605,
+                "std": 0.02061375044286251
+            },
+            "changed_pixels_threshold_0_05": 0.0703837051987648,
+            "mean_absolute_difference": 0.019535476341843605,
+            "mean_l2_distance": 0.028399989008903503,
+            "linf_distance": 0.4422599971294403,
+            "l1_norm": 3840.82666015625,
+            "l1_5_norm": 80.47657012939453,
+            "l2_norm": 12.592636108398438
+        },
+        {
+            "sample_index": 4,
+            "dataset_index": 4,
+            "manifest_sample_index": 4,
+            "source_image_path": "data/processed/BUSI/test/benign/benign (112).png",
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence_before_resize": 0.9977282881736755,
+            "target_class_index": 1,
+            "target_class": "malignant",
+            "target_initial_confidence_before_resize": 0.0018344564596191049,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 0,
+                "confidence": 0.9975142478942871,
+                "probabilities": [
+                    0.9975142478942871,
+                    0.0019765046890825033,
+                    0.0005093417130410671
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 6.2264251708984375,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -3.882976770401001,
+                    "max": 3.7074999809265137,
+                    "mean": -4.993095717509277e-05,
+                    "std": 0.2524917423725128
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.8588235378265381,
+                "mean": 0.21127106249332428,
+                "std": 0.1455015242099762
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.00047487381380051374,
+                "max": 0.8449908494949341,
+                "mean": 0.21132750809192657,
+                "std": 0.14400476217269897
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_04/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1099.966,
+            "steps_seen": 100,
+            "seed": 5,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9975142478942871,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "malignant",
+            "counterfactual_confidence": 0.9883827567100525,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.9975142478942871,
+                0.0019765046890825033,
+                0.0005093417130410671
+            ],
+            "counterfactual_probabilities": [
+                0.010774195194244385,
+                0.9883827567100525,
+                0.0008430611924268305
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_04/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_04/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_04/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.00047487381380051374,
+                "max": 0.8449908494949341,
+                "mean": 0.21132750809192657,
+                "std": 0.14400476217269897
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.7354468703269958,
+                "mean": 0.20796680450439453,
+                "std": 0.14213018119335175
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 8.940696716308594e-08,
+                "max": 0.4495603144168854,
+                "mean": 0.024669332429766655,
+                "std": 0.026246657595038414
+            },
+            "changed_pixels_threshold_0_05": 0.1294962614774704,
+            "mean_absolute_difference": 0.024669332429766655,
+            "mean_l2_distance": 0.03602026402950287,
+            "linf_distance": 0.4495603144168854,
+            "l1_norm": 4850.1875,
+            "l1_5_norm": 102.32367706298828,
+            "l2_norm": 15.97146224975586
+        },
+        {
+            "sample_index": 5,
+            "dataset_index": 66,
+            "manifest_sample_index": 5,
+            "source_image_path": "data/processed/BUSI/test/malignant/malignant (115).png",
+            "true_label_index": 1,
+            "true_label": "malignant",
+            "original_prediction_index": 1,
+            "original_prediction": "malignant",
+            "original_confidence_before_resize": 0.9972440004348755,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "target_initial_confidence_before_resize": 0.002714702859520912,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9830719232559204,
+                "probabilities": [
+                    0.016690846532583237,
+                    0.9830719232559204,
+                    0.0002371856098761782
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 4.092895030975342,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -5.265976428985596,
+                    "max": 6.665560722351074,
+                    "mean": 1.6312580555677414e-05,
+                    "std": 0.3975844383239746
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0313725471496582,
+                "max": 1.0,
+                "mean": 0.3429417908191681,
+                "std": 0.23115527629852295
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0313725471496582,
+                "max": 0.9997549057006836,
+                "mean": 0.34293779730796814,
+                "std": 0.23057498037815094
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_05/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1129.278,
+            "steps_seen": 100,
+            "seed": 6,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9830719232559204,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.9995335340499878,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.016690846532583237,
+                0.9830719232559204,
+                0.0002371856098761782
+            ],
+            "counterfactual_probabilities": [
+                0.9995335340499878,
+                0.0003246163250878453,
+                0.00014186279440764338
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_05/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_05/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_05/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0313725471496582,
+                "max": 0.9997549057006836,
+                "mean": 0.34293779730796814,
+                "std": 0.23057498037815094
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06819769740104675,
+                "max": 0.9749579429626465,
+                "mean": 0.3417407274246216,
+                "std": 0.22900664806365967
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.32951289415359497,
+                "mean": 0.01952706277370453,
+                "std": 0.020800260826945305
+            },
+            "changed_pixels_threshold_0_05": 0.0779012069106102,
+            "mean_absolute_difference": 0.01952706277370453,
+            "mean_l2_distance": 0.028529895469546318,
+            "linf_distance": 0.32951289415359497,
+            "l1_norm": 3839.17529296875,
+            "l1_5_norm": 80.91718292236328,
+            "l2_norm": 12.650232315063477
+        },
+        {
+            "sample_index": 6,
+            "dataset_index": 67,
+            "manifest_sample_index": 6,
+            "source_image_path": "data/processed/BUSI/test/malignant/malignant (117).png",
+            "true_label_index": 1,
+            "true_label": "malignant",
+            "original_prediction_index": 1,
+            "original_prediction": "malignant",
+            "original_confidence_before_resize": 0.9846459031105042,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "target_initial_confidence_before_resize": 0.014449939131736755,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9790549874305725,
+                "probabilities": [
+                    0.020005784928798676,
+                    0.9790549874305725,
+                    0.0009391386993229389
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 3.911733865737915,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -4.31753396987915,
+                    "max": 7.205966949462891,
+                    "mean": -0.00012260850053280592,
+                    "std": 0.33665746450424194
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.003921538591384888,
+                "max": 1.0,
+                "mean": 0.41649097204208374,
+                "std": 0.24596652388572693
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.003921538591384888,
+                "max": 1.0,
+                "mean": 0.41645240783691406,
+                "std": 0.2452821433544159
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_06/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1081.918,
+            "steps_seen": 100,
+            "seed": 7,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9790549874305725,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.9999551773071289,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.020005784928798676,
+                0.9790549874305725,
+                0.0009391386993229389
+            ],
+            "counterfactual_probabilities": [
+                0.9999551773071289,
+                1.9761506337090395e-05,
+                2.5014211132656783e-05
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_06/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_06/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_06/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.003921538591384888,
+                "max": 1.0,
+                "mean": 0.41645240783691406,
+                "std": 0.2452821433544159
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.9987857937812805,
+                "mean": 0.415918231010437,
+                "std": 0.24438263475894928
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.33380597829818726,
+                "mean": 0.020788056775927544,
+                "std": 0.021258655935525894
+            },
+            "changed_pixels_threshold_0_05": 0.0862172469496727,
+            "mean_absolute_difference": 0.020788056775927544,
+            "mean_l2_distance": 0.029733339324593544,
+            "linf_distance": 0.33380597829818726,
+            "l1_norm": 4087.08837890625,
+            "l1_5_norm": 85.26447296142578,
+            "l2_norm": 13.18382740020752
+        },
+        {
+            "sample_index": 7,
+            "dataset_index": 68,
+            "manifest_sample_index": 7,
+            "source_image_path": "data/processed/BUSI/test/malignant/malignant (119).png",
+            "true_label_index": 1,
+            "true_label": "malignant",
+            "original_prediction_index": 1,
+            "original_prediction": "malignant",
+            "original_confidence_before_resize": 0.9584060311317444,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "target_initial_confidence_before_resize": 0.037306711077690125,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9051539301872253,
+                "probabilities": [
+                    0.09105163812637329,
+                    0.9051539301872253,
+                    0.003794435877352953
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 2.3963286876678467,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -5.751340389251709,
+                    "max": 7.220279693603516,
+                    "mean": 5.0275190005777404e-05,
+                    "std": 0.40498483180999756
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 1.0,
+                "mean": 0.31221190094947815,
+                "std": 0.24333840608596802
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0009344291174784303,
+                "max": 0.9970435500144958,
+                "mean": 0.31215810775756836,
+                "std": 0.24194204807281494
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_07/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1228.063,
+            "steps_seen": 100,
+            "seed": 8,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9051539301872253,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.9999831914901733,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.09105163812637329,
+                0.9051539301872253,
+                0.003794435877352953
+            ],
+            "counterfactual_probabilities": [
+                0.9999831914901733,
+                1.651714910622104e-06,
+                1.513853385404218e-05
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_07/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_07/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_07/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0009344291174784303,
+                "max": 0.9970435500144958,
+                "mean": 0.31215810775756836,
+                "std": 0.24194204807281494
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0030432939529418945,
+                "max": 0.9986007213592529,
+                "mean": 0.31059667468070984,
+                "std": 0.23925085365772247
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 2.086162567138672e-07,
+                "max": 0.5507183074951172,
+                "mean": 0.026314400136470795,
+                "std": 0.02935846894979477
+            },
+            "changed_pixels_threshold_0_05": 0.1441090852022171,
+            "mean_absolute_difference": 0.026314400136470795,
+            "mean_l2_distance": 0.03942541033029556,
+            "linf_distance": 0.5507183074951172,
+            "l1_norm": 5173.6298828125,
+            "l1_5_norm": 110.3997573852539,
+            "l2_norm": 17.481300354003906
+        },
+        {
+            "sample_index": 8,
+            "dataset_index": 70,
+            "manifest_sample_index": 8,
+            "source_image_path": "data/processed/BUSI/test/malignant/malignant (140).png",
+            "true_label_index": 1,
+            "true_label": "malignant",
+            "original_prediction_index": 1,
+            "original_prediction": "malignant",
+            "original_confidence_before_resize": 0.9727027416229248,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "target_initial_confidence_before_resize": 0.027281085029244423,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9408928155899048,
+                "probabilities": [
+                    0.059054531157016754,
+                    0.9408928155899048,
+                    5.264904393698089e-05
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 2.829293966293335,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -10.10425090789795,
+                    "max": 11.020907402038574,
+                    "mean": 9.266815141018014e-06,
+                    "std": 0.41826918721199036
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.027450978755950928,
+                "max": 0.929411768913269,
+                "mean": 0.2941496968269348,
+                "std": 0.17936985194683075
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.03382352739572525,
+                "max": 0.9192095994949341,
+                "mean": 0.2941816747188568,
+                "std": 0.17809003591537476
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_08/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1140.231,
+            "steps_seen": 100,
+            "seed": 9,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9408928155899048,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.9999673366546631,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.059054531157016754,
+                0.9408928155899048,
+                5.264904393698089e-05
+            ],
+            "counterfactual_probabilities": [
+                0.9999673366546631,
+                1.7931537513504736e-05,
+                1.4784640370635316e-05
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_08/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_08/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_08/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.03382352739572525,
+                "max": 0.9192095994949341,
+                "mean": 0.2941816747188568,
+                "std": 0.17809003591537476
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.06327205896377563,
+                "max": 0.9013744592666626,
+                "mean": 0.29193732142448425,
+                "std": 0.17497099936008453
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 2.1606683731079102e-07,
+                "max": 0.6363746523857117,
+                "mean": 0.023364873602986336,
+                "std": 0.027058178558945656
+            },
+            "changed_pixels_threshold_0_05": 0.1013336181640625,
+            "mean_absolute_difference": 0.023364873602986336,
+            "mean_l2_distance": 0.03574994578957558,
+            "linf_distance": 0.6363746523857117,
+            "l1_norm": 4593.71484375,
+            "l1_5_norm": 97.99329376220703,
+            "l2_norm": 15.851642608642578
+        },
+        {
+            "sample_index": 9,
+            "dataset_index": 71,
+            "manifest_sample_index": 9,
+            "source_image_path": "data/processed/BUSI/test/malignant/malignant (144).png",
+            "true_label_index": 1,
+            "true_label": "malignant",
+            "original_prediction_index": 1,
+            "original_prediction": "malignant",
+            "original_confidence_before_resize": 0.9999669790267944,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "target_initial_confidence_before_resize": 2.5703373466967605e-05,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 1,
+                "confidence": 0.9998700618743896,
+                "probabilities": [
+                    0.00011544751760084182,
+                    0.9998700618743896,
+                    1.4421701052924618e-05
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 9.066694259643555,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -3.8966336250305176,
+                    "max": 5.083868026733398,
+                    "mean": -7.977910718182102e-05,
+                    "std": 0.3311120271682739
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.9568628072738647,
+                "mean": 0.27547168731689453,
+                "std": 0.21313953399658203
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0002450961619615555,
+                "max": 0.9437040686607361,
+                "mean": 0.27551427483558655,
+                "std": 0.21237587928771973
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_09/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1035.009,
+            "steps_seen": 100,
+            "seed": 10,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9998700618743896,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.9995716214179993,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.00011544751760084182,
+                0.9998700618743896,
+                1.4421701052924618e-05
+            ],
+            "counterfactual_probabilities": [
+                0.9995716214179993,
+                8.047554001677781e-05,
+                0.0003479666484054178
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_09/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_09/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_09/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0002450961619615555,
+                "max": 0.9437040686607361,
+                "mean": 0.27551427483558655,
+                "std": 0.21237587928771973
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.00280839204788208,
+                "max": 0.8446047306060791,
+                "mean": 0.2731454074382782,
+                "std": 0.20911580324172974
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 8.940696716308594e-08,
+                "max": 0.3523089289665222,
+                "mean": 0.021590910851955414,
+                "std": 0.025092585012316704
+            },
+            "changed_pixels_threshold_0_05": 0.1082560196518898,
+            "mean_absolute_difference": 0.021590910851955414,
+            "mean_l2_distance": 0.03310289978981018,
+            "linf_distance": 0.3523089289665222,
+            "l1_norm": 4244.9296875,
+            "l1_5_norm": 92.40589904785156,
+            "l2_norm": 14.677848815917969
+        },
+        {
+            "sample_index": 10,
+            "dataset_index": 98,
+            "manifest_sample_index": 10,
+            "source_image_path": "data/processed/BUSI/test/normal/normal (1).png",
+            "true_label_index": 2,
+            "true_label": "normal",
+            "original_prediction_index": 2,
+            "original_prediction": "normal",
+            "original_confidence_before_resize": 0.9878881573677063,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "target_initial_confidence_before_resize": 0.00916006788611412,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 2,
+                "confidence": 0.9891210198402405,
+                "probabilities": [
+                    0.010145559906959534,
+                    0.0007334085530601442,
+                    0.9891210198402405
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 4.590719223022461,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -5.60745906829834,
+                    "max": 4.956542015075684,
+                    "mean": 1.6120573491207324e-05,
+                    "std": 0.42280545830726624
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.00784313678741455,
+                "max": 0.9803922176361084,
+                "mean": 0.32817548513412476,
+                "std": 0.202340230345726
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.011075367219746113,
+                "max": 0.9640166163444519,
+                "mean": 0.32819896936416626,
+                "std": 0.2014710009098053
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_10/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 2233.537,
+            "steps_seen": 100,
+            "seed": 11,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9891210198402405,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.9999092817306519,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.010145559906959534,
+                0.0007334085530601442,
+                0.9891210198402405
+            ],
+            "counterfactual_probabilities": [
+                0.9999092817306519,
+                2.7763720936491154e-05,
+                6.289039447437972e-05
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_10/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_10/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_10/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.011075367219746113,
+                "max": 0.9640166163444519,
+                "mean": 0.32819896936416626,
+                "std": 0.2014710009098053
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.051231592893600464,
+                "max": 0.9237578511238098,
+                "mean": 0.3273422420024872,
+                "std": 0.19948844611644745
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 3.129243850708008e-07,
+                "max": 0.32403475046157837,
+                "mean": 0.021256098523736,
+                "std": 0.02174651250243187
+            },
+            "changed_pixels_threshold_0_05": 0.0924936905503273,
+            "mean_absolute_difference": 0.021256098523736,
+            "mean_l2_distance": 0.030409375205636024,
+            "linf_distance": 0.32403475046157837,
+            "l1_norm": 4179.1103515625,
+            "l1_5_norm": 87.15715789794922,
+            "l2_norm": 13.483591079711914
+        },
+        {
+            "sample_index": 11,
+            "dataset_index": 99,
+            "manifest_sample_index": 11,
+            "source_image_path": "data/processed/BUSI/test/normal/normal (103).png",
+            "true_label_index": 2,
+            "true_label": "normal",
+            "original_prediction_index": 2,
+            "original_prediction": "normal",
+            "original_confidence_before_resize": 0.9626815915107727,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "target_initial_confidence_before_resize": 0.03541509807109833,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 2,
+                "confidence": 0.9502513408660889,
+                "probabilities": [
+                    0.048423025757074356,
+                    0.001325572608038783,
+                    0.9502513408660889
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 3.0277798175811768,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -5.191350936889648,
+                    "max": 5.641261100769043,
+                    "mean": 7.106695557013154e-05,
+                    "std": 0.433132141828537
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.003921538591384888,
+                "max": 0.9411765336990356,
+                "mean": 0.4100283980369568,
+                "std": 0.22296451032161713
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.006127437576651573,
+                "max": 0.9357843399047852,
+                "mean": 0.4099891483783722,
+                "std": 0.22199805080890656
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_11/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 841.921,
+            "steps_seen": 100,
+            "seed": 12,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9502513408660889,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.9999232292175293,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.048423025757074356,
+                0.001325572608038783,
+                0.9502513408660889
+            ],
+            "counterfactual_probabilities": [
+                0.9999232292175293,
+                6.225238394108601e-06,
+                7.052010187180713e-05
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_11/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_11/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_11/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.006127437576651573,
+                "max": 0.9357843399047852,
+                "mean": 0.4099891483783722,
+                "std": 0.22199805080890656
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.01877698302268982,
+                "max": 0.8928335309028625,
+                "mean": 0.4077557325363159,
+                "std": 0.22020012140274048
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 1.1920928955078125e-07,
+                "max": 0.42005226016044617,
+                "mean": 0.024750297889113426,
+                "std": 0.024709725752472878
+            },
+            "changed_pixels_threshold_0_05": 0.1185963973402977,
+            "mean_absolute_difference": 0.024750297889113426,
+            "mean_l2_distance": 0.03497348353266716,
+            "linf_distance": 0.42005226016044617,
+            "l1_norm": 4866.1064453125,
+            "l1_5_norm": 100.53255462646484,
+            "l2_norm": 15.50735855102539
+        },
+        {
+            "sample_index": 12,
+            "dataset_index": 100,
+            "manifest_sample_index": 12,
+            "source_image_path": "data/processed/BUSI/test/normal/normal (124).png",
+            "true_label_index": 2,
+            "true_label": "normal",
+            "original_prediction_index": 2,
+            "original_prediction": "normal",
+            "original_confidence_before_resize": 0.9939561486244202,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "target_initial_confidence_before_resize": 0.0037827680353075266,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 2,
+                "confidence": 0.9739137291908264,
+                "probabilities": [
+                    0.024348033592104912,
+                    0.0017383004305884242,
+                    0.9739137291908264
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 3.715304136276245,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -4.8249969482421875,
+                    "max": 4.803739547729492,
+                    "mean": 4.062518200953491e-05,
+                    "std": 0.3252619504928589
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.0,
+                "max": 0.7960784435272217,
+                "mean": 0.2256155014038086,
+                "std": 0.128599613904953
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0014705790672451258,
+                "max": 0.7637254595756531,
+                "mean": 0.22559557855129242,
+                "std": 0.1270587146282196
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_12/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 951.177,
+            "steps_seen": 100,
+            "seed": 13,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9739137291908264,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.9997639060020447,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.024348033592104912,
+                0.0017383004305884242,
+                0.9739137291908264
+            ],
+            "counterfactual_probabilities": [
+                0.9997639060020447,
+                0.00010111040319316089,
+                0.00013500603381544352
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_12/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_12/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_12/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0014705790672451258,
+                "max": 0.7637254595756531,
+                "mean": 0.22559557855129242,
+                "std": 0.1270587146282196
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.0,
+                "max": 0.6713366508483887,
+                "mean": 0.22368274629116058,
+                "std": 0.12442740797996521
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 2.9802322387695312e-08,
+                "max": 0.2696710228919983,
+                "mean": 0.021146142855286598,
+                "std": 0.02310839667916298
+            },
+            "changed_pixels_threshold_0_05": 0.09893798828125,
+            "mean_absolute_difference": 0.021146142855286598,
+            "mean_l2_distance": 0.0313233882188797,
+            "linf_distance": 0.2696710228919983,
+            "l1_norm": 4157.51220703125,
+            "l1_5_norm": 88.46739959716797,
+            "l2_norm": 13.888863563537598
+        },
+        {
+            "sample_index": 13,
+            "dataset_index": 101,
+            "manifest_sample_index": 13,
+            "source_image_path": "data/processed/BUSI/test/normal/normal (13).png",
+            "true_label_index": 2,
+            "true_label": "normal",
+            "original_prediction_index": 2,
+            "original_prediction": "normal",
+            "original_confidence_before_resize": 0.9961642026901245,
+            "target_class_index": 1,
+            "target_class": "malignant",
+            "target_initial_confidence_before_resize": 0.0019531971774995327,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 2,
+                "confidence": 0.9977770447731018,
+                "probabilities": [
+                    0.0016188932349905372,
+                    0.0006039603031240404,
+                    0.9977770447731018
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 7.412002086639404,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -3.588714838027954,
+                    "max": 4.470683574676514,
+                    "mean": -6.584532093256712e-05,
+                    "std": 0.32609379291534424
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.003921538591384888,
+                "max": 1.0,
+                "mean": 0.44933515787124634,
+                "std": 0.21039430797100067
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.003921538591384888,
+                "max": 0.9957720637321472,
+                "mean": 0.4493633806705475,
+                "std": 0.2092994600534439
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_13/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1366.181,
+            "steps_seen": 100,
+            "seed": 14,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9977770447731018,
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "malignant",
+            "counterfactual_confidence": 0.9833373427391052,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.0016188932349905372,
+                0.0006039603031240404,
+                0.9977770447731018
+            ],
+            "counterfactual_probabilities": [
+                0.006691965740174055,
+                0.9833373427391052,
+                0.009970723651349545
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_13/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_13/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_13/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.003921538591384888,
+                "max": 0.9957720637321472,
+                "mean": 0.4493633806705475,
+                "std": 0.2092994600534439
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.01756986975669861,
+                "max": 0.9964956045150757,
+                "mean": 0.44831618666648865,
+                "std": 0.20709720253944397
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 2.384185791015625e-07,
+                "max": 0.42145395278930664,
+                "mean": 0.028748823329806328,
+                "std": 0.02600967139005661
+            },
+            "changed_pixels_threshold_0_05": 0.1669362336397171,
+            "mean_absolute_difference": 0.028748823329806328,
+            "mean_l2_distance": 0.038768474012613297,
+            "linf_distance": 0.42145395278930664,
+            "l1_norm": 5652.23486328125,
+            "l1_5_norm": 114.32969665527344,
+            "l2_norm": 17.190067291259766
+        },
+        {
+            "sample_index": 14,
+            "dataset_index": 102,
+            "manifest_sample_index": 14,
+            "source_image_path": "data/processed/BUSI/test/normal/normal (133).png",
+            "true_label_index": 2,
+            "true_label": "normal",
+            "original_prediction_index": 2,
+            "original_prediction": "normal",
+            "original_confidence_before_resize": 0.9810680747032166,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "target_initial_confidence_before_resize": 0.017724832519888878,
+            "adapter_forward_check": {
+                "logits_shape": [
+                    1,
+                    3
+                ],
+                "prediction_index": 2,
+                "confidence": 0.9757099747657776,
+                "probabilities": [
+                    0.023986073210835457,
+                    0.0003038746363017708,
+                    0.9757099747657776
+                ]
+            },
+            "classifier_guidance_gradient_check": {
+                "target_loss": 3.7302818298339844,
+                "gradient_available": true,
+                "gradient_stats": {
+                    "shape": [
+                        1,
+                        3,
+                        256,
+                        256
+                    ],
+                    "min": -4.009843826293945,
+                    "max": 3.722424268722534,
+                    "mean": -6.280059460550547e-05,
+                    "std": 0.3349318504333496
+                },
+                "has_nonzero_gradient": true
+            },
+            "second_classifier_path": "models/busi_resnet18_robust_pgd.pth",
+            "cone_projection_requested": true,
+            "input_01_stats": {
+                "shape": [
+                    1,
+                    3,
+                    224,
+                    224
+                ],
+                "min": 0.019607841968536377,
+                "max": 1.0,
+                "mean": 0.3223269283771515,
+                "std": 0.22084885835647583
+            },
+            "input_256_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.025107204914093018,
+                "max": 0.9984375238418579,
+                "mean": 0.3223157227039337,
+                "std": 0.2195993959903717
+            },
+            "sample_preview_path": "results/final/dvce_original_style_cone/openai/busi/sample_14/dvce_medical_input_256.png",
+            "ok": true,
+            "error": null,
+            "runtime_seconds": 1410.882,
+            "steps_seen": 100,
+            "seed": 15,
+            "model_output_size": 256,
+            "timestep_respacing": "200",
+            "skip_timesteps": 100,
+            "use_ddim": false,
+            "gen_type": "p_sample",
+            "use_fp16": false,
+            "clip_denoised": false,
+            "classifier_lambda": 0.1,
+            "lp_custom": 1.0,
+            "lp_custom_value": 0.15,
+            "enforce_same_norms": true,
+            "denoise_dist_input": true,
+            "denoise_dist_input_default_note": "The original argparse default is False, but both published DVCE commands in the original readme pass --denoise_dist_input, so original-faithful runs should enable it.",
+            "deg_cone_projection": 30.0,
+            "classifier_size": 224,
+            "cone_projection_enabled": true,
+            "aug_num": 16,
+            "guidance_space": "pred_xstart",
+            "distance_target": "init_image",
+            "sampling_backbone": {
+                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "model_config": {
+                    "image_size": 256,
+                    "num_channels": 256,
+                    "num_res_blocks": 2,
+                    "num_heads": 4,
+                    "num_heads_upsample": -1,
+                    "num_head_channels": 64,
+                    "attention_resolutions": "32, 16, 8",
+                    "channel_mult": "",
+                    "dropout": 0.0,
+                    "class_cond": false,
+                    "use_checkpoint": false,
+                    "use_scale_shift_norm": true,
+                    "resblock_updown": true,
+                    "use_fp16": false,
+                    "use_new_attention_order": false,
+                    "learn_sigma": true,
+                    "diffusion_steps": 1000,
+                    "noise_schedule": "linear",
+                    "timestep_respacing": "200",
+                    "use_kl": false,
+                    "predict_xstart": false,
+                    "rescale_timesteps": true,
+                    "rescale_learned_sigmas": false
+                },
+                "diffusion_num_timesteps": 200,
+                "gradient_parameter_count": 96,
+                "gradient_parameter_rule": "qkv/norm/proj parameters require gradients, matching local DiffusionAttack."
+            },
+            "note": "Original-style medical DVCE core: cond_fn recomputes p_mean_variance, evaluates classifier and LP distance on pred_xstart (unclamped _map_img input), separately normalizes classifier/distance gradients to eps=model_output when enforce_same_norms is enabled, and returns grad_class - lp_grad. Cone projection (active with second classifier and deg_cone_projection > 0) projects the robust second classifier's gradient onto the cone centered at the explained classifier's gradient, matching the original dff_attack.py argument order.",
+            "original_confidence": 0.9757099747657776,
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.9999972581863403,
+            "valid_counterfactual": true,
+            "original_probabilities": [
+                0.023986073210835457,
+                0.0003038746363017708,
+                0.9757099747657776
+            ],
+            "counterfactual_probabilities": [
+                0.9999972581863403,
+                1.3477165339281783e-07,
+                2.592613100205199e-06
+            ],
+            "counterfactual_path": "results/final/dvce_original_style_cone/openai/busi/sample_14/dvce_counterfactual_candidate.png",
+            "difference_path": "results/final/dvce_original_style_cone/openai/busi/sample_14/dvce_absolute_difference.png",
+            "visualization_path": "results/final/dvce_original_style_cone/openai/busi/sample_14/dvce_counterfactual_visualization.png",
+            "original_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.025107204914093018,
+                "max": 0.9984375238418579,
+                "mean": 0.3223157227039337,
+                "std": 0.2195993959903717
+            },
+            "counterfactual_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 0.05112597346305847,
+                "max": 0.9983714818954468,
+                "mean": 0.3208216726779938,
+                "std": 0.2177252173423767
+            },
+            "diff_stats": {
+                "shape": [
+                    1,
+                    3,
+                    256,
+                    256
+                ],
+                "min": 5.960464477539063e-08,
+                "max": 0.67447829246521,
+                "mean": 0.02377248741686344,
+                "std": 0.0292269978672266
+            },
+            "changed_pixels_threshold_0_05": 0.1146647110581398,
+            "mean_absolute_difference": 0.02377248741686344,
+            "mean_l2_distance": 0.0376741848886013,
+            "linf_distance": 0.67447829246521,
+            "l1_norm": 4673.85595703125,
+            "l1_5_norm": 101.74038696289062,
+            "l2_norm": 16.704776763916016
+        }
+    ]
+}
