@@ -68,6 +68,14 @@ def infer_method(metadata):
     if method == "Retrieval-based nearest-unlike-neighbor baseline":
         return "Retrieval-based nearest-unlike-neighbor baseline"
 
+    if method == "CFProto original-style prototype-guided counterfactuals":
+        checkpoint = metadata.get("autoencoder_checkpoint") or {}
+        architecture = checkpoint.get("architecture")
+        latent_dim = checkpoint.get("latent_dim")
+        if architecture == "conv_autoencoder_bottleneck_v1" and latent_dim:
+            return f"CFProto original-style (bottleneck{latent_dim})"
+        return "CFProto original-style (encoder feature map)"
+
     if "prototype-guided" in method.lower():
         parameters = metadata.get("parameters", {})
         if (
