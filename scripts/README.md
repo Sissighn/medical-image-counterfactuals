@@ -12,7 +12,7 @@ scripts below.
 | `prepare_pneumonia.py` | Prepare the Pneumonia dataset in the processed `train/val/test` folder structure. |
 | `evaluate_model.py` | Evaluate a saved classifier on the full test split and write metrics to JSON. |
 | `train_robust_resnet18_pgd.py` | Train a PGD-adversarially robust ResNet18 in the same checkpoint format as the normal classifiers, for DVCE Cone Projection. |
-| `train_autoencoder.py` | Train an unsupervised ConvAutoencoder, including the compact bottleneck variant, on denormalized `[0, 1]` images for the CFProto-nearer encoder-prototype method. |
+| `train_autoencoder.py` | Train an unsupervised ConvAutoencoder, including the compact bottleneck variant, on denormalized `[0, 1]` images for the CFProto (original-style) encoder-prototype method. |
 | `check_autoencoder_plausibility.py` | Check whether a trained autoencoder assigns higher reconstruction loss to brightness/contrast, blur, patch, and noise perturbations than to original images. |
 | `create_evaluation_manifest.py` | Create fixed correctly classified evaluation samples for counterfactual comparison. |
 | `run_cfproto_pytorch.py` | Run the CFProto original-style prototype-guided counterfactual method (FISTA with shrinkage-thresholding, hinge attack loss, binary c-search, encoder-space class prototypes) following alibi's `CounterfactualProto`. |

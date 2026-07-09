@@ -17,13 +17,18 @@ The comparison script does not recompute, stretch, or per-image normalize the em
 
 This is intentional: very dark difference maps indicate genuinely small absolute changes on a fixed scale, not a plotting error. Stronger colors would only be appropriate with an explicitly labelled alternate scale, because otherwise tiny differences could appear misleadingly large.
 
-For method-level interpretation and the trade-offs between CFProto-nearer prototype-guided optimization, Goyal 2019 CVE, SEDC-T, and DVCE, see:
+For method-level interpretation and the trade-offs between CFProto (original-style), Goyal 2019 CVE, SEDC-T, and DVCE, see:
 
 - `results/qualitative_figures/qualitative_results_interpretation.md`
 
 Generated per-method figures:
 
+- `results/qualitative_figures/per_method/busi/cfproto_original_style_bottleneck256.png`
 - `results/qualitative_figures/per_method/busi/goyal_2019_counterfactual_visual_explanations.png`
+- `results/qualitative_figures/per_method/busi/sedc_t_original_style_best_first.png`
+- `results/qualitative_figures/per_method/pneumonia/cfproto_original_style_bottleneck256.png`
 - `results/qualitative_figures/per_method/pneumonia/goyal_2019_counterfactual_visual_explanations.png`
+- `results/qualitative_figures/per_method/pneumonia/sedc_t_original_style_best_first.png`
+- `results/qualitative_figures/per_method/pneumonia/sedc_t_lung_field_roi_ablation.png`
 
 Warnings emitted during generation: 0
