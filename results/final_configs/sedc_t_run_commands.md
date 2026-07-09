@@ -26,7 +26,7 @@ prediction matches the manifest).
 .venv/bin/python scripts/run_sedc_t_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/fixed_evaluation/sedc_t_busi_original_style \
+  --output_dir results/final/sedc_t_busi_original_style \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
   --search_timeout_seconds 30
 ```
@@ -37,7 +37,7 @@ prediction matches the manifest).
 .venv/bin/python scripts/run_sedc_t_pytorch.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --dataset_path data/processed/Pneumonia \
-  --output_dir results/fixed_evaluation/sedc_t_pneumonia_original_style \
+  --output_dir results/final/sedc_t_pneumonia_original_style \
   --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json \
   --search_timeout_seconds 30
 ```
@@ -54,7 +54,7 @@ sub-diaphragmatic region). The exact fractions are recorded per run under
 .venv/bin/python scripts/run_sedc_t_pytorch.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --dataset_path data/processed/Pneumonia \
-  --output_dir results/fixed_evaluation/sedc_t_pneumonia_lung_field_roi \
+  --output_dir results/final/sedc_t_pneumonia_lung_field_roi \
   --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json \
   --roi_mode lung_fields \
   --search_timeout_seconds 30
@@ -71,9 +71,9 @@ consistent (add their `metadata.json` paths to the `--metadata` list).
 .venv/bin/python scripts/select_interpretable_examples.py \
   --copy_assets \
   --metadata \
-    results/fixed_evaluation/sedc_t_busi_original_style/metadata.json \
-    results/fixed_evaluation/sedc_t_pneumonia_original_style/metadata.json \
-    results/fixed_evaluation/sedc_t_pneumonia_lung_field_roi/metadata.json
+    results/final/sedc_t_busi_original_style/metadata.json \
+    results/final/sedc_t_pneumonia_original_style/metadata.json \
+    results/final/sedc_t_pneumonia_lung_field_roi/metadata.json
 
 .venv/bin/python scripts/create_qualitative_comparison_figures.py
 ```

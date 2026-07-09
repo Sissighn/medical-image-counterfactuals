@@ -181,7 +181,7 @@ def main():
     parser.add_argument(
         "--output_path",
         type=str,
-        default="results/fixed_evaluation_summary.md",
+        default="results/docs/fixed_evaluation_summary.md",
     )
     args = parser.parse_args()
 

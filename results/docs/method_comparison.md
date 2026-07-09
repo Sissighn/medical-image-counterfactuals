@@ -31,7 +31,7 @@ quantitative values.
 The generated central summary is:
 
 ```text
-results/fixed_evaluation_summary.md
+results/docs/fixed_evaluation_summary.md
 ```
 
 ## Interpretation

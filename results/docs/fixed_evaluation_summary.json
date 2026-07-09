@@ -21,7 +21,7 @@
             "mean_runtime_seconds": 46.3415266752243
         },
         {
-            "metadata_path": "results/fixed_evaluation/goyal_cve_busi/metadata.json",
+            "metadata_path": "results/final/goyal_cve_busi/metadata.json",
             "method": "Goyal 2019 counterfactual visual explanations",
             "dataset": "BUSI",
             "samples": 15,
@@ -31,7 +31,7 @@
             "mean_runtime_seconds": 0.25227354367574056
         },
         {
-            "metadata_path": "results/fixed_evaluation/goyal_cve_pneumonia/metadata.json",
+            "metadata_path": "results/final/goyal_cve_pneumonia/metadata.json",
             "method": "Goyal 2019 counterfactual visual explanations",
             "dataset": "Pneumonia",
             "samples": 20,
@@ -41,7 +41,7 @@
             "mean_runtime_seconds": 0.16718459129333496
         },
         {
-            "metadata_path": "results/fixed_evaluation/sedc_t_busi_original_style/metadata.json",
+            "metadata_path": "results/final/sedc_t_busi_original_style/metadata.json",
             "method": "SEDC-T original-style best-first",
             "dataset": "BUSI",
             "samples": 15,
@@ -51,7 +51,7 @@
             "mean_runtime_seconds": 6.713887135187785
         },
         {
-            "metadata_path": "results/fixed_evaluation/sedc_t_pneumonia_original_style/metadata.json",
+            "metadata_path": "results/final/sedc_t_pneumonia_original_style/metadata.json",
             "method": "SEDC-T original-style best-first",
             "dataset": "Pneumonia",
             "samples": 20,
@@ -61,7 +61,7 @@
             "mean_runtime_seconds": 13.922122955322266
         },
         {
-            "metadata_path": "results/fixed_evaluation/sedc_t_pneumonia_lung_field_roi/metadata.json",
+            "metadata_path": "results/final/sedc_t_pneumonia_lung_field_roi/metadata.json",
             "method": "SEDC-T lung-field ROI ablation",
             "dataset": "Pneumonia",
             "samples": 20,
