@@ -1,10 +1,15 @@
-# CFProto Encoder-KNN Final Fixed-Manifest Summary
+# CFProto Final Fixed-Manifest Summary
 
-This summary reports the final fixed-manifest runs for the CFProto-nearer
-prototype-guided optimization baseline. The runs use encoder-space local
-KNN prototypes, adaptive binary-style c-search, elastic-net selection, and
-polynomial learning-rate decay. They do not constitute a full Alibi
-`CounterfactualProto` reproduction.
+This summary reports the final fixed-manifest runs for the CFProto
+original-style prototype-guided method (FISTA with shrinkage-thresholding,
+untargeted hinge attack loss, encoder-space class prototypes from classifier
+predictions, binary c-search, elastic-net best-counterfactual selection),
+following `alibi.explainers.cfproto.CounterfactualProto`. See
+[`cfproto_encoder_method_documentation.md`](../../final_configs/cfproto_encoder_method_documentation.md)
+for the full method documentation and Soll-Ist comparison with the original.
+
+These runs were executed on a CUDA machine (university GPU) rather than the
+project's usual Apple Silicon/MPS machine, using the exact commands below.
 
 ## Exact Commands
 
@@ -16,28 +21,17 @@ PYTHONPATH=. python scripts/run_cfproto_pytorch.py \
   --dataset_path data/processed/BUSI \
   --output_dir results/final/cfproto_encoder_knn/busi \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
-  --steps 300 \
-  --learning_rate 0.01 \
-  --attack_loss cw_hinge \
-  --attack_const 1.0 \
-  --c_init 1.0 \
-  --c_steps 3 \
-  --c_search_mode adaptive_binary \
+  --max_iterations 1000 \
+  --learning_rate_init 0.01 \
   --kappa 0.0 \
-  --lambda_l1 0.01 \
-  --lambda_l2 5.0 \
-  --lambda_tv 0.2 \
-  --lambda_proto 0.05 \
-  --autoencoder_path models/autoencoder_busi.pth \
-  --gamma 0.0 \
-  --prototype_space encoder \
-  --prototype_mode knn_mean \
-  --prototype_k 3 \
-  --selection_metric elastic_net \
   --beta 0.1 \
-  --lr_schedule polynomial \
-  --max_delta 0.12 \
-  --perturbation_resolution 28 \
+  --gamma 1.0 \
+  --theta 0.5 \
+  --c_init 1.0 \
+  --c_steps 5 \
+  --autoencoder_path models/autoencoder_busi_bottleneck256.pth \
+  --prototype_k 3 \
+  --k_type mean \
   --batch_size 16
 ```
 
@@ -49,65 +43,42 @@ PYTHONPATH=. python scripts/run_cfproto_pytorch.py \
   --dataset_path data/processed/Pneumonia \
   --output_dir results/final/cfproto_encoder_knn/pneumonia \
   --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json \
-  --steps 300 \
-  --learning_rate 0.01 \
-  --attack_loss cw_hinge \
-  --attack_const 1.0 \
-  --c_init 1.0 \
-  --c_steps 3 \
-  --c_search_mode adaptive_binary \
+  --max_iterations 1000 \
+  --learning_rate_init 0.01 \
   --kappa 0.0 \
-  --lambda_l1 0.01 \
-  --lambda_l2 5.0 \
-  --lambda_tv 0.2 \
-  --lambda_proto 0.05 \
-  --autoencoder_path models/autoencoder_pneumonia.pth \
-  --gamma 0.0 \
-  --prototype_space encoder \
-  --prototype_mode knn_mean \
-  --prototype_k 3 \
-  --selection_metric elastic_net \
   --beta 0.1 \
-  --lr_schedule polynomial \
-  --max_delta 0.12 \
-  --perturbation_resolution 28 \
+  --gamma 1.0 \
+  --theta 0.05 \
+  --c_init 1.0 \
+  --c_steps 5 \
+  --autoencoder_path models/autoencoder_pneumonia_bottleneck256.pth \
+  --prototype_k 3 \
+  --k_type mean \
   --batch_size 16
 ```
 
 ## Final Parameters
 
-| Parameter | Value |
-| --- | --- |
-| `prototype_space` | `encoder` |
-| `prototype_mode` | `knn_mean` |
-| `prototype_k` | `3` |
-| `c_search_mode` | `adaptive_binary` |
-| `selection_metric` | `elastic_net` |
-| `beta` | `0.1` |
-| `lr_schedule` | `polynomial` |
-| `attack_loss` | `cw_hinge` |
-| `attack_const` | `1.0` |
-| `c_init` | `1.0` |
-| `c_steps` | `3` |
-| `kappa` | `0.0` |
-| `lambda_l1` | `0.01` |
-| `lambda_l2` | `5.0` |
-| `lambda_tv` | `0.2` |
-| `lambda_proto` | `0.05` |
-| `gamma` | `0.0` |
-| `max_delta` | `0.12` |
-| `perturbation_resolution` | `28` |
-| `steps` | `300` |
-| `learning_rate` | `0.01` |
-| `force_grayscale` | `True` |
-| `target_class` | manifest target (`record["target_class_index"]`) |
+| Parameter | BUSI | Pneumonia |
+| --- | --- | --- |
+| `autoencoder_path` | `autoencoder_busi_bottleneck256.pth` | `autoencoder_pneumonia_bottleneck256.pth` |
+| `prototype_space` | encoder (bottleneck, latent_dim=256) | encoder (bottleneck, latent_dim=256) |
+| `prototype_k` / `k_type` | 3 / mean | 3 / mean |
+| `max_iterations` | 1000 | 1000 |
+| `c_init` / `c_steps` | 1.0 / 5 | 1.0 / 5 |
+| `kappa` | 0.0 | 0.0 |
+| `beta` | 0.1 | 0.1 |
+| `gamma` | 1.0 | 1.0 |
+| `theta` | 0.5 | 0.05 (recalibrated, see method doc §4) |
+| `learning_rate_init` | 0.01 | 0.01 |
+| `target_class` | manifest target (`record["target_class_index"]`) | manifest target (`record["target_class_index"]`) |
 
 ## Quantitative Summary
 
-| dataset | num_samples | valid_count | validity | mean_cf_confidence | mean_target_confidence | mean_l1_mad | mean_l2 | mean_linf | mean_changed_pixel_fraction | mean_runtime_seconds |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BUSI | 15 | 15 | 1.000000 | 0.547051 | 0.547051 | 0.006331 | 0.007600 | 0.018075 | 0.008384 | 7.429689 |
-| Pneumonia | 20 | 18 | 0.900000 | 0.576668 | 0.476669 | 0.006500 | 0.007939 | 0.023833 | 0.010842 | 8.581645 |
+| dataset | num_samples | valid_count | validity | mean_cf_confidence (valid) | mean_l1 | mean_l2 | mean_linf | mean_changed_pixel_fraction | mean_runtime_seconds |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BUSI | 15 | 13 | 0.8667 | 0.6463 | 0.0121 | 0.0436 | 0.8506 | 0.0529 | 46.10 |
+| Pneumonia | 20 | 20 | 1.0000 | 0.5740 | 0.0027 | 0.0210 | 0.8059 | 0.0180 | 46.34 |
 
 ## Metadata Files
 
@@ -121,17 +92,29 @@ PYTHONPATH=. python scripts/run_cfproto_pytorch.py \
 
 ## Invalid Counterfactuals
 
-| Dataset | Manifest sample | True label | Original prediction | Target | CF prediction | Target confidence | CF confidence |
-| --- | ---: | --- | --- | --- | --- | ---: | ---: |
-| Pneumonia | 11 | PNEUMONIA | PNEUMONIA | NORMAL | PNEUMONIA | 0.000014 | 0.999986 |
-| Pneumonia | 16 | PNEUMONIA | PNEUMONIA | NORMAL | PNEUMONIA | 0.000001 | 0.999999 |
+| Dataset | Manifest sample | True label | Original prediction | Target | CF prediction | CF confidence |
+| --- | ---: | --- | --- | --- | --- | ---: |
+| BUSI | 0 | benign | benign | malignant | normal | 0.9178 |
+| BUSI | 13 | normal | normal | malignant | benign | 0.9029 |
+
+Both BUSI invalids are a direct, expected consequence of the untargeted
+attack loss (see method doc §1/§4): the optimization found a confident flip
+away from the original class, just not to the manifest's specific target
+class.
 
 ## Cautious Interpretation
 
-- This method is CFProto-nearer because it uses autoencoder encoder-space local target-class KNN prototypes, adaptive binary-style c-search, elastic-net selection, and polynomial learning-rate decay.
-- It is still not a full Alibi `CounterfactualProto` reproduction. FISTA/shrinkage, TrustScore, the original TensorFlow graph structure, and the original Alibi k-d-tree machinery were not fully reproduced.
-- Validity means that the trained classifier predicts the manifest target class for the generated counterfactual. It does not imply medical plausibility.
-- The changes can remain diffuse or visually subtle. They should be interpreted as model-behavior counterfactuals, not as clinically causal image edits.
+- Validity means the trained classifier predicts the manifest target class
+  for the generated counterfactual. It does not imply medical plausibility.
+- Because the attack loss is untargeted, a "failure" here is not evidence of
+  an implementation bug — it can be the correct behavior of the original
+  algorithm when the nearest confident flip differs from the fixed manifest
+  target.
+- Sparsity (changed pixel fraction) differs substantially between datasets
+  (5.3% BUSI vs. 1.8% Pneumonia) because `theta` was calibrated separately per
+  dataset/autoencoder to compensate for very different raw encoder-space
+  prototype distances (see method doc §4); this is a calibration artifact,
+  not a difference in method fidelity.
 
 ## Output Check
 

@@ -1,47 +1,50 @@
 # Method Variant Rationale
 
 This document explains which method states are retained in the project and why.
-The old prototype-guided variants have been removed. The retained main
-prototype-guided method is the CFProto-nearer encoder feature-map configuration;
-the bottleneck256 and bottleneck1024 configurations are retained only as
-autoencoder/prototype-space ablations.
+The earlier feature-map and bottleneck-ablation prototype-guided experiments
+have been replaced by a single CFProto (original-style) configuration: a
+faithful PyTorch port of alibi's `CounterfactualProto` using a bottleneck-256
+autoencoder, with `gamma`/`theta` calibrated per dataset.
 
 ## Current Method Roles
 
 | Method family | Retained role | Notes |
 | --- | --- | --- |
-| CFProto-nearer prototype-guided optimization | Final prototype-guided method plus bottleneck ablations | Encoder-kNN prototypes, adaptive c-search, elastic-net selection, polynomial learning-rate decay, targeted margin loss |
+| CFProto (original-style) prototype-guided optimization | Final prototype-guided method | FISTA + shrinkage-thresholding, untargeted hinge attack loss, encoder-space class prototypes, binary c-search, elastic-net selection |
 | Goyal et al. 2019 CVE | Instance-based feature-space edit | Greedy cell swaps from a nearest-unlike distractor; sparse localized edits; validity guaranteed by construction |
 | SEDC-T | Region-based/localized counterfactuals | Original-style best-first plus Pneumonia lung-field ROI ablation |
 | DVCE | Generative counterfactual feasibility | One original-style method family with no-cone and Cone Projection states; diffusion checkpoints are OpenAI, Pneumonia-medical, and BUSI-medical |
 
-## CFProto-Nearer Prototype-Guided Optimization
+## CFProto (Original-Style Prototype-Guided Optimization)
 
 Use the following wording:
 
 ```text
-CFProto-nearer prototype-guided optimization baseline
+CFProto original-style prototype-guided counterfactuals
 ```
 
-The method uses:
+The method follows alibi's `CounterfactualProto` faithfully:
 
-- autoencoder encoder-space target-class kNN mean prototypes,
-- adaptive binary-style attack-constant search,
-- elastic-net selection among valid candidates,
-- polynomial learning-rate decay,
-- targeted margin-style attack loss.
+- FISTA optimization with shrinkage-thresholding and Nesterov momentum,
+- an untargeted hinge attack loss on the original class,
+- a sum-based loss `c*L_attack + L2 + beta*L1 + gamma*L_AE + theta*L_proto`,
+- binary search over the attack constant `c` (x10 escalation),
+- encoder-space class prototypes from the classifier's own predictions on the
+  training split (kNN mean),
+- elastic-net (L2 + beta*L1) best-counterfactual selection.
 
-It is methodically aligned with CFProto, but it is not a full Alibi
-`CounterfactualProto` reproduction. FISTA/shrinkage, TrustScore, the original
-TensorFlow graph, and the original Alibi k-d-tree machinery are not fully
-reproduced.
+Deliberate differences from the original are only the framework (PyTorch
+instead of the TensorFlow 1.x graph) and per-dataset/autoencoder recalibrated
+`gamma`/`theta` weights: since all loss terms are sums, their raw magnitude
+depends on the input and latent dimensionality, so the original MNIST-example
+values do not transfer. Not reproduced: the TensorFlow graph itself, black-box
+mode with numerical gradients, categorical variables/k-d-tree prototypes, and
+TrustScore filtering (disabled by default in alibi too). Full documentation:
+`results/final_configs/cfproto_encoder_method_documentation.md`.
 
-The encoder feature-map configuration is the main reported prototype-guided
-result. The bottleneck256 and bottleneck1024 configurations are kept as
-ablations because they test a more compact autoencoder latent representation.
-In the current fixed-manifest results they are not improvements: they reduce
-validity and increase changed pixel fraction. No older ResNet/class-mean or
-Cross-Entropy prototype-guided result is retained as a main comparison row.
+This bottleneck-256 configuration replaced the earlier feature-map,
+bottleneck-1024, and ResNet/class-mean prototype experiments, which are no
+longer retained as separate comparison rows.
 
 ## Goyal et al. 2019 CVE
 
