@@ -28,7 +28,7 @@ Retained counterfactual directions:
 | CFProto (original-style) prototype-guided optimization | FISTA optimization with shrinkage-thresholding, untargeted hinge attack loss, encoder-space class prototypes, following alibi's `CounterfactualProto` |
 | Goyal et al. 2019 counterfactual visual explanations | Instance-based greedy feature-cell swaps from a nearest-unlike distractor |
 | SEDC-T-style segment replacement | Region-based/localized explanation |
-| DVCE original-style diffusion-guided generation | Generative feasibility method; final rows need regeneration, including optional Cone Projection with robust second classifiers |
+| DVCE diffusion-guided generation | Generative method; Cone Projection (robust PGD second classifier) is original-faithful for the non-robust ResNet18, no-cone is a marked ablation; OpenAI vs medical fine-tuned diffusion checkpoints |
 
 Central summaries:
 
@@ -217,16 +217,20 @@ results/final_configs/sedc_t_run_commands.md
 results/final_configs/sedc_t_method_documentation.md
 ```
 
-### DVCE Original-Style Generation
+### DVCE Diffusion-Guided Generation
+
+The original-faithful variant for the non-robust ResNet18 is Cone Projection
+(robust PGD ResNet18 as second classifier):
 
 ```bash
-PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
+  --second_model_path models/busi_resnet18_robust_pgd.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/final/dvce_original_style/openai/busi \
+  --output_dir results/final/dvce_original_style_cone/openai/busi \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
   --run_generation \
-  --device cuda \
+  --device auto \
   --timestep_respacing 200 \
   --skip_timesteps 100 \
   --classifier_lambda 0.1 \
@@ -234,20 +238,17 @@ PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
   --lp_custom_value 0.15 \
   --denoise_dist_input \
   --no-clip_denoised \
+  --deg_cone_projection 30 \
+  --aug_num 16 \
   --diffusion_checkpoint_path external/DVCEs/checkpoints/256x256_diffusion_uncond.pt
 ```
 
-Additional OpenAI/Pneumonia-medical/BUSI-medical checkpoint commands are stored in:
+Full method write-up, the evaluation matrix, and all commands:
 
 ```text
-results/final_configs/dvce_original_style_commands.md
-```
-
-Cone Projection setup, robust classifier training commands, smoke tests, and
-full fixed-manifest DVCE commands for the Uni GPU are stored in:
-
-```text
+results/final_configs/dvce_method_documentation.md
 results/final_configs/dvce_cone_projection.md
+results/final_configs/dvce_original_style_commands.md
 ```
 
 ## Current Fixed Evaluation Results
@@ -261,11 +262,17 @@ results/final_configs/dvce_cone_projection.md
 | SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 6.71s |
 | SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 | 13.92s |
 | SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 | 15.23s |
+| DVCE Cone (OpenAI, original-faithful) | BUSI | 15 | 0.93 | 0.944 | 0.116 | 1173.4s |
+| DVCE Cone (OpenAI, original-faithful) | Pneumonia | 20 | 0.80 | 0.837 | 0.051 | 700.2s |
+| DVCE Cone (fine-tuned checkpoint) | BUSI | 15 | 1.00 | 0.998 | 0.156 | 44.6s |
+| DVCE Cone (fine-tuned checkpoint) | Pneumonia | 20 | 1.00 | 0.980 | 0.067 | 44.9s |
 
-DVCE rows from the earlier free-guidance prototype were removed. New DVCE
-original-style fixed-manifest results should be generated with the commands in
-`results/final_configs/dvce_original_style_commands.md` and, for Cone
-Projection, `results/final_configs/dvce_cone_projection.md`.
+DVCE is run on the full fixed manifests with the original-code-nearer core.
+Cone Projection is the original-faithful variant for the non-robust ResNet18;
+no-cone rows are marked ablations. The fine-tuned diffusion checkpoints reach
+full validity, the generic OpenAI checkpoint lower (0.93 / 0.80), as expected
+for a natural-image prior. The two OpenAI runtimes reflect a CPU-bound machine.
+Details: `results/final_configs/dvce_method_documentation.md`.
 
 Validity means target-class model prediction. It does not imply medical
 plausibility or clinical causality.
