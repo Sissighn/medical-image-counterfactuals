@@ -19,8 +19,8 @@ external/DVCEs/checkpoints/medical_diffusion_busi_ema.pt
 
 ```text
 1. GitHub-Repo (Code): https://github.com/Sissighn/medical-image-counterfactuals
-   Branch main, aktueller Commit siehe unten (ich schicke dir den Hash separat,
-   nachdem ich alles gepusht habe).
+   Branch main, Commit cb82d38
+
 2. external/DVCEs Code-Zip (ohne Checkpoints, ohne .git) — liegt bei mir im
    Google Drive Ordner, ca. 5 MB.
 3. data/processed/Pneumonia/ (Google Drive, ~1,2 GB)
@@ -110,7 +110,7 @@ PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
   --diffusion_checkpoint_path external/DVCEs/checkpoints/medical_diffusion_busi_ema.pt
 ```
 
-### 3.3 Laufzeit-Test vor dem vollen Cone-Run (1 Sample, empfohlen)
+### 3.3 Laufzeit-**Test** vor dem vollen Cone-Run (1 Sample, empfohlen)
 
 ```bash
 PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
