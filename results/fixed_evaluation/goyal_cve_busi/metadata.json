@@ -1,0 +1,3933 @@
+{
+    "method": "Goyal et al. 2019 counterfactual visual explanations (greedy exhaustive search)",
+    "references": {
+        "paper": "Goyal, Wu, Ernst, Batra, Parikh & Lee (2019), Counterfactual Visual Explanations, ICML 2019, arXiv:1904.07451",
+        "reference_implementation": "https://github.com/facebookresearch/visual-counterfactuals (official Meta repo for Vandenhende et al. 2022, contains the Goyal et al. baseline)"
+    },
+    "model_path": "models/busi_resnet18_pretrained.pth",
+    "dataset_path": "data/processed/BUSI",
+    "classes": [
+        "benign",
+        "malignant",
+        "normal"
+    ],
+    "parameters": {
+        "feature_layer": "ResNet18 layer4 output (spatial cells before global average pooling)",
+        "search": "greedy exhaustive search over (query cell, distractor cell) swaps",
+        "selection_criterion": "maximize target-class softmax probability per iteration",
+        "constraints": "each query cell edited at most once; each distractor cell used at most once (permutation constraint)",
+        "stopping": "first iteration where argmax prediction equals the target class",
+        "max_edits": null,
+        "distractor_selection": "nearest correctly classified training image of the manifest target class, cosine distance on L2-normalized pooled penultimate features",
+        "distractor_split": "train",
+        "batch_size": 32,
+        "change_threshold": 0.03,
+        "manifest_path": "results/evaluation_manifests/busi_balanced_5_per_class_second_best.json",
+        "manifest_max_samples": null
+    },
+    "evaluation_manifest": {
+        "path": "results/evaluation_manifests/busi_balanced_5_per_class_second_best.json",
+        "purpose": "fixed correctly classified test sample set for counterfactual evaluation",
+        "num_manifest_records": 15,
+        "num_used_records": 15,
+        "target_strategy": "second_best"
+    },
+    "candidate_database": {
+        "split": "train",
+        "correctly_classified_candidates_by_class": {
+            "benign": 303,
+            "malignant": 145,
+            "normal": 93
+        },
+        "total_correctly_classified_candidates": 541
+    },
+    "records": [
+        {
+            "sample_index": 0,
+            "manifest_sample_index": 0,
+            "dataset_index": 0,
+            "source_image_path": "data/processed/BUSI/test/benign/benign (1).png",
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.9968323111534119,
+            "target_class_index": 1,
+            "target_class": "malignant",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "malignant",
+            "counterfactual_confidence": 0.5124890804290771,
+            "valid_counterfactual": true,
+            "num_edits": 14,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        2,
+                        4
+                    ],
+                    "distractor_cell": [
+                        3,
+                        3
+                    ],
+                    "target_probability_after": 0.005407229531556368,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        2,
+                        3
+                    ],
+                    "distractor_cell": [
+                        2,
+                        3
+                    ],
+                    "target_probability_after": 0.009273218922317028,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        3
+                    ],
+                    "target_probability_after": 0.015643369406461716,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        1,
+                        3
+                    ],
+                    "distractor_cell": [
+                        3,
+                        4
+                    ],
+                    "target_probability_after": 0.02554848976433277,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        3,
+                        4
+                    ],
+                    "distractor_cell": [
+                        2,
+                        4
+                    ],
+                    "target_probability_after": 0.038749806582927704,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        0,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        4
+                    ],
+                    "target_probability_after": 0.058056291192770004,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        5,
+                        5
+                    ],
+                    "target_probability_after": 0.08498727530241013,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        0,
+                        3
+                    ],
+                    "distractor_cell": [
+                        3,
+                        5
+                    ],
+                    "target_probability_after": 0.1207936555147171,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        4,
+                        4
+                    ],
+                    "distractor_cell": [
+                        2,
+                        5
+                    ],
+                    "target_probability_after": 0.1659112274646759,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        2,
+                        2
+                    ],
+                    "distractor_cell": [
+                        2,
+                        2
+                    ],
+                    "target_probability_after": 0.22114022076129913,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 11,
+                    "query_cell": [
+                        4,
+                        3
+                    ],
+                    "distractor_cell": [
+                        5,
+                        6
+                    ],
+                    "target_probability_after": 0.28576263785362244,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 12,
+                    "query_cell": [
+                        1,
+                        5
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.3571484088897705,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 13,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        3,
+                        2
+                    ],
+                    "target_probability_after": 0.4350214898586273,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 14,
+                    "query_cell": [
+                        1,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        5
+                    ],
+                    "target_probability_after": 0.5124890804290771,
+                    "prediction_after": 1
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 342,
+            "distractor_image_path": "data/processed/BUSI/train/malignant/malignant (148).png",
+            "distractor_true_label_index": 1,
+            "distractor_true_label": "malignant",
+            "distractor_confidence": 0.7182892560958862,
+            "embedding_distance": 0.22310364246368408,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 145,
+            "original_probabilities": [
+                0.9968323111534119,
+                0.002999682677909732,
+                0.00016804154438432306
+            ],
+            "counterfactual_probabilities": [
+                0.4808982014656067,
+                0.5124890804290771,
+                0.006612756289541721
+            ],
+            "runtime_seconds": 2.305438995361328,
+            "change_metrics": {
+                "l1_mean": 0.04738098382949829,
+                "l2_mean": 0.11037635803222656,
+                "linf": 0.7803921699523926,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.2543845474720001
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.027450978755950928,
+                    "max": 1.0,
+                    "mean": 0.5191391706466675
+                },
+                "counterfactual": {
+                    "min": 0.027450978755950928,
+                    "max": 1.0,
+                    "mean": 0.501312255859375
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7803921699523926,
+                    "mean": 0.04738098382949829,
+                    "std": 0.09968975931406021
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_00.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_00.summary.png"
+        },
+        {
+            "sample_index": 1,
+            "manifest_sample_index": 1,
+            "dataset_index": 1,
+            "source_image_path": "data/processed/BUSI/test/benign/benign (100).png",
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.9997206330299377,
+            "target_class_index": 2,
+            "target_class": "normal",
+            "counterfactual_prediction_index": 2,
+            "counterfactual_prediction": "normal",
+            "counterfactual_confidence": 0.5542799234390259,
+            "valid_counterfactual": true,
+            "num_edits": 21,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        3,
+                        5
+                    ],
+                    "target_probability_after": 0.00037230373709462583,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        2,
+                        3
+                    ],
+                    "distractor_cell": [
+                        3,
+                        4
+                    ],
+                    "target_probability_after": 0.000636869459412992,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        2,
+                        4
+                    ],
+                    "distractor_cell": [
+                        4,
+                        5
+                    ],
+                    "target_probability_after": 0.0010749141220003366,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        3,
+                        5
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.0017714954447001219,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        2,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        3
+                    ],
+                    "target_probability_after": 0.002866513328626752,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        2,
+                        1
+                    ],
+                    "distractor_cell": [
+                        1,
+                        1
+                    ],
+                    "target_probability_after": 0.004597989376634359,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        3,
+                        4
+                    ],
+                    "distractor_cell": [
+                        4,
+                        4
+                    ],
+                    "target_probability_after": 0.00724358344450593,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        3,
+                        1
+                    ],
+                    "distractor_cell": [
+                        2,
+                        5
+                    ],
+                    "target_probability_after": 0.011180901899933815,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        1,
+                        5
+                    ],
+                    "target_probability_after": 0.016879452392458916,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        1,
+                        3
+                    ],
+                    "distractor_cell": [
+                        1,
+                        4
+                    ],
+                    "target_probability_after": 0.025112472474575043,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 11,
+                    "query_cell": [
+                        1,
+                        1
+                    ],
+                    "distractor_cell": [
+                        5,
+                        5
+                    ],
+                    "target_probability_after": 0.036882735788822174,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 12,
+                    "query_cell": [
+                        1,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        0
+                    ],
+                    "target_probability_after": 0.05322655290365219,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 13,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        0,
+                        2
+                    ],
+                    "target_probability_after": 0.07560121268033981,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 14,
+                    "query_cell": [
+                        3,
+                        2
+                    ],
+                    "distractor_cell": [
+                        2,
+                        4
+                    ],
+                    "target_probability_after": 0.1061634048819542,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 15,
+                    "query_cell": [
+                        2,
+                        6
+                    ],
+                    "distractor_cell": [
+                        3,
+                        6
+                    ],
+                    "target_probability_after": 0.14684951305389404,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 16,
+                    "query_cell": [
+                        1,
+                        5
+                    ],
+                    "distractor_cell": [
+                        5,
+                        3
+                    ],
+                    "target_probability_after": 0.19729198515415192,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 17,
+                    "query_cell": [
+                        2,
+                        0
+                    ],
+                    "distractor_cell": [
+                        0,
+                        3
+                    ],
+                    "target_probability_after": 0.25922176241874695,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 18,
+                    "query_cell": [
+                        3,
+                        0
+                    ],
+                    "distractor_cell": [
+                        5,
+                        4
+                    ],
+                    "target_probability_after": 0.33083394169807434,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 19,
+                    "query_cell": [
+                        3,
+                        6
+                    ],
+                    "distractor_cell": [
+                        3,
+                        3
+                    ],
+                    "target_probability_after": 0.40946027636528015,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 20,
+                    "query_cell": [
+                        1,
+                        0
+                    ],
+                    "distractor_cell": [
+                        4,
+                        3
+                    ],
+                    "target_probability_after": 0.4825178384780884,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 21,
+                    "query_cell": [
+                        0,
+                        1
+                    ],
+                    "distractor_cell": [
+                        0,
+                        1
+                    ],
+                    "target_probability_after": 0.5542799234390259,
+                    "prediction_after": 2
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 494,
+            "distractor_image_path": "data/processed/BUSI/train/normal/normal (33).png",
+            "distractor_true_label_index": 2,
+            "distractor_true_label": "normal",
+            "distractor_confidence": 0.9603931903839111,
+            "embedding_distance": 0.46096956729888916,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 93,
+            "original_probabilities": [
+                0.9997206330299377,
+                7.1421054599341e-05,
+                0.00020800784113816917
+            ],
+            "counterfactual_probabilities": [
+                0.4422939121723175,
+                0.003426151815801859,
+                0.5542799234390259
+            ],
+            "runtime_seconds": 0.33077311515808105,
+            "change_metrics": {
+                "l1_mean": 0.11337285488843918,
+                "l2_mean": 0.21567900478839874,
+                "linf": 0.9058823585510254,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.3962252736091614
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.003921538591384888,
+                    "max": 1.0,
+                    "mean": 0.35338664054870605
+                },
+                "counterfactual": {
+                    "min": 0.00784313678741455,
+                    "max": 1.0,
+                    "mean": 0.3838866651058197
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.9058823585510254,
+                    "mean": 0.11337285488843918,
+                    "std": 0.1834782212972641
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_01.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_01.summary.png"
+        },
+        {
+            "sample_index": 2,
+            "manifest_sample_index": 2,
+            "dataset_index": 2,
+            "source_image_path": "data/processed/BUSI/test/benign/benign (105).png",
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.998917818069458,
+            "target_class_index": 2,
+            "target_class": "normal",
+            "counterfactual_prediction_index": 2,
+            "counterfactual_prediction": "normal",
+            "counterfactual_confidence": 0.5302870869636536,
+            "valid_counterfactual": true,
+            "num_edits": 16,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        2,
+                        3
+                    ],
+                    "distractor_cell": [
+                        3,
+                        5
+                    ],
+                    "target_probability_after": 0.0017486944561824203,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        3,
+                        4
+                    ],
+                    "target_probability_after": 0.0032549784518778324,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        2,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.005897650495171547,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        3,
+                        4
+                    ],
+                    "distractor_cell": [
+                        4,
+                        5
+                    ],
+                    "target_probability_after": 0.010220948606729507,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        2,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        3
+                    ],
+                    "target_probability_after": 0.017607038840651512,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        3,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        1
+                    ],
+                    "target_probability_after": 0.0286712646484375,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        1,
+                        3
+                    ],
+                    "distractor_cell": [
+                        4,
+                        4
+                    ],
+                    "target_probability_after": 0.045088671147823334,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        4,
+                        3
+                    ],
+                    "distractor_cell": [
+                        2,
+                        5
+                    ],
+                    "target_probability_after": 0.06877253949642181,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        5
+                    ],
+                    "target_probability_after": 0.09796275198459625,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        4,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        4
+                    ],
+                    "target_probability_after": 0.13673879206180573,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 11,
+                    "query_cell": [
+                        4,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        0
+                    ],
+                    "target_probability_after": 0.18333135545253754,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 12,
+                    "query_cell": [
+                        1,
+                        2
+                    ],
+                    "distractor_cell": [
+                        5,
+                        5
+                    ],
+                    "target_probability_after": 0.24094241857528687,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 13,
+                    "query_cell": [
+                        0,
+                        3
+                    ],
+                    "distractor_cell": [
+                        0,
+                        2
+                    ],
+                    "target_probability_after": 0.30579453706741333,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 14,
+                    "query_cell": [
+                        2,
+                        1
+                    ],
+                    "distractor_cell": [
+                        2,
+                        4
+                    ],
+                    "target_probability_after": 0.3780134320259094,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 15,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        3,
+                        6
+                    ],
+                    "target_probability_after": 0.4546850323677063,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 16,
+                    "query_cell": [
+                        3,
+                        5
+                    ],
+                    "distractor_cell": [
+                        0,
+                        3
+                    ],
+                    "target_probability_after": 0.5302870869636536,
+                    "prediction_after": 2
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 494,
+            "distractor_image_path": "data/processed/BUSI/train/normal/normal (33).png",
+            "distractor_true_label_index": 2,
+            "distractor_true_label": "normal",
+            "distractor_confidence": 0.9603931903839111,
+            "embedding_distance": 0.41378235816955566,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 93,
+            "original_probabilities": [
+                0.998917818069458,
+                0.00022272283968050033,
+                0.000859575520735234
+            ],
+            "counterfactual_probabilities": [
+                0.4638121426105499,
+                0.005900735966861248,
+                0.5302870869636536
+            ],
+            "runtime_seconds": 0.08019399642944336,
+            "change_metrics": {
+                "l1_mean": 0.0623064860701561,
+                "l2_mean": 0.13579629361629486,
+                "linf": 0.7803921699523926,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.2935068607330322
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.003921538591384888,
+                    "max": 0.988235354423523,
+                    "mean": 0.3916734755039215
+                },
+                "counterfactual": {
+                    "min": 0.003921538591384888,
+                    "max": 0.988235354423523,
+                    "mean": 0.4004287123680115
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7803921699523926,
+                    "mean": 0.0623064860701561,
+                    "std": 0.12065915763378143
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_02.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_02.summary.png"
+        },
+        {
+            "sample_index": 3,
+            "manifest_sample_index": 3,
+            "dataset_index": 3,
+            "source_image_path": "data/processed/BUSI/test/benign/benign (111).png",
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.9997790455818176,
+            "target_class_index": 2,
+            "target_class": "normal",
+            "counterfactual_prediction_index": 2,
+            "counterfactual_prediction": "normal",
+            "counterfactual_confidence": 0.5067952871322632,
+            "valid_counterfactual": true,
+            "num_edits": 17,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        2,
+                        4
+                    ],
+                    "distractor_cell": [
+                        3,
+                        5
+                    ],
+                    "target_probability_after": 0.0003769264731090516,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        2,
+                        3
+                    ],
+                    "distractor_cell": [
+                        3,
+                        4
+                    ],
+                    "target_probability_after": 0.0007419264875352383,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        3,
+                        4
+                    ],
+                    "distractor_cell": [
+                        4,
+                        5
+                    ],
+                    "target_probability_after": 0.0014189010253176093,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.0027014417573809624,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        3
+                    ],
+                    "target_probability_after": 0.005123627372086048,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        1,
+                        3
+                    ],
+                    "distractor_cell": [
+                        1,
+                        1
+                    ],
+                    "target_probability_after": 0.009005976840853691,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        4,
+                        4
+                    ],
+                    "target_probability_after": 0.015562190674245358,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        3,
+                        5
+                    ],
+                    "distractor_cell": [
+                        2,
+                        5
+                    ],
+                    "target_probability_after": 0.026091882959008217,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        1,
+                        5
+                    ],
+                    "distractor_cell": [
+                        1,
+                        5
+                    ],
+                    "target_probability_after": 0.042147569358348846,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        2,
+                        6
+                    ],
+                    "distractor_cell": [
+                        1,
+                        4
+                    ],
+                    "target_probability_after": 0.06484285742044449,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 11,
+                    "query_cell": [
+                        2,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        0
+                    ],
+                    "target_probability_after": 0.09710849076509476,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 12,
+                    "query_cell": [
+                        3,
+                        2
+                    ],
+                    "distractor_cell": [
+                        5,
+                        5
+                    ],
+                    "target_probability_after": 0.1384122371673584,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 13,
+                    "query_cell": [
+                        3,
+                        6
+                    ],
+                    "distractor_cell": [
+                        0,
+                        2
+                    ],
+                    "target_probability_after": 0.19158527255058289,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 14,
+                    "query_cell": [
+                        0,
+                        4
+                    ],
+                    "distractor_cell": [
+                        2,
+                        4
+                    ],
+                    "target_probability_after": 0.25648435950279236,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 15,
+                    "query_cell": [
+                        4,
+                        4
+                    ],
+                    "distractor_cell": [
+                        3,
+                        6
+                    ],
+                    "target_probability_after": 0.33317628502845764,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 16,
+                    "query_cell": [
+                        1,
+                        2
+                    ],
+                    "distractor_cell": [
+                        0,
+                        3
+                    ],
+                    "target_probability_after": 0.4184305667877197,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 17,
+                    "query_cell": [
+                        1,
+                        6
+                    ],
+                    "distractor_cell": [
+                        5,
+                        3
+                    ],
+                    "target_probability_after": 0.5067952871322632,
+                    "prediction_after": 2
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 494,
+            "distractor_image_path": "data/processed/BUSI/train/normal/normal (33).png",
+            "distractor_true_label_index": 2,
+            "distractor_true_label": "normal",
+            "distractor_confidence": 0.9603931903839111,
+            "embedding_distance": 0.4538295865058899,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 93,
+            "original_probabilities": [
+                0.9997790455818176,
+                5.514336589840241e-05,
+                0.00016579707153141499
+            ],
+            "counterfactual_probabilities": [
+                0.48545435070991516,
+                0.0077503519132733345,
+                0.5067952871322632
+            ],
+            "runtime_seconds": 0.0888221263885498,
+            "change_metrics": {
+                "l1_mean": 0.07659938931465149,
+                "l2_mean": 0.15927815437316895,
+                "linf": 0.7686274647712708,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.3192562162876129
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0313725471496582,
+                    "max": 1.0,
+                    "mean": 0.3984611928462982
+                },
+                "counterfactual": {
+                    "min": 0.019607841968536377,
+                    "max": 1.0,
+                    "mean": 0.3870144188404083
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7686274647712708,
+                    "mean": 0.07659938931465149,
+                    "std": 0.13965027034282684
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_03.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_03.summary.png"
+        },
+        {
+            "sample_index": 4,
+            "manifest_sample_index": 4,
+            "dataset_index": 4,
+            "source_image_path": "data/processed/BUSI/test/benign/benign (112).png",
+            "true_label_index": 0,
+            "true_label": "benign",
+            "original_prediction_index": 0,
+            "original_prediction": "benign",
+            "original_confidence": 0.9977282881736755,
+            "target_class_index": 1,
+            "target_class": "malignant",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "malignant",
+            "counterfactual_confidence": 0.49779343605041504,
+            "valid_counterfactual": true,
+            "num_edits": 15,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        1,
+                        2
+                    ],
+                    "distractor_cell": [
+                        3,
+                        5
+                    ],
+                    "target_probability_after": 0.003504970110952854,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        2,
+                        2
+                    ],
+                    "distractor_cell": [
+                        3,
+                        4
+                    ],
+                    "target_probability_after": 0.00635323952883482,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        0,
+                        2
+                    ],
+                    "distractor_cell": [
+                        2,
+                        5
+                    ],
+                    "target_probability_after": 0.011104465462267399,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        1,
+                        1
+                    ],
+                    "distractor_cell": [
+                        4,
+                        5
+                    ],
+                    "target_probability_after": 0.018628843128681183,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        2,
+                        1
+                    ],
+                    "distractor_cell": [
+                        2,
+                        4
+                    ],
+                    "target_probability_after": 0.029956035315990448,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        1,
+                        3
+                    ],
+                    "distractor_cell": [
+                        4,
+                        4
+                    ],
+                    "target_probability_after": 0.046174898743629456,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        0,
+                        1
+                    ],
+                    "distractor_cell": [
+                        3,
+                        6
+                    ],
+                    "target_probability_after": 0.0685395896434784,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        2,
+                        3
+                    ],
+                    "distractor_cell": [
+                        5,
+                        5
+                    ],
+                    "target_probability_after": 0.09849477559328079,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        1,
+                        0
+                    ],
+                    "distractor_cell": [
+                        2,
+                        6
+                    ],
+                    "target_probability_after": 0.1358969509601593,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        0,
+                        3
+                    ],
+                    "distractor_cell": [
+                        3,
+                        3
+                    ],
+                    "target_probability_after": 0.1837352216243744,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 11,
+                    "query_cell": [
+                        3,
+                        2
+                    ],
+                    "distractor_cell": [
+                        4,
+                        3
+                    ],
+                    "target_probability_after": 0.2389790564775467,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 12,
+                    "query_cell": [
+                        2,
+                        0
+                    ],
+                    "distractor_cell": [
+                        5,
+                        4
+                    ],
+                    "target_probability_after": 0.3037509322166443,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 13,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        4,
+                        6
+                    ],
+                    "target_probability_after": 0.36609742045402527,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 14,
+                    "query_cell": [
+                        3,
+                        1
+                    ],
+                    "distractor_cell": [
+                        1,
+                        5
+                    ],
+                    "target_probability_after": 0.4322875738143921,
+                    "prediction_after": 0
+                },
+                {
+                    "edit_index": 15,
+                    "query_cell": [
+                        0,
+                        0
+                    ],
+                    "distractor_cell": [
+                        5,
+                        3
+                    ],
+                    "target_probability_after": 0.49779343605041504,
+                    "prediction_after": 1
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 336,
+            "distractor_image_path": "data/processed/BUSI/train/malignant/malignant (141).png",
+            "distractor_true_label_index": 1,
+            "distractor_true_label": "malignant",
+            "distractor_confidence": 0.573740541934967,
+            "embedding_distance": 0.2979850172996521,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 145,
+            "original_probabilities": [
+                0.9977282881736755,
+                0.0018344564596191049,
+                0.00043724870192818344
+            ],
+            "counterfactual_probabilities": [
+                0.49304649233818054,
+                0.49779343605041504,
+                0.009160163812339306
+            ],
+            "runtime_seconds": 0.0830540657043457,
+            "change_metrics": {
+                "l1_mean": 0.04672689363360405,
+                "l2_mean": 0.10518242418766022,
+                "linf": 0.6980392336845398,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.26953125
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.8588235378265381,
+                    "mean": 0.21127106249332428
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9372549057006836,
+                    "mean": 0.2207227349281311
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.6980392336845398,
+                    "mean": 0.04672689363360405,
+                    "std": 0.09423375129699707
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_04.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_04.summary.png"
+        },
+        {
+            "sample_index": 5,
+            "manifest_sample_index": 5,
+            "dataset_index": 66,
+            "source_image_path": "data/processed/BUSI/test/malignant/malignant (115).png",
+            "true_label_index": 1,
+            "true_label": "malignant",
+            "original_prediction_index": 1,
+            "original_prediction": "malignant",
+            "original_confidence": 0.9972440004348755,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.5122784972190857,
+            "valid_counterfactual": true,
+            "num_edits": 19,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        2,
+                        3
+                    ],
+                    "distractor_cell": [
+                        3,
+                        2
+                    ],
+                    "target_probability_after": 0.004976295400410891,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        3,
+                        3
+                    ],
+                    "target_probability_after": 0.008503830060362816,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        2,
+                        4
+                    ],
+                    "distractor_cell": [
+                        2,
+                        2
+                    ],
+                    "target_probability_after": 0.013630702160298824,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        3,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        3
+                    ],
+                    "target_probability_after": 0.021278386935591698,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        2,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.032413192093372345,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        3,
+                        2
+                    ],
+                    "distractor_cell": [
+                        4,
+                        2
+                    ],
+                    "target_probability_after": 0.04767581820487976,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        1,
+                        3
+                    ],
+                    "distractor_cell": [
+                        1,
+                        5
+                    ],
+                    "target_probability_after": 0.06571676582098007,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        4,
+                        3
+                    ],
+                    "distractor_cell": [
+                        1,
+                        4
+                    ],
+                    "target_probability_after": 0.08824365586042404,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        3,
+                        1
+                    ],
+                    "target_probability_after": 0.11377207189798355,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        4,
+                        4
+                    ],
+                    "distractor_cell": [
+                        2,
+                        3
+                    ],
+                    "target_probability_after": 0.1453581601381302,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 11,
+                    "query_cell": [
+                        2,
+                        1
+                    ],
+                    "distractor_cell": [
+                        0,
+                        5
+                    ],
+                    "target_probability_after": 0.1813785284757614,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 12,
+                    "query_cell": [
+                        3,
+                        5
+                    ],
+                    "distractor_cell": [
+                        0,
+                        4
+                    ],
+                    "target_probability_after": 0.2224917709827423,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 13,
+                    "query_cell": [
+                        3,
+                        1
+                    ],
+                    "distractor_cell": [
+                        1,
+                        6
+                    ],
+                    "target_probability_after": 0.26667577028274536,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 14,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        0,
+                        6
+                    ],
+                    "target_probability_after": 0.31328877806663513,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 15,
+                    "query_cell": [
+                        1,
+                        2
+                    ],
+                    "distractor_cell": [
+                        5,
+                        1
+                    ],
+                    "target_probability_after": 0.36225974559783936,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 16,
+                    "query_cell": [
+                        4,
+                        2
+                    ],
+                    "distractor_cell": [
+                        4,
+                        1
+                    ],
+                    "target_probability_after": 0.41278699040412903,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 17,
+                    "query_cell": [
+                        4,
+                        1
+                    ],
+                    "distractor_cell": [
+                        0,
+                        3
+                    ],
+                    "target_probability_after": 0.4505259692668915,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 18,
+                    "query_cell": [
+                        4,
+                        5
+                    ],
+                    "distractor_cell": [
+                        5,
+                        0
+                    ],
+                    "target_probability_after": 0.4878003001213074,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 19,
+                    "query_cell": [
+                        5,
+                        5
+                    ],
+                    "distractor_cell": [
+                        4,
+                        3
+                    ],
+                    "target_probability_after": 0.5122784972190857,
+                    "prediction_after": 0
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 24,
+            "distractor_image_path": "data/processed/BUSI/train/benign/benign (131).png",
+            "distractor_true_label_index": 0,
+            "distractor_true_label": "benign",
+            "distractor_confidence": 0.6005454659461975,
+            "embedding_distance": 0.2055797576904297,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 303,
+            "original_probabilities": [
+                0.002714702859520912,
+                0.9972440004348755,
+                4.127865031477995e-05
+            ],
+            "counterfactual_probabilities": [
+                0.5122784972190857,
+                0.470253586769104,
+                0.017467865720391273
+            ],
+            "runtime_seconds": 0.26634788513183594,
+            "change_metrics": {
+                "l1_mean": 0.08156637102365494,
+                "l2_mean": 0.16784675419330597,
+                "linf": 0.7960784435272217,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.34747686982154846
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0313725471496582,
+                    "max": 1.0,
+                    "mean": 0.3429417908191681
+                },
+                "counterfactual": {
+                    "min": 0.00784313678741455,
+                    "max": 1.0,
+                    "mean": 0.35996532440185547
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7960784435272217,
+                    "mean": 0.08156637102365494,
+                    "std": 0.14669561386108398
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_05.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_05.summary.png"
+        },
+        {
+            "sample_index": 6,
+            "manifest_sample_index": 6,
+            "dataset_index": 67,
+            "source_image_path": "data/processed/BUSI/test/malignant/malignant (117).png",
+            "true_label_index": 1,
+            "true_label": "malignant",
+            "original_prediction_index": 1,
+            "original_prediction": "malignant",
+            "original_confidence": 0.9846459031105042,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.5236050486564636,
+            "valid_counterfactual": true,
+            "num_edits": 7,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        3,
+                        1
+                    ],
+                    "distractor_cell": [
+                        1,
+                        3
+                    ],
+                    "target_probability_after": 0.031862471252679825,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        2,
+                        1
+                    ],
+                    "distractor_cell": [
+                        2,
+                        3
+                    ],
+                    "target_probability_after": 0.06514423340559006,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        3,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        4
+                    ],
+                    "target_probability_after": 0.12042330950498581,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        2,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.19535495340824127,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        3,
+                        0
+                    ],
+                    "distractor_cell": [
+                        2,
+                        4
+                    ],
+                    "target_probability_after": 0.29561156034469604,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        2,
+                        0
+                    ],
+                    "distractor_cell": [
+                        2,
+                        2
+                    ],
+                    "target_probability_after": 0.4166204631328583,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        4,
+                        1
+                    ],
+                    "distractor_cell": [
+                        3,
+                        3
+                    ],
+                    "target_probability_after": 0.5236050486564636,
+                    "prediction_after": 0
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 232,
+            "distractor_image_path": "data/processed/BUSI/train/benign/benign (395).png",
+            "distractor_true_label_index": 0,
+            "distractor_true_label": "benign",
+            "distractor_confidence": 0.9442333579063416,
+            "embedding_distance": 0.2183932065963745,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 303,
+            "original_probabilities": [
+                0.014449939131736755,
+                0.9846459031105042,
+                0.0009042164892889559
+            ],
+            "counterfactual_probabilities": [
+                0.5236050486564636,
+                0.46560654044151306,
+                0.010788483545184135
+            ],
+            "runtime_seconds": 0.05476975440979004,
+            "change_metrics": {
+                "l1_mean": 0.03312379866838455,
+                "l2_mean": 0.10081525146961212,
+                "linf": 0.6470588445663452,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.1342075914144516
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.003921538591384888,
+                    "max": 1.0,
+                    "mean": 0.41649097204208374
+                },
+                "counterfactual": {
+                    "min": 0.003921538591384888,
+                    "max": 1.0,
+                    "mean": 0.43534764647483826
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.6470588445663452,
+                    "mean": 0.03312379866838455,
+                    "std": 0.09521864354610443
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_06.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_06.summary.png"
+        },
+        {
+            "sample_index": 7,
+            "manifest_sample_index": 7,
+            "dataset_index": 68,
+            "source_image_path": "data/processed/BUSI/test/malignant/malignant (119).png",
+            "true_label_index": 1,
+            "true_label": "malignant",
+            "original_prediction_index": 1,
+            "original_prediction": "malignant",
+            "original_confidence": 0.9584060311317444,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.532882034778595,
+            "valid_counterfactual": true,
+            "num_edits": 10,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        3,
+                        5
+                    ],
+                    "distractor_cell": [
+                        3,
+                        2
+                    ],
+                    "target_probability_after": 0.06003466993570328,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        3,
+                        3
+                    ],
+                    "target_probability_after": 0.09145711362361908,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        3,
+                        4
+                    ],
+                    "distractor_cell": [
+                        2,
+                        2
+                    ],
+                    "target_probability_after": 0.13291624188423157,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        2,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.1865638792514801,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        3,
+                        6
+                    ],
+                    "distractor_cell": [
+                        4,
+                        2
+                    ],
+                    "target_probability_after": 0.2366946041584015,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        2,
+                        6
+                    ],
+                    "distractor_cell": [
+                        1,
+                        3
+                    ],
+                    "target_probability_after": 0.2948955297470093,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        4,
+                        5
+                    ],
+                    "distractor_cell": [
+                        3,
+                        1
+                    ],
+                    "target_probability_after": 0.3574168086051941,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        4,
+                        4
+                    ],
+                    "distractor_cell": [
+                        2,
+                        3
+                    ],
+                    "target_probability_after": 0.4207799434661865,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        1,
+                        4
+                    ],
+                    "target_probability_after": 0.4770974814891815,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        1,
+                        5
+                    ],
+                    "distractor_cell": [
+                        1,
+                        5
+                    ],
+                    "target_probability_after": 0.532882034778595,
+                    "prediction_after": 0
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 24,
+            "distractor_image_path": "data/processed/BUSI/train/benign/benign (131).png",
+            "distractor_true_label_index": 0,
+            "distractor_true_label": "benign",
+            "distractor_confidence": 0.6005454659461975,
+            "embedding_distance": 0.21945059299468994,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 303,
+            "original_probabilities": [
+                0.037306711077690125,
+                0.9584060311317444,
+                0.00428727688267827
+            ],
+            "counterfactual_probabilities": [
+                0.532882034778595,
+                0.45142418146133423,
+                0.01569373533129692
+            ],
+            "runtime_seconds": 0.062172889709472656,
+            "change_metrics": {
+                "l1_mean": 0.04267777502536774,
+                "l2_mean": 0.11832861602306366,
+                "linf": 0.7803921699523926,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.1881975382566452
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 1.0,
+                    "mean": 0.31221193075180054
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 1.0,
+                    "mean": 0.337964802980423
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7803921699523926,
+                    "mean": 0.04267777502536774,
+                    "std": 0.11036462336778641
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_07.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_07.summary.png"
+        },
+        {
+            "sample_index": 8,
+            "manifest_sample_index": 8,
+            "dataset_index": 70,
+            "source_image_path": "data/processed/BUSI/test/malignant/malignant (140).png",
+            "true_label_index": 1,
+            "true_label": "malignant",
+            "original_prediction_index": 1,
+            "original_prediction": "malignant",
+            "original_confidence": 0.9727027416229248,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.5367321372032166,
+            "valid_counterfactual": true,
+            "num_edits": 15,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        0
+                    ],
+                    "target_probability_after": 0.03829982504248619,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        2,
+                        4
+                    ],
+                    "distractor_cell": [
+                        0,
+                        0
+                    ],
+                    "target_probability_after": 0.05232158675789833,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        1,
+                        5
+                    ],
+                    "distractor_cell": [
+                        0,
+                        1
+                    ],
+                    "target_probability_after": 0.07046834379434586,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        0,
+                        4
+                    ],
+                    "target_probability_after": 0.09302651882171631,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        1,
+                        3
+                    ],
+                    "distractor_cell": [
+                        1,
+                        1
+                    ],
+                    "target_probability_after": 0.11931492388248444,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        2,
+                        3
+                    ],
+                    "distractor_cell": [
+                        5,
+                        2
+                    ],
+                    "target_probability_after": 0.14931190013885498,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        3,
+                        4
+                    ],
+                    "distractor_cell": [
+                        5,
+                        1
+                    ],
+                    "target_probability_after": 0.1813300997018814,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        2,
+                        2
+                    ],
+                    "distractor_cell": [
+                        4,
+                        3
+                    ],
+                    "target_probability_after": 0.2178916186094284,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        2,
+                        1
+                    ],
+                    "distractor_cell": [
+                        0,
+                        2
+                    ],
+                    "target_probability_after": 0.2581316828727722,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        3,
+                        5
+                    ],
+                    "distractor_cell": [
+                        4,
+                        2
+                    ],
+                    "target_probability_after": 0.3015173673629761,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 11,
+                    "query_cell": [
+                        3,
+                        2
+                    ],
+                    "distractor_cell": [
+                        0,
+                        5
+                    ],
+                    "target_probability_after": 0.34722819924354553,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 12,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        0,
+                        3
+                    ],
+                    "target_probability_after": 0.3957712948322296,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 13,
+                    "query_cell": [
+                        1,
+                        2
+                    ],
+                    "distractor_cell": [
+                        2,
+                        0
+                    ],
+                    "target_probability_after": 0.4433789551258087,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 14,
+                    "query_cell": [
+                        2,
+                        6
+                    ],
+                    "distractor_cell": [
+                        4,
+                        4
+                    ],
+                    "target_probability_after": 0.4905354976654053,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 15,
+                    "query_cell": [
+                        3,
+                        1
+                    ],
+                    "distractor_cell": [
+                        5,
+                        0
+                    ],
+                    "target_probability_after": 0.5367321372032166,
+                    "prediction_after": 0
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 262,
+            "distractor_image_path": "data/processed/BUSI/train/benign/benign (433).png",
+            "distractor_true_label_index": 0,
+            "distractor_true_label": "benign",
+            "distractor_confidence": 0.6052676439285278,
+            "embedding_distance": 0.22459262609481812,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 303,
+            "original_probabilities": [
+                0.027281085029244423,
+                0.9727027416229248,
+                1.6187703295145184e-05
+            ],
+            "counterfactual_probabilities": [
+                0.5367321372032166,
+                0.4621025621891022,
+                0.001165343332104385
+            ],
+            "runtime_seconds": 0.08008289337158203,
+            "change_metrics": {
+                "l1_mean": 0.08974339812994003,
+                "l2_mean": 0.18071997165679932,
+                "linf": 0.7843137979507446,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.29850924015045166
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.027450978755950928,
+                    "max": 0.929411768913269,
+                    "mean": 0.2941496968269348
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.929411768913269,
+                    "mean": 0.29474401473999023
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7843137979507446,
+                    "mean": 0.08974339812994003,
+                    "std": 0.15686295926570892
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_08.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_08.summary.png"
+        },
+        {
+            "sample_index": 9,
+            "manifest_sample_index": 9,
+            "dataset_index": 71,
+            "source_image_path": "data/processed/BUSI/test/malignant/malignant (144).png",
+            "true_label_index": 1,
+            "true_label": "malignant",
+            "original_prediction_index": 1,
+            "original_prediction": "malignant",
+            "original_confidence": 0.9999669790267944,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.49211111664772034,
+            "valid_counterfactual": true,
+            "num_edits": 26,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        1,
+                        0
+                    ],
+                    "target_probability_after": 6.53793613309972e-05,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        2,
+                        3
+                    ],
+                    "distractor_cell": [
+                        0,
+                        0
+                    ],
+                    "target_probability_after": 0.00015657514450140297,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        3,
+                        2
+                    ],
+                    "distractor_cell": [
+                        0,
+                        1
+                    ],
+                    "target_probability_after": 0.00031774304807186127,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        3,
+                        4
+                    ],
+                    "distractor_cell": [
+                        0,
+                        4
+                    ],
+                    "target_probability_after": 0.0006307100411504507,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        2,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        1
+                    ],
+                    "target_probability_after": 0.0012055321130901575,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        2,
+                        4
+                    ],
+                    "distractor_cell": [
+                        5,
+                        2
+                    ],
+                    "target_probability_after": 0.002179128583520651,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        1,
+                        3
+                    ],
+                    "distractor_cell": [
+                        5,
+                        1
+                    ],
+                    "target_probability_after": 0.003920858260244131,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        4,
+                        3
+                    ],
+                    "distractor_cell": [
+                        4,
+                        3
+                    ],
+                    "target_probability_after": 0.006845450960099697,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        4,
+                        4
+                    ],
+                    "distractor_cell": [
+                        0,
+                        2
+                    ],
+                    "target_probability_after": 0.010834764689207077,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        1,
+                        2
+                    ],
+                    "distractor_cell": [
+                        0,
+                        5
+                    ],
+                    "target_probability_after": 0.01677275262773037,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 11,
+                    "query_cell": [
+                        3,
+                        5
+                    ],
+                    "distractor_cell": [
+                        0,
+                        3
+                    ],
+                    "target_probability_after": 0.025287646800279617,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 12,
+                    "query_cell": [
+                        4,
+                        2
+                    ],
+                    "distractor_cell": [
+                        4,
+                        2
+                    ],
+                    "target_probability_after": 0.03779641538858414,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 13,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        2,
+                        0
+                    ],
+                    "target_probability_after": 0.054745133966207504,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 14,
+                    "query_cell": [
+                        2,
+                        1
+                    ],
+                    "distractor_cell": [
+                        4,
+                        4
+                    ],
+                    "target_probability_after": 0.07730294018983841,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 15,
+                    "query_cell": [
+                        3,
+                        1
+                    ],
+                    "distractor_cell": [
+                        5,
+                        0
+                    ],
+                    "target_probability_after": 0.1076197549700737,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 16,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        5,
+                        3
+                    ],
+                    "target_probability_after": 0.14458122849464417,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 17,
+                    "query_cell": [
+                        4,
+                        5
+                    ],
+                    "distractor_cell": [
+                        4,
+                        1
+                    ],
+                    "target_probability_after": 0.18151316046714783,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 18,
+                    "query_cell": [
+                        1,
+                        1
+                    ],
+                    "distractor_cell": [
+                        6,
+                        1
+                    ],
+                    "target_probability_after": 0.22078634798526764,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 19,
+                    "query_cell": [
+                        5,
+                        3
+                    ],
+                    "distractor_cell": [
+                        6,
+                        2
+                    ],
+                    "target_probability_after": 0.26217660307884216,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 20,
+                    "query_cell": [
+                        5,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        4
+                    ],
+                    "target_probability_after": 0.3018353581428528,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 21,
+                    "query_cell": [
+                        1,
+                        5
+                    ],
+                    "distractor_cell": [
+                        5,
+                        4
+                    ],
+                    "target_probability_after": 0.33956173062324524,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 22,
+                    "query_cell": [
+                        5,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        5
+                    ],
+                    "target_probability_after": 0.3742865025997162,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 23,
+                    "query_cell": [
+                        4,
+                        1
+                    ],
+                    "distractor_cell": [
+                        3,
+                        3
+                    ],
+                    "target_probability_after": 0.40942344069480896,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 24,
+                    "query_cell": [
+                        0,
+                        3
+                    ],
+                    "distractor_cell": [
+                        2,
+                        1
+                    ],
+                    "target_probability_after": 0.44157424569129944,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 25,
+                    "query_cell": [
+                        5,
+                        5
+                    ],
+                    "distractor_cell": [
+                        3,
+                        1
+                    ],
+                    "target_probability_after": 0.4680977463722229,
+                    "prediction_after": 1
+                },
+                {
+                    "edit_index": 26,
+                    "query_cell": [
+                        0,
+                        2
+                    ],
+                    "distractor_cell": [
+                        3,
+                        4
+                    ],
+                    "target_probability_after": 0.49211111664772034,
+                    "prediction_after": 0
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 262,
+            "distractor_image_path": "data/processed/BUSI/train/benign/benign (433).png",
+            "distractor_true_label_index": 0,
+            "distractor_true_label": "benign",
+            "distractor_confidence": 0.6052676439285278,
+            "embedding_distance": 0.2873231768608093,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 303,
+            "original_probabilities": [
+                2.5703373466967605e-05,
+                0.9999669790267944,
+                7.335709597100504e-06
+            ],
+            "counterfactual_probabilities": [
+                0.49211111664772034,
+                0.45057499408721924,
+                0.05731381103396416
+            ],
+            "runtime_seconds": 0.10288500785827637,
+            "change_metrics": {
+                "l1_mean": 0.16837157309055328,
+                "l2_mean": 0.2747155427932739,
+                "linf": 0.9450981020927429,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.4725765287876129
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.9568628072738647,
+                    "mean": 0.27547162771224976
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.9058823585510254,
+                    "mean": 0.27389758825302124
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.9450981020927429,
+                    "mean": 0.16837157309055328,
+                    "std": 0.2170713096857071
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_09.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_09.summary.png"
+        },
+        {
+            "sample_index": 10,
+            "manifest_sample_index": 10,
+            "dataset_index": 98,
+            "source_image_path": "data/processed/BUSI/test/normal/normal (1).png",
+            "true_label_index": 2,
+            "true_label": "normal",
+            "original_prediction_index": 2,
+            "original_prediction": "normal",
+            "original_confidence": 0.9878881573677063,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.5198324918746948,
+            "valid_counterfactual": true,
+            "num_edits": 11,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        1,
+                        1
+                    ],
+                    "target_probability_after": 0.016328297555446625,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        2,
+                        4
+                    ],
+                    "distractor_cell": [
+                        2,
+                        1
+                    ],
+                    "target_probability_after": 0.02752908505499363,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        3,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.04564483091235161,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        1,
+                        5
+                    ],
+                    "distractor_cell": [
+                        2,
+                        2
+                    ],
+                    "target_probability_after": 0.07389216125011444,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        3,
+                        5
+                    ],
+                    "distractor_cell": [
+                        3,
+                        1
+                    ],
+                    "target_probability_after": 0.11290270835161209,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        3,
+                        2
+                    ],
+                    "target_probability_after": 0.16144445538520813,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        2,
+                        3
+                    ],
+                    "distractor_cell": [
+                        0,
+                        1
+                    ],
+                    "target_probability_after": 0.22124242782592773,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        4,
+                        4
+                    ],
+                    "distractor_cell": [
+                        2,
+                        3
+                    ],
+                    "target_probability_after": 0.290169894695282,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        1,
+                        3
+                    ],
+                    "target_probability_after": 0.3661077618598938,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        1,
+                        6
+                    ],
+                    "distractor_cell": [
+                        0,
+                        2
+                    ],
+                    "target_probability_after": 0.4446280002593994,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 11,
+                    "query_cell": [
+                        1,
+                        1
+                    ],
+                    "distractor_cell": [
+                        1,
+                        0
+                    ],
+                    "target_probability_after": 0.5198324918746948,
+                    "prediction_after": 0
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 112,
+            "distractor_image_path": "data/processed/BUSI/train/benign/benign (247).png",
+            "distractor_true_label_index": 0,
+            "distractor_true_label": "benign",
+            "distractor_confidence": 0.944505512714386,
+            "embedding_distance": 0.2946298122406006,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 303,
+            "original_probabilities": [
+                0.00916006788611412,
+                0.002951808739453554,
+                0.9878881573677063
+            ],
+            "counterfactual_probabilities": [
+                0.5198324918746948,
+                0.039971038699150085,
+                0.4401964545249939
+            ],
+            "runtime_seconds": 0.06847715377807617,
+            "change_metrics": {
+                "l1_mean": 0.04423543065786362,
+                "l2_mean": 0.111980140209198,
+                "linf": 0.7254902124404907,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.20651307702064514
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.00784313678741455,
+                    "max": 0.9803922176361084,
+                    "mean": 0.32817548513412476
+                },
+                "counterfactual": {
+                    "min": 0.00784313678741455,
+                    "max": 0.9803922176361084,
+                    "mean": 0.2977308928966522
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.7254902124404907,
+                    "mean": 0.04423543065786362,
+                    "std": 0.10287297517061234
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_10.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_10.summary.png"
+        },
+        {
+            "sample_index": 11,
+            "manifest_sample_index": 11,
+            "dataset_index": 99,
+            "source_image_path": "data/processed/BUSI/test/normal/normal (103).png",
+            "true_label_index": 2,
+            "true_label": "normal",
+            "original_prediction_index": 2,
+            "original_prediction": "normal",
+            "original_confidence": 0.9626815915107727,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.5155532956123352,
+            "valid_counterfactual": true,
+            "num_edits": 7,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        1,
+                        1
+                    ],
+                    "distractor_cell": [
+                        1,
+                        1
+                    ],
+                    "target_probability_after": 0.06478136777877808,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        1,
+                        2
+                    ],
+                    "distractor_cell": [
+                        2,
+                        1
+                    ],
+                    "target_probability_after": 0.10938888043165207,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        1,
+                        3
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.17215876281261444,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        1,
+                        0
+                    ],
+                    "distractor_cell": [
+                        2,
+                        2
+                    ],
+                    "target_probability_after": 0.24889932572841644,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        0,
+                        1
+                    ],
+                    "distractor_cell": [
+                        3,
+                        1
+                    ],
+                    "target_probability_after": 0.3355795443058014,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        0,
+                        2
+                    ],
+                    "distractor_cell": [
+                        3,
+                        2
+                    ],
+                    "target_probability_after": 0.426065057516098,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        0,
+                        1
+                    ],
+                    "target_probability_after": 0.5155532956123352,
+                    "prediction_after": 0
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 112,
+            "distractor_image_path": "data/processed/BUSI/train/benign/benign (247).png",
+            "distractor_true_label_index": 0,
+            "distractor_true_label": "benign",
+            "distractor_confidence": 0.944505512714386,
+            "embedding_distance": 0.23899245262145996,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 303,
+            "original_probabilities": [
+                0.03541509807109833,
+                0.0019033419666811824,
+                0.9626815915107727
+            ],
+            "counterfactual_probabilities": [
+                0.5155532956123352,
+                0.01108569372445345,
+                0.4733610451221466
+            ],
+            "runtime_seconds": 0.05549740791320801,
+            "change_metrics": {
+                "l1_mean": 0.042818065732717514,
+                "l2_mean": 0.12839658558368683,
+                "linf": 0.6823529601097107,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.13683833181858063
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.003921538591384888,
+                    "max": 0.9411765336990356,
+                    "mean": 0.4100283980369568
+                },
+                "counterfactual": {
+                    "min": 0.003921538591384888,
+                    "max": 0.9411765336990356,
+                    "mean": 0.3695501685142517
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.6823529601097107,
+                    "mean": 0.042818065732717514,
+                    "std": 0.12104707211256027
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_11.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_11.summary.png"
+        },
+        {
+            "sample_index": 12,
+            "manifest_sample_index": 12,
+            "dataset_index": 100,
+            "source_image_path": "data/processed/BUSI/test/normal/normal (124).png",
+            "true_label_index": 2,
+            "true_label": "normal",
+            "original_prediction_index": 2,
+            "original_prediction": "normal",
+            "original_confidence": 0.9939561486244202,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.542675793170929,
+            "valid_counterfactual": true,
+            "num_edits": 15,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        3,
+                        5
+                    ],
+                    "distractor_cell": [
+                        1,
+                        1
+                    ],
+                    "target_probability_after": 0.006618581712245941,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        4,
+                        1
+                    ],
+                    "distractor_cell": [
+                        2,
+                        1
+                    ],
+                    "target_probability_after": 0.010935100726783276,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        1,
+                        5
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.017701616510748863,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        3,
+                        1
+                    ],
+                    "distractor_cell": [
+                        2,
+                        2
+                    ],
+                    "target_probability_after": 0.02769034169614315,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        4,
+                        5
+                    ],
+                    "distractor_cell": [
+                        3,
+                        1
+                    ],
+                    "target_probability_after": 0.04165687412023544,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        5,
+                        1
+                    ],
+                    "distractor_cell": [
+                        3,
+                        2
+                    ],
+                    "target_probability_after": 0.061303041875362396,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        3,
+                        6
+                    ],
+                    "distractor_cell": [
+                        0,
+                        1
+                    ],
+                    "target_probability_after": 0.08912929147481918,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        2,
+                        3
+                    ],
+                    "target_probability_after": 0.1238572746515274,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        1,
+                        4
+                    ],
+                    "distractor_cell": [
+                        1,
+                        3
+                    ],
+                    "target_probability_after": 0.16676431894302368,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 10,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        0,
+                        2
+                    ],
+                    "target_probability_after": 0.21805042028427124,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 11,
+                    "query_cell": [
+                        4,
+                        2
+                    ],
+                    "distractor_cell": [
+                        1,
+                        0
+                    ],
+                    "target_probability_after": 0.276104599237442,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 12,
+                    "query_cell": [
+                        3,
+                        4
+                    ],
+                    "distractor_cell": [
+                        4,
+                        1
+                    ],
+                    "target_probability_after": 0.3401120603084564,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 13,
+                    "query_cell": [
+                        5,
+                        5
+                    ],
+                    "distractor_cell": [
+                        3,
+                        3
+                    ],
+                    "target_probability_after": 0.4084348976612091,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 14,
+                    "query_cell": [
+                        3,
+                        2
+                    ],
+                    "distractor_cell": [
+                        2,
+                        0
+                    ],
+                    "target_probability_after": 0.4780849814414978,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 15,
+                    "query_cell": [
+                        4,
+                        3
+                    ],
+                    "distractor_cell": [
+                        4,
+                        2
+                    ],
+                    "target_probability_after": 0.542675793170929,
+                    "prediction_after": 0
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 112,
+            "distractor_image_path": "data/processed/BUSI/train/benign/benign (247).png",
+            "distractor_true_label_index": 0,
+            "distractor_true_label": "benign",
+            "distractor_confidence": 0.944505512714386,
+            "embedding_distance": 0.3015862703323364,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 303,
+            "original_probabilities": [
+                0.0037827680353075266,
+                0.002261101035401225,
+                0.9939561486244202
+            ],
+            "counterfactual_probabilities": [
+                0.542675793170929,
+                0.012813526205718517,
+                0.44451066851615906
+            ],
+            "runtime_seconds": 0.07906389236450195,
+            "change_metrics": {
+                "l1_mean": 0.042046040296554565,
+                "l2_mean": 0.10009246319532394,
+                "linf": 0.6784314513206482,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.2569754421710968
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.0,
+                    "max": 0.7960784435272217,
+                    "mean": 0.2256154716014862
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 0.886274516582489,
+                    "mean": 0.2488074153661728
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.6784314513206482,
+                    "mean": 0.042046040296554565,
+                    "std": 0.09083329141139984
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_12.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_12.summary.png"
+        },
+        {
+            "sample_index": 13,
+            "manifest_sample_index": 13,
+            "dataset_index": 101,
+            "source_image_path": "data/processed/BUSI/test/normal/normal (13).png",
+            "true_label_index": 2,
+            "true_label": "normal",
+            "original_prediction_index": 2,
+            "original_prediction": "normal",
+            "original_confidence": 0.9961642026901245,
+            "target_class_index": 1,
+            "target_class": "malignant",
+            "counterfactual_prediction_index": 1,
+            "counterfactual_prediction": "malignant",
+            "counterfactual_confidence": 0.6282593607902527,
+            "valid_counterfactual": true,
+            "num_edits": 9,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        1,
+                        1
+                    ],
+                    "distractor_cell": [
+                        2,
+                        1
+                    ],
+                    "target_probability_after": 0.00553496927022934,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        1,
+                        0
+                    ],
+                    "distractor_cell": [
+                        3,
+                        1
+                    ],
+                    "target_probability_after": 0.013988818973302841,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        4,
+                        5
+                    ],
+                    "distractor_cell": [
+                        1,
+                        1
+                    ],
+                    "target_probability_after": 0.03113589622080326,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        4,
+                        1
+                    ],
+                    "distractor_cell": [
+                        2,
+                        0
+                    ],
+                    "target_probability_after": 0.0663115531206131,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        5,
+                        1
+                    ],
+                    "distractor_cell": [
+                        3,
+                        0
+                    ],
+                    "target_probability_after": 0.1261473447084427,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        0,
+                        1
+                    ],
+                    "distractor_cell": [
+                        2,
+                        2
+                    ],
+                    "target_probability_after": 0.22062768042087555,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        3,
+                        1
+                    ],
+                    "distractor_cell": [
+                        1,
+                        0
+                    ],
+                    "target_probability_after": 0.34978175163269043,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        2,
+                        1
+                    ],
+                    "distractor_cell": [
+                        3,
+                        2
+                    ],
+                    "target_probability_after": 0.4960293471813202,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 9,
+                    "query_cell": [
+                        3,
+                        5
+                    ],
+                    "distractor_cell": [
+                        1,
+                        2
+                    ],
+                    "target_probability_after": 0.6282593607902527,
+                    "prediction_after": 1
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 420,
+            "distractor_image_path": "data/processed/BUSI/train/malignant/malignant (55).png",
+            "distractor_true_label_index": 1,
+            "distractor_true_label": "malignant",
+            "distractor_confidence": 0.9881431460380554,
+            "embedding_distance": 0.33106493949890137,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 145,
+            "original_probabilities": [
+                0.0018825281877070665,
+                0.0019531971774995327,
+                0.9961642026901245
+            ],
+            "counterfactual_probabilities": [
+                0.005260985344648361,
+                0.6282593607902527,
+                0.36647969484329224
+            ],
+            "runtime_seconds": 0.06698083877563477,
+            "change_metrics": {
+                "l1_mean": 0.03199209272861481,
+                "l2_mean": 0.09143148362636566,
+                "linf": 0.6078431606292725,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.16440130770206451
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.003921538591384888,
+                    "max": 1.0,
+                    "mean": 0.44933515787124634
+                },
+                "counterfactual": {
+                    "min": 0.003921538591384888,
+                    "max": 1.0,
+                    "mean": 0.45051491260528564
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.6078431606292725,
+                    "mean": 0.03199209272861481,
+                    "std": 0.08565203845500946
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_13.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_13.summary.png"
+        },
+        {
+            "sample_index": 14,
+            "manifest_sample_index": 14,
+            "dataset_index": 102,
+            "source_image_path": "data/processed/BUSI/test/normal/normal (133).png",
+            "true_label_index": 2,
+            "true_label": "normal",
+            "original_prediction_index": 2,
+            "original_prediction": "normal",
+            "original_confidence": 0.9810680747032166,
+            "target_class_index": 0,
+            "target_class": "benign",
+            "counterfactual_prediction_index": 0,
+            "counterfactual_prediction": "benign",
+            "counterfactual_confidence": 0.5124465227127075,
+            "valid_counterfactual": true,
+            "num_edits": 8,
+            "grid_size": [
+                7,
+                7
+            ],
+            "edits": [
+                {
+                    "edit_index": 1,
+                    "query_cell": [
+                        2,
+                        3
+                    ],
+                    "distractor_cell": [
+                        3,
+                        2
+                    ],
+                    "target_probability_after": 0.03283829987049103,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 2,
+                    "query_cell": [
+                        1,
+                        3
+                    ],
+                    "distractor_cell": [
+                        2,
+                        2
+                    ],
+                    "target_probability_after": 0.0582411102950573,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 3,
+                    "query_cell": [
+                        1,
+                        2
+                    ],
+                    "distractor_cell": [
+                        3,
+                        1
+                    ],
+                    "target_probability_after": 0.09484491497278214,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 4,
+                    "query_cell": [
+                        2,
+                        2
+                    ],
+                    "distractor_cell": [
+                        2,
+                        1
+                    ],
+                    "target_probability_after": 0.14781568944454193,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 5,
+                    "query_cell": [
+                        2,
+                        4
+                    ],
+                    "distractor_cell": [
+                        4,
+                        2
+                    ],
+                    "target_probability_after": 0.2216627448797226,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 6,
+                    "query_cell": [
+                        2,
+                        1
+                    ],
+                    "distractor_cell": [
+                        3,
+                        3
+                    ],
+                    "target_probability_after": 0.31125953793525696,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 7,
+                    "query_cell": [
+                        2,
+                        5
+                    ],
+                    "distractor_cell": [
+                        4,
+                        1
+                    ],
+                    "target_probability_after": 0.414141446352005,
+                    "prediction_after": 2
+                },
+                {
+                    "edit_index": 8,
+                    "query_cell": [
+                        3,
+                        3
+                    ],
+                    "distractor_cell": [
+                        2,
+                        3
+                    ],
+                    "target_probability_after": 0.5124465227127075,
+                    "prediction_after": 0
+                }
+            ],
+            "distractor_split": "train",
+            "distractor_dataset_index": 3,
+            "distractor_image_path": "data/processed/BUSI/train/benign/benign (103).png",
+            "distractor_true_label_index": 0,
+            "distractor_true_label": "benign",
+            "distractor_confidence": 0.9354772567749023,
+            "embedding_distance": 0.2587348222732544,
+            "distance_metric": "cosine_distance_on_normalized_pooled_resnet18_embeddings",
+            "candidate_pool_size": 303,
+            "original_probabilities": [
+                0.017724832519888878,
+                0.0012070572702214122,
+                0.9810680747032166
+            ],
+            "counterfactual_probabilities": [
+                0.5124465227127075,
+                0.0034992671571671963,
+                0.48405423760414124
+            ],
+            "runtime_seconds": 0.05954313278198242,
+            "change_metrics": {
+                "l1_mean": 0.05098078399896622,
+                "l2_mean": 0.14984069764614105,
+                "linf": 0.9921569228172302,
+                "sparsity_threshold": 0.03,
+                "changed_pixel_fraction": 0.1546556055545807
+            },
+            "image_debug_stats": {
+                "value_range": "[0, 1]",
+                "difference_formula": "abs(original_image - composite_counterfactual_image)",
+                "normalization_note": "Images are denormalized from ImageNet mean/std before visualization and difference computation.",
+                "original": {
+                    "min": 0.019607841968536377,
+                    "max": 1.0,
+                    "mean": 0.3223268985748291
+                },
+                "counterfactual": {
+                    "min": 0.0,
+                    "max": 1.0,
+                    "mean": 0.28409215807914734
+                },
+                "diff": {
+                    "min": 0.0,
+                    "max": 0.9921569228172302,
+                    "mean": 0.05098078399896622,
+                    "std": 0.1409018337726593
+                }
+            },
+            "image_path": "results/fixed_evaluation/goyal_cve_busi/sample_14.png",
+            "summary_path": "results/fixed_evaluation/goyal_cve_busi/sample_14.summary.png"
+        }
+    ],
+    "aggregate_metrics": {
+        "num_samples": 15,
+        "valid_count": 15,
+        "validity": 1.0,
+        "l1_mean": {
+            "mean": 0.06492946247259776,
+            "min": 0.03199209272861481,
+            "max": 0.16837157309055328
+        },
+        "l2_mean": {
+            "mean": 0.143365316092968,
+            "min": 0.09143148362636566,
+            "max": 0.2747155427932739
+        },
+        "linf": {
+            "mean": 0.7715032974878947,
+            "min": 0.6078431606292725,
+            "max": 0.9921569228172302
+        },
+        "changed_pixel_fraction": {
+            "mean": 0.2595503787199656,
+            "min": 0.1342075914144516,
+            "max": 0.4725765287876129
+        },
+        "runtime_seconds": {
+            "mean": 0.25227354367574056,
+            "min": 0.05476975440979004,
+            "max": 2.305438995361328
+        },
+        "embedding_distance": {
+            "mean": 0.295334521929423,
+            "min": 0.2055797576904297,
+            "max": 0.46096956729888916
+        },
+        "counterfactual_confidence": {
+            "mean": 0.5278680741786956,
+            "min": 0.49211111664772034,
+            "max": 0.6282593607902527
+        },
+        "num_edits": {
+            "mean": 14.0,
+            "min": 7.0,
+            "max": 26.0
+        },
+        "mean_counterfactual_confidence": 0.5278680741786956
+    },
+    "interpretation_note": "The decision-flipping edit is performed in the classifier's spatial feature space (cell swaps from a real distractor image of the target class). The composite counterfactual image pastes the aligned image patches and is the standard visualization; pixel change metrics are computed on this composite."
+}

@@ -16,7 +16,7 @@ scripts below.
 | `check_autoencoder_plausibility.py` | Check whether a trained autoencoder assigns higher reconstruction loss to brightness/contrast, blur, patch, and noise perturbations than to original images. |
 | `create_evaluation_manifest.py` | Create fixed correctly classified evaluation samples for counterfactual comparison. |
 | `run_cfproto_pytorch.py` | Run the CFProto original-style prototype-guided counterfactual method (FISTA with shrinkage-thresholding, hinge attack loss, binary c-search, encoder-space class prototypes) following alibi's `CounterfactualProto`. |
-| `run_retrieval_nun_pytorch.py` | Run the retrieval-based nearest-unlike-neighbor case baseline. |
+| `run_goyal_cve_pytorch.py` | Run Goyal et al. 2019 counterfactual visual explanations (greedy exhaustive feature-cell swaps from a nearest-unlike-neighbor distractor). |
 | `run_sedc_t_pytorch.py` | Run SEDC-T original-style best-first, plus the retained Pneumonia lung-field ROI ablation via `--roi_mode lung_fields`. |
 | `run_dvce_medical_prototype.py` | Run the original-style DVCE diffusion-guided counterfactual generation with OpenAI or medical fine-tuned diffusion checkpoints. |
 | `summarize_counterfactual_evaluation.py` | Generate compact summary tables from method metadata files. |

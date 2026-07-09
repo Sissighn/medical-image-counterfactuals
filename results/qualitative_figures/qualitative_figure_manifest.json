@@ -1,43 +1,28 @@
 {
-  "selected_examples_path": "results/meeting_paul_tuesday/selected_examples.json",
+  "selected_examples_path": "results/qualitative_selection/selected_examples.json",
   "dpi": 300,
   "per_method_figures": [
     {
       "type": "per_method",
       "dataset": "BUSI",
-      "method": "SEDC-T original-style best-first",
-      "figure_path": "results/qualitative_figures/per_method/busi/sedc_t_original_style_best_first.png",
+      "method": "Goyal 2019 counterfactual visual explanations",
+      "figure_path": "results/qualitative_figures/per_method/busi/goyal_2019_counterfactual_visual_explanations.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
-        "Low-plausibility valid case",
-        "Failure case"
+        "Low-plausibility valid case"
       ],
       "warnings": []
     },
     {
       "type": "per_method",
       "dataset": "Pneumonia",
-      "method": "SEDC-T original-style best-first",
-      "figure_path": "results/qualitative_figures/per_method/pneumonia/sedc_t_original_style_best_first.png",
+      "method": "Goyal 2019 counterfactual visual explanations",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/goyal_2019_counterfactual_visual_explanations.png",
       "categories": [
         "Most balanced valid case",
         "Highest-confidence valid case",
-        "Low-plausibility valid case",
-        "Failure case"
-      ],
-      "warnings": []
-    },
-    {
-      "type": "per_method",
-      "dataset": "Pneumonia",
-      "method": "SEDC-T lung-field ROI ablation",
-      "figure_path": "results/qualitative_figures/per_method/pneumonia/sedc_t_lung_field_roi_ablation.png",
-      "categories": [
-        "Most balanced valid case",
-        "Highest-confidence valid case",
-        "Low-plausibility valid case",
-        "Failure case"
+        "Low-plausibility valid case"
       ],
       "warnings": []
     }
