@@ -42,6 +42,43 @@
     },
     {
       "type": "per_method",
+      "dataset": "BUSI",
+      "method": "DVCE original-style with Cone Projection, OpenAI checkpoint",
+      "figure_path": "results/qualitative_figures/per_method/busi/dvce_original_style_with_cone_projection_openai_checkpoint.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "DVCE original-style with Cone Projection, BUSI fine-tuned checkpoint",
+      "figure_path": "results/qualitative_figures/per_method/busi/dvce_original_style_with_cone_projection_busi_fine_tuned_checkpoint.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "BUSI",
+      "method": "DVCE original-style without Cone Projection, BUSI fine-tuned checkpoint",
+      "figure_path": "results/qualitative_figures/per_method/busi/dvce_original_style_without_cone_projection_busi_fine_tuned_checkpoint.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
       "dataset": "Pneumonia",
       "method": "CFProto original-style (bottleneck256)",
       "figure_path": "results/qualitative_figures/per_method/pneumonia/cfproto_original_style_bottleneck256.png",
@@ -87,6 +124,55 @@
         "Highest-confidence valid case",
         "Low-plausibility valid case",
         "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "DVCE original-style without Cone Projection, OpenAI checkpoint",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/dvce_original_style_without_cone_projection_openai_checkpoint.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "DVCE original-style with Cone Projection, OpenAI checkpoint",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/dvce_original_style_with_cone_projection_openai_checkpoint.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case",
+        "Failure case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "DVCE original-style with Cone Projection, Pneumonia fine-tuned checkpoint",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/dvce_original_style_with_cone_projection_pneumonia_fine_tuned_checkpoint.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case"
+      ],
+      "warnings": []
+    },
+    {
+      "type": "per_method",
+      "dataset": "Pneumonia",
+      "method": "DVCE original-style without Cone Projection, Pneumonia fine-tuned checkpoint",
+      "figure_path": "results/qualitative_figures/per_method/pneumonia/dvce_original_style_without_cone_projection_pneumonia_fine_tuned_checkpoint.png",
+      "categories": [
+        "Most balanced valid case",
+        "Highest-confidence valid case",
+        "Low-plausibility valid case"
       ],
       "warnings": []
     }

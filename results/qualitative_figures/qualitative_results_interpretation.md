@@ -59,12 +59,16 @@ segment replacement.
 
 ## DVCE
 
-DVCE figures from the earlier free-guidance prototype have been removed. The
-retained implementation now uses the original-code-nearer DVCE core:
-`p_sample`, `pred_xstart` guidance, `classifier_lambda=0.1`, `lp_custom=1.0`,
-`lp_custom_value=0.15`, and `enforce_same_norms=True`. New qualitative figures
-should only be regenerated after the OpenAI, Pneumonia medical-checkpoint, and
-BUSI medical-checkpoint states have been rerun with this core.
+DVCE uses the original-code-nearer core (`p_sample`, `pred_xstart` guidance with
+unclamped `_map_img`, `classifier_lambda=0.1`, `lp_custom=1.0`,
+`lp_custom_value=0.15`, `enforce_same_norms=True`, Cone Projection matching the
+original `dff_attack.py`). The original-faithful variant for the non-robust
+ResNet18 is Cone Projection; no-cone is a marked ablation. Qualitative figures
+should contrast two axes: **OpenAI vs medically fine-tuned checkpoint** (the
+fine-tuned prior reaches full validity and cleaner images; the OpenAI prior is
+more artifact-prone: validity 0.93 BUSI / 0.80 Pneumonia) and, secondarily,
+cone vs no-cone. Result directories are under
+`results/final/dvce_original_style_cone/` and `results/final/dvce_original_style/`.
 
 ## Overall Reading
 
@@ -75,7 +79,7 @@ The qualitative comparison should emphasize trade-offs:
 | CFProto (original-style) | compact, mostly model-valid changes | can be visually subtle and not medically causal |
 | Goyal 2019 CVE | sparse localized edits grounded in real cases | coarse 7x7 cell grid; confidence near decision boundary |
 | SEDC-T | localized segment changes | lower validity, especially on Pneumonia |
-| DVCE | generative counterfactual direction | artifact- and checkpoint-sensitive |
+| DVCE | generative, manifold-consistent counterfactuals; full validity with fine-tuned checkpoint | checkpoint-sensitive (OpenAI prior more artifact-prone); expensive per sample |
 
 Across all methods, model validity and medical plausibility must be discussed
 separately.
