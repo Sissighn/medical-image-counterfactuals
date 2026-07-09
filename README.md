@@ -171,18 +171,22 @@ This is not a full Alibi CFProto reproduction. FISTA/shrinkage, TrustScore, the
 original TensorFlow graph, and the original Alibi k-d-tree machinery are not
 fully reproduced.
 
-### Retrieval-NUN
+### Goyal et al. 2019 (Counterfactual Visual Explanations)
 
 ```bash
-PYTHONPATH=. python scripts/run_retrieval_nun_pytorch.py \
+PYTHONPATH=. python scripts/run_goyal_cve_pytorch.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
-  --output_dir results/fixed_evaluation/retrieval_nun_busi_balanced_manifest \
+  --output_dir results/fixed_evaluation/goyal_cve_busi \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
 ```
 
-Retrieval-NUN retrieves a real target-class training image. It is a case-based
-baseline, not a minimal edit.
+Instance-based method after Goyal et al. (ICML 2019, arXiv:1904.07451): a
+nearest-unlike-neighbor distractor image from the target class is retrieved,
+then spatial cells of the query's ResNet18 layer4 feature map are greedily
+replaced by distractor cells (each cell at most once, permutation constraint)
+until the prediction flips to the target class. Reference implementation of
+the baseline: https://github.com/facebookresearch/visual-counterfactuals.
 
 ### SEDC-T
 
