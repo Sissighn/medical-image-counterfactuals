@@ -2,63 +2,23 @@
     "rows": [
         {
             "metadata_path": "results/final/cfproto_encoder_knn/busi/metadata.json",
-            "method": "CFProto-nearer prototype-guided optimization baseline (encoder feature map)",
+            "method": "CFProto original-style prototype-guided counterfactuals",
             "dataset": "BUSI",
             "samples": 15,
-            "validity": 1.0,
-            "mean_counterfactual_confidence": 0.5470508058865865,
-            "mean_change": 0.00838382199096183,
-            "mean_runtime_seconds": 7.429689121246338
+            "validity": 0.8666666666666667,
+            "mean_counterfactual_confidence": 0.6814641972382863,
+            "mean_change": 0.052926587484156094,
+            "mean_runtime_seconds": 46.10451018015544
         },
         {
             "metadata_path": "results/final/cfproto_encoder_knn/pneumonia/metadata.json",
-            "method": "CFProto-nearer prototype-guided optimization baseline (encoder feature map)",
+            "method": "CFProto original-style prototype-guided counterfactuals",
             "dataset": "Pneumonia",
             "samples": 20,
-            "validity": 0.9,
-            "mean_counterfactual_confidence": 0.5766677588224411,
-            "mean_change": 0.0108418367934064,
-            "mean_runtime_seconds": 8.581644713878632
-        },
-        {
-            "metadata_path": "results/final/cfproto_encoder_knn_bottleneck256/busi/metadata.json",
-            "method": "CFProto-nearer prototype-guided optimization baseline (bottleneck256)",
-            "dataset": "BUSI",
-            "samples": 15,
-            "validity": 0.6666666666666666,
-            "mean_counterfactual_confidence": 0.6844756444295247,
-            "mean_change": 0.616790218418464,
-            "mean_runtime_seconds": 8.64886770248413
-        },
-        {
-            "metadata_path": "results/final/cfproto_encoder_knn_bottleneck256/pneumonia/metadata.json",
-            "method": "CFProto-nearer prototype-guided optimization baseline (bottleneck256)",
-            "dataset": "Pneumonia",
-            "samples": 20,
-            "validity": 0.5,
-            "mean_counterfactual_confidence": 0.753709614276886,
-            "mean_change": 0.6665557071566581,
-            "mean_runtime_seconds": 8.725240707397461
-        },
-        {
-            "metadata_path": "results/final/cfproto_encoder_knn_bottleneck1024/busi/metadata.json",
-            "method": "CFProto-nearer prototype-guided optimization baseline (bottleneck1024)",
-            "dataset": "BUSI",
-            "samples": 15,
-            "validity": 0.6666666666666666,
-            "mean_counterfactual_confidence": 0.6590171972910563,
-            "mean_change": 0.7053119540214539,
-            "mean_runtime_seconds": 14.604366779327393
-        },
-        {
-            "metadata_path": "results/final/cfproto_encoder_knn_bottleneck1024/pneumonia/metadata.json",
-            "method": "CFProto-nearer prototype-guided optimization baseline (bottleneck1024)",
-            "dataset": "Pneumonia",
-            "samples": 20,
-            "validity": 0.55,
-            "mean_counterfactual_confidence": 0.7292291462421417,
-            "mean_change": 0.6312380239367485,
-            "mean_runtime_seconds": 13.783432364463806
+            "validity": 1.0,
+            "mean_counterfactual_confidence": 0.5739770412445069,
+            "mean_change": 0.01801624905747303,
+            "mean_runtime_seconds": 46.3415266752243
         },
         {
             "metadata_path": "results/fixed_evaluation/goyal_cve_busi/metadata.json",

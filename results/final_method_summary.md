@@ -3,9 +3,10 @@
 ## Scope
 
 This file summarizes the current method set used for the seminar project. The
-prototype-guided track has been cleaned up: the retained main prototype-guided
-method is the CFProto-nearer encoder feature-map configuration, with
-bottleneck256 and bottleneck1024 kept only as ablations.
+prototype-guided method is CFProto (original-style), a faithful PyTorch port of
+alibi's `CounterfactualProto` using a bottleneck-256 autoencoder; the earlier
+feature-map and bottleneck1024 experiments have been replaced by this single
+calibrated configuration.
 
 ## Baseline Classifiers
 
@@ -14,41 +15,35 @@ bottleneck256 and bottleneck1024 kept only as ablations.
 | BUSI | benign, malignant, normal | ResNet18 pretrained | 0.8390 | 0.8365 |
 | Pneumonia | NORMAL, PNEUMONIA | ResNet18 pretrained | 0.8782 | 0.8732 |
 
-## Method 1: CFProto-Nearer Prototype-Guided Optimization Baseline
+## Method 1: CFProto (Original-Style Prototype-Guided Optimization)
 
-The method optimizes the input image toward the fixed manifest target class
-using:
+The method follows alibi's `CounterfactualProto` faithfully:
 
-- autoencoder encoder-space target-class kNN mean prototypes,
-- adaptive attack-constant search,
-- elastic-net best-counterfactual selection,
-- polynomial learning-rate decay,
-- targeted margin-style attack loss.
+- FISTA optimization with shrinkage-thresholding and Nesterov momentum,
+- an untargeted hinge attack loss on the original class,
+- a sum-based loss `c*L_attack + L2 + beta*L1 + gamma*L_AE + theta*L_proto`,
+- binary search over the attack constant `c` (x10 escalation),
+- encoder-space class prototypes built from the classifier's own predictions
+  on the training split (kNN mean),
+- elastic-net (L2 + beta*L1) best-counterfactual selection.
 
-It remains a PyTorch-based implementation in this medical image pipeline, not a
-full Alibi CFProto reproduction. FISTA/shrinkage, TrustScore, the original
-TensorFlow graph, and the original Alibi k-d-tree machinery are not fully
-reproduced.
+Deliberate differences from the original are the framework (PyTorch instead of
+the TensorFlow 1.x graph) and per-dataset/autoencoder recalibrated `gamma`/
+`theta` weights, since all loss terms are sums and their raw magnitude depends
+on input and latent dimensionality. Not reproduced: the TensorFlow graph
+itself, black-box mode with numerical gradients, categorical variables/
+k-d-tree prototypes, and TrustScore filtering (disabled by default in alibi
+too). Full Soll-Ist comparison:
+`results/final_configs/cfproto_encoder_method_documentation.md`.
 
 | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean runtime |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| BUSI | 15 | 1.00 | 0.5471 | 0.0084 | 7.43s |
-| Pneumonia | 20 | 0.90 | 0.5767 | 0.0108 | 8.58s |
+| BUSI | 15 | 0.87 | 0.6815 | 0.0529 | 46.10s |
+| Pneumonia | 20 | 1.00 | 0.5740 | 0.0180 | 46.34s |
 
-### CFProto Autoencoder Bottleneck Ablations
-
-The bottleneck256 and bottleneck1024 variants are retained as ablations, not as
-main methods. They test whether compact autoencoder latent prototypes improve
-the prototype-guided optimization. In the current fixed-manifest runs they are
-less stable than the encoder feature-map configuration and change much larger
-image areas.
-
-| Variant | Dataset | Samples | Validity | Mean CF confidence | Mean changed pixel fraction | Mean runtime |
-| --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Bottleneck256 | BUSI | 15 | 0.67 | 0.6845 | 0.6168 | 8.65s |
-| Bottleneck256 | Pneumonia | 20 | 0.50 | 0.7537 | 0.6666 | 8.73s |
-| Bottleneck1024 | BUSI | 15 | 0.67 | 0.6590 | 0.7053 | 14.60s |
-| Bottleneck1024 | Pneumonia | 20 | 0.55 | 0.7292 | 0.6312 | 13.78s |
+The two BUSI failures (of 15) are an expected consequence of the untargeted
+attack loss: the optimization found a confident flip away from the original
+class that did not land on the manifest's specific fixed target class.
 
 ## Method 2: Goyal et al. 2019 Counterfactual Visual Explanations
 
@@ -118,8 +113,8 @@ results/final_configs/dvce_cone_projection_for_paul.md
 
 ## Main Takeaway
 
-The methods expose different trade-offs. CFProto-nearer optimization is compact
-and model-valid, Goyal et al. 2019 CVE gives sparse localized edits grounded in
+The methods expose different trade-offs. CFProto (original-style) optimization
+is compact and mostly model-valid, Goyal et al. 2019 CVE gives sparse localized edits grounded in
 real target-class images (validity guaranteed by construction, confidence near
 the decision boundary), SEDC-T is more localized but less consistently valid,
 and DVCE is generative but still pending fresh fixed-manifest results after the
