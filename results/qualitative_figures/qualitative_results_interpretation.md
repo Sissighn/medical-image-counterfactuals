@@ -7,31 +7,32 @@ This document explains the qualitative per-method figures in
 
 | Dataset | Method | Figure |
 | --- | --- | --- |
-| BUSI | CFProto-nearer prototype-guided optimization baseline | `per_method/busi/cfproto_nearer_prototype_guided_optimization_baseline.png` |
+| BUSI | CFProto (original-style, bottleneck256) | `per_method/busi/cfproto_original_style_bottleneck256.png` |
 | BUSI | Goyal 2019 counterfactual visual explanations | `per_method/busi/goyal_2019_counterfactual_visual_explanations.png` |
 | BUSI | SEDC-T original-style best-first | `per_method/busi/sedc_t_original_style_best_first.png` |
-| Pneumonia | CFProto-nearer prototype-guided optimization baseline | `per_method/pneumonia/cfproto_nearer_prototype_guided_optimization_baseline.png` |
+| Pneumonia | CFProto (original-style, bottleneck256) | `per_method/pneumonia/cfproto_original_style_bottleneck256.png` |
 | Pneumonia | Goyal 2019 counterfactual visual explanations | `per_method/pneumonia/goyal_2019_counterfactual_visual_explanations.png` |
 | Pneumonia | SEDC-T original-style best-first | `per_method/pneumonia/sedc_t_original_style_best_first.png` |
 | Pneumonia | SEDC-T lung-field ROI ablation | `per_method/pneumonia/sedc_t_lung_field_roi_ablation.png` |
 
-## CFProto-Nearer Prototype-Guided Optimization
+## CFProto (Original-Style Prototype-Guided Optimization)
 
-The retained prototype-guided method uses encoder-space target-class kNN
-prototypes, adaptive c-search, elastic-net selection, polynomial learning-rate
-decay, and a targeted margin loss. Its qualitative figures should be discussed
-as model-behavior explanations, not as medical causal edits.
+The method follows alibi's `CounterfactualProto` faithfully: FISTA optimization
+with shrinkage-thresholding, an untargeted hinge attack loss, encoder-space
+class prototypes from classifier predictions (bottleneck-256 autoencoder),
+binary c-search, and elastic-net selection. Its qualitative figures should be
+discussed as model-behavior explanations, not as medical causal edits.
 
-On BUSI the method is valid on all fixed samples. On Pneumonia it is valid for
-18 of 20 fixed samples, so the Pneumonia figure can include a failure case. The
-changes are small under the fixed difference scale. This is important:
-low-contrast difference maps do not mean the plotting is broken; they indicate
-that the method found small perturbations according to the recorded pixel-scale
-metrics.
-
-The bottleneck256 and bottleneck1024 CFProto variants are currently documented
-as quantitative ablations. They are not included as retained qualitative
-per-method figures because they are not the main prototype-guided configuration.
+On BUSI the method is valid for 13 of 15 fixed samples, so the BUSI figure can
+include a failure case; the two misses are a direct consequence of the
+untargeted attack loss finding a confident flip to a class other than the
+manifest's fixed target. On Pneumonia it is valid for all 20 of 20 fixed
+samples. The changes are small under the fixed difference scale on both
+datasets (more so on Pneumonia, where `theta` was calibrated an order of
+magnitude smaller to match the autoencoder's larger raw prototype distances).
+This is important: low-contrast difference maps do not mean the plotting is
+broken; they indicate that the method found small perturbations according to
+the recorded pixel-scale metrics.
 
 ## Goyal 2019 CVE
 
@@ -71,7 +72,7 @@ The qualitative comparison should emphasize trade-offs:
 
 | Method | Strength | Limitation |
 | --- | --- | --- |
-| CFProto-nearer optimization | compact model-valid changes | can be visually subtle and not medically causal |
+| CFProto (original-style) | compact, mostly model-valid changes | can be visually subtle and not medically causal |
 | Goyal 2019 CVE | sparse localized edits grounded in real cases | coarse 7x7 cell grid; confidence near decision boundary |
 | SEDC-T | localized segment changes | lower validity, especially on Pneumonia |
 | DVCE | generative counterfactual direction | artifact- and checkpoint-sensitive |

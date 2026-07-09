@@ -28,10 +28,7 @@ CATEGORY_ORDER = [
 ]
 
 METHOD_ORDER = [
-    "CFProto-nearer prototype-guided optimization baseline (encoder feature map)",
-    "CFProto-nearer prototype-guided optimization baseline (bottleneck256)",
-    "CFProto-nearer prototype-guided optimization baseline (bottleneck1024)",
-    "CFProto-nearer prototype-guided optimization baseline",
+    "CFProto original-style",
     "Goyal 2019 counterfactual visual explanations",
     "SEDC-T original-style best-first",
     "SEDC-T lung-field ROI ablation",
@@ -512,7 +509,7 @@ def write_readme(
             "large.",
             "",
             "For method-level interpretation and the trade-offs between "
-            "CFProto-nearer prototype-guided optimization, Goyal 2019 CVE, SEDC-T, and DVCE, see:",
+            "CFProto (original-style), Goyal 2019 CVE, SEDC-T, and DVCE, see:",
             "",
             "- `results/qualitative_figures/qualitative_results_interpretation.md`",
             "",

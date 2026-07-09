@@ -25,7 +25,7 @@ Retained counterfactual directions:
 
 | Method | Role |
 | --- | --- |
-| CFProto-nearer prototype-guided optimization baseline | Optimized image perturbation with encoder-kNN prototypes |
+| CFProto (original-style) prototype-guided optimization | FISTA optimization with shrinkage-thresholding, untargeted hinge attack loss, encoder-space class prototypes, following alibi's `CounterfactualProto` |
 | Goyal et al. 2019 counterfactual visual explanations | Instance-based greedy feature-cell swaps from a nearest-unlike distractor |
 | SEDC-T-style segment replacement | Region-based/localized explanation |
 | DVCE original-style diffusion-guided generation | Generative feasibility method; final rows need regeneration, including optional Cone Projection with robust second classifiers |
@@ -141,7 +141,7 @@ PYTHONPATH=. python scripts/create_evaluation_manifest.py \
 
 ## Counterfactual Methods
 
-### CFProto-Nearer Prototype-Guided Optimization Baseline
+### CFProto (Original-Style Prototype-Guided Optimization)
 
 Final BUSI command:
 
@@ -151,25 +151,23 @@ PYTHONPATH=. python scripts/run_cfproto_pytorch.py \
   --dataset_path data/processed/BUSI \
   --output_dir results/final/cfproto_encoder_knn/busi \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
-  --autoencoder_path models/autoencoder_busi.pth
+  --autoencoder_path models/autoencoder_busi_bottleneck256.pth \
+  --theta 0.5 --gamma 1.0 --c_steps 5 --prototype_k 3
 ```
 
-The script defaults to the final CFProto-nearer configuration:
+Follows alibi's `CounterfactualProto` closely: FISTA optimization with
+shrinkage-thresholding and Nesterov momentum, an untargeted hinge attack loss,
+a sum-based loss `c*L_attack + L2 + beta*L1 + gamma*L_AE + theta*L_proto`,
+binary search over the attack constant `c`, and encoder-space class prototypes
+built from the classifier's own predictions on the training split. `theta` is
+recalibrated per dataset/autoencoder since all loss terms are sums (see
+`results/final_configs/cfproto_encoder_method_documentation.md`).
 
-```text
-prototype_space=encoder
-prototype_mode=knn_mean
-prototype_k=3
-c_search_mode=adaptive_binary
-selection_metric=elastic_net
-lr_schedule=polynomial
-attack_loss=cw_hinge
-gamma=0.0
-```
-
-This is not a full Alibi CFProto reproduction. FISTA/shrinkage, TrustScore, the
-original TensorFlow graph, and the original Alibi k-d-tree machinery are not
-fully reproduced.
+Not reproduced: the original TensorFlow graph itself (reimplemented in
+PyTorch), black-box mode with numerical gradients, categorical variables and
+k-d-tree prototypes, and TrustScore filtering (disabled by default in alibi
+too). Full method documentation and Soll-Ist comparison:
+`results/final_configs/cfproto_encoder_method_documentation.md`.
 
 ### Goyal et al. 2019 (Counterfactual Visual Explanations)
 
@@ -256,12 +254,8 @@ results/final_configs/dvce_cone_projection_for_paul.md
 
 | Method | Dataset | Samples | Validity | Mean CF confidence | Mean change | Runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| CFProto-nearer prototype-guided optimization | BUSI | 15 | 1.00 | 0.5471 | 0.0084 | 7.43s |
-| CFProto-nearer prototype-guided optimization | Pneumonia | 20 | 0.90 | 0.5767 | 0.0108 | 8.58s |
-| CFProto bottleneck256 ablation | BUSI | 15 | 0.67 | 0.6845 | 0.6168 | 8.65s |
-| CFProto bottleneck256 ablation | Pneumonia | 20 | 0.50 | 0.7537 | 0.6666 | 8.73s |
-| CFProto bottleneck1024 ablation | BUSI | 15 | 0.67 | 0.6590 | 0.7053 | 14.60s |
-| CFProto bottleneck1024 ablation | Pneumonia | 20 | 0.55 | 0.7292 | 0.6312 | 13.78s |
+| CFProto (original-style) | BUSI | 15 | 0.87 | 0.6815 | 0.0529 | 46.10s |
+| CFProto (original-style) | Pneumonia | 20 | 1.00 | 0.5740 | 0.0180 | 46.34s |
 | Goyal et al. 2019 CVE | BUSI | 15 | 1.00 | 0.5279 | 0.2596 | 0.25s |
 | Goyal et al. 2019 CVE | Pneumonia | 20 | 1.00 | 0.5231 | 0.3072 | 0.17s |
 | SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 6.71s |
