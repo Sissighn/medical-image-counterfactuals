@@ -39,23 +39,23 @@ the robust model as `--model_path` (see the last section below). Keep the
 normal-classifier no-cone runs only if you want them as an explicitly marked
 ablation.
 
-On CUDA machines add `--diffusion_fp16` to every command below — the original
-always runs the diffusion UNet in fp16 (`use_fp16: True`). Locally on MPS,
-leave it off.
+All commands below use `--device auto` (resolves to MPS locally). The
+original always runs the diffusion UNet in fp16 (`use_fp16: True`); add
+`--diffusion_fp16` only if these commands are ever run on a CUDA machine —
+leave it off on MPS.
 
 ## 1. OpenAI Checkpoint
 
 BUSI:
 
 ```bash
-PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
   --output_dir results/final/dvce_original_style/openai/busi \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
   --run_generation \
-  --device cuda \
-  --diffusion_fp16 \
+  --device auto \
   --timestep_respacing 200 \
   --skip_timesteps 100 \
   --classifier_lambda 0.1 \
@@ -69,14 +69,13 @@ PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
 Pneumonia:
 
 ```bash
-PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --dataset_path data/processed/Pneumonia \
   --output_dir results/final/dvce_original_style/openai/pneumonia \
   --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json \
   --run_generation \
-  --device cuda \
-  --diffusion_fp16 \
+  --device auto \
   --timestep_respacing 200 \
   --skip_timesteps 100 \
   --classifier_lambda 0.1 \
@@ -90,14 +89,13 @@ PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
 ## 2. Pneumonia Fine-Tuned Medical Checkpoint
 
 ```bash
-PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
   --model_path models/pneumonia_resnet18_pretrained.pth \
   --dataset_path data/processed/Pneumonia \
   --output_dir results/final/dvce_original_style/pneumonia_medical_checkpoint/pneumonia \
   --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json \
   --run_generation \
-  --device cuda \
-  --diffusion_fp16 \
+  --device auto \
   --timestep_respacing 200 \
   --skip_timesteps 100 \
   --classifier_lambda 0.1 \
@@ -111,14 +109,13 @@ PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
 ## 3. BUSI Fine-Tuned Medical Checkpoint
 
 ```bash
-PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
   --model_path models/busi_resnet18_pretrained.pth \
   --dataset_path data/processed/BUSI \
   --output_dir results/final/dvce_original_style/busi_medical_checkpoint/busi \
   --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
   --run_generation \
-  --device cuda \
-  --diffusion_fp16 \
+  --device auto \
   --timestep_respacing 200 \
   --skip_timesteps 100 \
   --classifier_lambda 0.1 \
@@ -147,14 +144,13 @@ original readme command `python imagenet_VCEs.py ... --denoise_dist_input`,
 where the explained classifier itself is robust:
 
 ```bash
-PYTHONPATH=. python scripts/run_dvce_medical_prototype.py \
+PYTHONPATH=. .venv/bin/python scripts/run_dvce_medical_prototype.py \
   --model_path models/pneumonia_resnet18_robust_pgd.pth \
   --dataset_path data/processed/Pneumonia \
   --output_dir results/final/dvce_original_style_robust/openai/pneumonia \
   --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json \
   --run_generation \
-  --device cuda \
-  --diffusion_fp16 \
+  --device auto \
   --timestep_respacing 200 \
   --skip_timesteps 100 \
   --classifier_lambda 0.1 \
@@ -171,5 +167,5 @@ fine-tuned diffusion checkpoints swap `--diffusion_checkpoint_path`.)
 For Cone Projection runs with robust second classifiers, use:
 
 ```text
-results/final_configs/dvce_cone_projection_for_paul.md
+results/final_configs/dvce_cone_projection.md
 ```
