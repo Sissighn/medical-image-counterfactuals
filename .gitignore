@@ -83,4 +83,3 @@ results/final/**/*.jpeg
 # Notebook checkpoints
 .ipynb_checkpoints/
 results/docs/project_structure_diagram.png
-results/docs/method_implementation_audit.md
