@@ -33,10 +33,8 @@ Retained counterfactual directions:
 Central summaries:
 
 ```text
+results/docs/method_comparison_and_results.md
 results/docs/fixed_evaluation_summary.md
-results/docs/method_comparison.md
-results/docs/final_method_summary.md
-results/docs/method_variant_rationale.md
 ```
 
 ## Repository Structure
