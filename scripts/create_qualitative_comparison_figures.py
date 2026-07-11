@@ -1,9 +1,3 @@
-"""Create multi-row qualitative comparison figures from selected CF examples.
-
-The script composes existing per-example visualizations into dataset-level
-comparison figures. It does not recompute or re-normalize difference maps.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -120,7 +114,6 @@ def choose_example_path(example: dict[str, Any]) -> tuple[Path | None, str | Non
 
 
 def normalize_image_for_display(image: np.ndarray) -> np.ndarray:
-    """Return image data in [0, 1] for display without contrast stretching."""
     if image.dtype.kind in {"u", "i"}:
         max_value = np.iinfo(image.dtype).max
         return image.astype(np.float32) / float(max_value)
@@ -137,12 +130,6 @@ def compact_vertical_whitespace(
     min_blank_run: int = 28,
     keep_blank_rows: int = 18,
 ) -> np.ndarray:
-    """Remove excessive white rows from embedded source plots.
-
-    Some source visualizations reserve a large title area. This function only
-    compresses long near-white horizontal bands; image content and color scales
-    are left unchanged.
-    """
     if image.ndim < 2 or image.shape[0] < min_blank_run:
         return image
 
@@ -203,7 +190,6 @@ def format_cell_note(example: dict[str, Any]) -> str:
 
 
 def available_categories(examples_by_category: dict[str, dict[str, Any]]) -> list[tuple[str, str]]:
-    """Return ordered qualitative categories that actually exist for a method."""
     return [
         (category, label)
         for category, label in CATEGORY_ORDER
