@@ -2,17 +2,13 @@ from pathlib import Path
 import shutil
 import random
 
-# Damit die Aufteilung jedes Mal gleich bleibt
 random.seed(42)
 
-# Pfade
 RAW_DIR = Path("data/raw/BUSI/Dataset_BUSI_with_GT")
 OUT_DIR = Path("data/processed/BUSI")
 
 CLASSES = ["normal", "benign", "malignant"]
 
-# Verhältnis:
-# 70% Training, 15% Validation, 15% Test
 TRAIN_RATIO = 0.70
 VAL_RATIO = 0.15
 TEST_RATIO = 0.15
@@ -31,11 +27,9 @@ def get_image_files(class_name):
     image_files = []
 
     for file_path in class_folder.iterdir():
-        # Nur Bilddateien nehmen
         if file_path.suffix.lower() not in [".png", ".jpg", ".jpeg"]:
             continue
 
-        # Masken ignorieren
         if "_mask" in file_path.name:
             continue
 
