@@ -6,7 +6,6 @@ BOTTLENECK_ARCHITECTURE_NAME = "conv_autoencoder_bottleneck_v1"
 
 
 class ConvAutoencoder(nn.Module):
-    """Small convolutional autoencoder for 224x224 RGB medical images."""
 
     def __init__(self, input_channels=3, base_channels=32):
         super().__init__()
@@ -75,7 +74,6 @@ class ConvAutoencoder(nn.Module):
         )
 
     def encode(self, images):
-        """Return the latent encoder representation before reconstruction."""
         return self.encoder(images)
 
     def forward(self, images):
@@ -84,7 +82,6 @@ class ConvAutoencoder(nn.Module):
 
 
 class ConvAutoencoderBottleneck(nn.Module):
-    """Convolutional autoencoder with compact vector bottleneck."""
 
     def __init__(
         self,
