@@ -66,12 +66,6 @@ def load_checkpoint_model(model_path, device):
 
 
 def predict_batch(model, pixels_batch):
-    """Single forward pass over a batch of images.
-
-    Batching all candidates of one search level into one forward pass mirrors
-    the reference implementation's `classifier.predict(cf_candidates)` and is
-    numerically equivalent to predicting each image on its own.
-    """
     with torch.no_grad():
         logits = model(normalize(pixels_batch))
         probabilities = F.softmax(logits, dim=1)
@@ -196,7 +190,6 @@ def normalize_blur_kernel(blur_kernel):
 
 
 def create_replacement_image(image_pixels, replacement_mode, blur_kernel, segments):
-    """Build the perturbed image exactly like the reference sedc_t2_fast modes."""
     image_np = image_pixels[0].detach().cpu().permute(1, 2, 0).numpy()
 
     if replacement_mode == "mean":
@@ -273,12 +266,6 @@ def compute_segment_pixel_fraction(segments, selected_segments):
     return float(segment_mask.float().mean().item())
 
 
-# Geometric lung-field prior for frontal chest X-rays, expressed as image
-# fractions. Two rectangles (left/right lung) with a central gap over the
-# mediastinum/spine. The vertical bounds are set to include the lung apices
-# (top) while excluding the sub-diaphragmatic abdomen (bottom), tuned against
-# the Pneumonia test images. This is a coarse, content-agnostic prior, not a
-# per-image lung segmentation, and is not part of the original SEDC-T setup.
 LUNG_FIELD_ROI = {
     "y_min": 0.10,
     "y_max": 0.82,
@@ -344,12 +331,6 @@ def evaluate_segment_sets_batch(
     added_segments,
     max_batch=128,
 ):
-    """Evaluate every candidate segment set of one search level in one batch.
-
-    The candidate order is preserved so that the downstream ``max`` selections
-    break ties on the first candidate exactly like the sequential version and
-    the reference ``np.argmax``.
-    """
     if not segment_sets:
         return []
 
@@ -404,15 +385,6 @@ def generate_sedc_t_original_best_first_counterfactual(
     allowed_segments,
     timeout_seconds,
 ):
-    """Port of the reference implementation sedc_t2_fast (best-first SEDC-T).
-
-    Mirrors the reference search: evaluate all one-segment perturbations,
-    then repeatedly expand the pending segment set with the largest
-    target-vs-original class score difference until a valid expansion level
-    is found. Like the reference, duplicate segment sets are not deduplicated,
-    the timeout is only checked once per expansion level, and the loop also
-    stops when an expansion produces no children.
-    """
 
     start_time = time.time()
     allowed_segments = sorted(allowed_segments)
@@ -515,15 +487,11 @@ def generate_sedc_t_original_best_first_counterfactual(
         raise RuntimeError("SEDC-T best-first search did not evaluate any candidates.")
 
     if valid_candidates:
-        # Reference: best_explanation = np.argmax(P - p), i.e. the valid
-        # candidate with the highest target-score increase (first on ties).
         best_result = max(
             valid_candidates,
             key=lambda candidate: candidate["target_score_increase"],
         )
     else:
-        # The reference returns no counterfactual in this case; the best
-        # non-valid attempt is kept here for reporting purposes only.
         print("No CF found on the requested parameters")
         best_result = max(
             evaluated_candidates,
