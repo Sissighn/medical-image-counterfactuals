@@ -103,13 +103,6 @@ def validate_second_classifier_checkpoint(primary_checkpoint, second_checkpoint)
 
 
 class MedicalResNetAdapter(nn.Module):
-    """DVCE-facing classifier adapter for project ResNet18 checkpoints.
-
-    Mirrors the original ResizeAndMeanWrapper: bicubic resize (interpolation=3)
-    to the classifier input size, normalization, no input clamping. Unclamped
-    inputs keep guidance gradients alive for out-of-range pixels, exactly as in
-    the original DVCE cond_fn.
-    """
 
     def __init__(self, model):
         super().__init__()
@@ -338,14 +331,10 @@ def compute_difference_stats(original_01, counterfactual_01):
     flat_diff = diff.view(diff.shape[0], -1)
     changed_pixels = torch.mean((diff > 0.05).float()).item()
 
-    # Existing project metrics are kept for compatibility with earlier DVCE runs
-    # and the other counterfactual baselines.
     mean_absolute_difference = diff.mean().detach().cpu().item()
     mean_l2_distance = torch.sqrt(torch.mean(diff.pow(2))).detach().cpu().item()
     linf_distance = diff.max().detach().cpu().item()
 
-    # DVCE-paper-style per-image vector norms. The original DVCE code reports
-    # Lp norms over the flattened image difference, not mean-normalized values.
     l1_norm = flat_diff.norm(p=1, dim=1).detach().cpu()
     l1_5_norm = flat_diff.norm(p=1.5, dim=1).detach().cpu()
     l2_norm = flat_diff.norm(p=2, dim=1).detach().cpu()
