@@ -1,34 +1,3 @@
-"""Run counterfactual visual explanations after Goyal et al. (ICML 2019).
-
-Reference: Goyal, Wu, Ernst, Batra, Parikh & Lee (2019), "Counterfactual
-Visual Explanations", ICML 2019, arXiv:1904.07451. A faithful reference
-implementation of this method (as baseline) is contained in the official
-Meta repository https://github.com/facebookresearch/visual-counterfactuals
-(Vandenhende et al., ECCV 2022).
-
-Method (paper Section 3): the CNN is decomposed into a spatial feature
-extractor f and a decision head g. For a query image I (predicted class c)
-and a distractor image I' from the target class c', the counterfactual
-feature map is
-
-    f*(I) = (1 - a) o f(I) + a o (P f(I'))
-
-where a is a binary gate vector over spatial cells and P is a permutation
-matrix aligning distractor cells to query cells. The number of edits ||a||_1
-is minimized subject to argmax g(f*(I)) = c'. Following the paper's greedy
-exhaustive-search variant, each iteration evaluates all remaining
-(query cell i, distractor cell j) swaps, commits the swap that maximizes the
-softmax probability of c', and stops as soon as the prediction flips to c'.
-Each query cell is edited at most once and each distractor cell is used at
-most once (permutation constraint).
-
-Distractor selection: the paper defines the method for a given (I, I') pair
-with I' taken from the target class. This runner instantiates I' as the
-nearest correctly classified training image of the manifest target class in
-the classifier's pooled penultimate feature space (cosine distance), i.e. a
-nearest-unlike-neighbor distractor.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -71,11 +40,6 @@ def create_model(num_classes: int) -> nn.Module:
 
 
 class ResNetSpatialSplit(nn.Module):
-    """Decomposes ResNet18 into spatial extractor f and decision head g.
-
-    f: conv stem through layer4, output [B, 512, 7, 7] for 224x224 inputs.
-    g: global average pooling followed by the fully connected classifier.
-    """
 
     def __init__(self, model: nn.Module) -> None:
         super().__init__()
@@ -278,15 +242,6 @@ def greedy_exhaustive_search(
     target_index: int,
     max_edits: int,
 ) -> dict[str, Any]:
-    """Greedy exhaustive search over spatial cell swaps (paper Section 3.2).
-
-    At each iteration all remaining (query cell, distractor cell) pairs are
-    scored and the swap maximizing the target-class softmax probability is
-    committed. For ResNet the head g is the fully connected layer applied to
-    the spatial mean, so candidate pooled vectors are computed with the exact
-    incremental mean update pooled + (f'(j) - f_current(i)) / N, which is
-    identical to evaluating g on every edited feature map.
-    """
     channels, grid_h, grid_w = query_spatial.shape
     num_cells = grid_h * grid_w
     current = query_spatial.reshape(channels, num_cells).clone()
@@ -302,8 +257,6 @@ def greedy_exhaustive_search(
         prediction = int(torch.argmax(logits).item())
 
         while prediction != target_index and len(edits) < max_edits:
-            # pooled_candidates[i, j]: pooled feature after replacing query
-            # cell i with distractor cell j.
             delta = (
                 distractor_cells.T.unsqueeze(0) - current.T.unsqueeze(1)
             ) / num_cells
@@ -365,13 +318,6 @@ def build_composite_image(
     edits: list[dict[str, Any]],
     grid_size: list[int],
 ) -> torch.Tensor:
-    """Paste the image patches aligned with the swapped feature cells.
-
-    The decision-flipping edit happens in feature space; this pixel-space
-    composite is the standard visualization used by the paper and the
-    reference implementation (each 7x7 feature cell maps to the aligned
-    image patch).
-    """
     composite = original_pixels.clone()
     grid_h, grid_w = grid_size
     patch_h = original_pixels.shape[-2] // grid_h
