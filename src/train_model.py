@@ -14,13 +14,6 @@ from src.data_utils import create_dataloaders
 
 
 def get_device():
-    """
-    Wählt automatisch aus, ob GPU oder CPU genutzt wird.
-
-    Auf Mac mit Apple Silicon kann 'mps' verwendet werden.
-    Auf Windows/Linux mit NVIDIA-GPU kann 'cuda' verwendet werden.
-    Sonst wird CPU verwendet.
-    """
     if torch.backends.mps.is_available():
         return torch.device("mps")
     elif torch.cuda.is_available():
@@ -30,13 +23,6 @@ def get_device():
 
 
 def create_model(num_classes, pretrained=False, download_timeout=30):
-    """
-    Erstellt ein ResNet18-Modell.
-
-    ResNet18 ist ein CNN, das oft für Bildklassifikation genutzt wird.
-    Optional kann ein vortrainiertes Modell verwendet werden. Die letzte Schicht
-    wird ersetzt, damit sie zu unserer Anzahl an Klassen passt.
-    """
     weights = None
     if pretrained:
         try:
@@ -57,12 +43,8 @@ def create_model(num_classes, pretrained=False, download_timeout=30):
     finally:
         socket.setdefaulttimeout(previous_timeout)
 
-    # Anzahl der Eingabefeatures der letzten Schicht
     in_features = model.fc.in_features
 
-    # Letzte Schicht ersetzen:
-    # BUSI: 3 Klassen
-    # Pneumonia: 2 Klassen
     model.fc = nn.Linear(in_features, num_classes)
 
     return model
@@ -86,19 +68,14 @@ def train_one_epoch(model, train_loader, criterion, optimizer, device):
         images = images.to(device)
         labels = labels.to(device)
 
-        # Alte Gradienten löschen
         optimizer.zero_grad()
 
-        # Vorhersage berechnen
         outputs = model(images)
 
-        # Fehler berechnen
         loss = criterion(outputs, labels)
 
-        # Backpropagation
         loss.backward()
 
-        # Modellgewichte aktualisieren
         optimizer.step()
 
         running_loss += loss.item() * images.size(0)
@@ -228,7 +205,6 @@ def train_model(
             }
         )
 
-        # Bestes Modell speichern
         if val_f1 > best_val_f1:
             best_val_f1 = val_f1
 
@@ -258,7 +234,6 @@ def train_model(
             print(f"Neues bestes Modell gespeichert: {output_model_path}")
             print()
 
-    # Trainingshistorie speichern
     results_path = Path("results") / f"{dataset_name.lower()}_training_history.json"
 
     with open(results_path, "w") as f:
