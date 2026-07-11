@@ -32,8 +32,6 @@ from src.train_model import get_device
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
 IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
 
-# Original alibi CounterfactualProto constants: perturbed instances live in
-# feature_range and graph gradients are clipped to `clip`.
 FEATURE_RANGE = (0.0, 1.0)
 GRADIENT_CLIP = (-1000.0, 1000.0)
 
@@ -70,11 +68,6 @@ def normalize(images):
 
 
 def predict_proba(model, pixels):
-    """Class probabilities on [0, 1] pixel inputs.
-
-    Plays the role of alibi's `predict` function returning probabilities;
-    the ImageNet normalization is part of the wrapped predictor.
-    """
     logits, _ = model(normalize(pixels))
     return F.softmax(logits, dim=1)
 
@@ -121,11 +114,6 @@ def encode_flat(autoencoder, pixels):
 
 
 def fit_class_encodings(model, autoencoder, train_loader, device):
-    """Encoder-space class encodings and class-mean prototypes.
-
-    Mirrors alibi `CounterfactualProto.fit`: class membership is determined by
-    the classifier predictions on the training data, not by the true labels.
-    """
     encodings = []
     predictions = []
 
@@ -163,14 +151,6 @@ def select_class_prototype(
     k,
     k_type,
 ):
-    """Closest target-class prototype, following alibi `attack`.
-
-    With `k is None` the prototype of a class is the mean encoding of all
-    instances predicted as that class. With `k` set, the k nearest encodings
-    (`k_type='mean'`: their mean and mean distance, `k_type='point'`: the
-    k-th nearest point) define the prototype. Among all candidate classes the
-    one with the smallest distance to ENC(x) is selected.
-    """
     with torch.no_grad():
         original_encoding = encode_flat(autoencoder, original_pixels)[0]
 
@@ -222,15 +202,12 @@ def select_class_prototype(
 
 
 def compare(probabilities, orig_class, kappa):
-    """Counterfactual condition from alibi: argmax after adding kappa to the
-    original class probability must differ from the original class."""
     adjusted = probabilities.clone()
     adjusted[orig_class] += kappa
     return int(torch.argmax(adjusted).item()) != orig_class
 
 
 def attack_loss_terms(probabilities, orig_class, kappa):
-    """Hinge attack loss f(x, d) = max(0, p_orig - max_{i != orig} p_i + kappa)."""
     one_hot = torch.zeros_like(probabilities)
     one_hot[:, orig_class] = 1.0
     target_proba = torch.sum(probabilities * one_hot, dim=1)
@@ -241,8 +218,6 @@ def attack_loss_terms(probabilities, orig_class, kappa):
 
 
 def shrinkage_thresholding(adv_s, orig, beta):
-    """Element-wise FISTA shrinkage-thresholding around the original instance,
-    projected onto the feature range (alibi `shrinkage_thresholding` scope)."""
     delta = adv_s - orig
     upper = torch.clamp(adv_s - beta, max=FEATURE_RANGE[1])
     lower = torch.clamp(adv_s + beta, min=FEATURE_RANGE[0])
@@ -256,8 +231,6 @@ def shrinkage_thresholding(adv_s, orig, beta):
 def compute_loss_terms(
     model, autoencoder, pixels, orig_pixels, orig_class, kappa, beta
 ):
-    """Raw (unweighted) loss terms for a given counterfactual, as sums like in
-    the original implementation."""
     with torch.no_grad():
         probabilities = predict_proba(model, pixels)
         attack = attack_loss_terms(probabilities, orig_class, kappa)
@@ -293,14 +266,6 @@ def cfproto_attack(
     verbose=False,
     print_every=100,
 ):
-    """FISTA attack loop following alibi `CounterfactualProto.attack` for a
-    single instance.
-
-    Optimized loss (gradient step on the auxiliary variable adv_s):
-        c * L_attack + L2 + gamma * L_AE + theta * L_proto
-    The beta * L1 elastic-net term is handled by shrinkage-thresholding, not by
-    the gradient. All loss terms are sums, as in the original TF graph.
-    """
     orig = original_pixels.detach()
     proto = target_prototype.detach()
 
@@ -317,7 +282,6 @@ def cfproto_attack(
     start_time = time.time()
 
     for c_step in range(c_steps):
-        # variables are re-initialized to the original instance for each c step
         adv = orig.clone()
         adv_s = orig.clone()
 
@@ -325,12 +289,10 @@ def cfproto_attack(
         current_best_class = -1
 
         for iteration in range(max_iterations):
-            # polynomial learning-rate decay (power 0.5, end learning rate 0)
             learning_rate = (
                 learning_rate_init * (1.0 - iteration / max_iterations) ** 0.5
             )
 
-            # gradient of the optimized loss w.r.t. adv_s
             adv_s_var = adv_s.clone().requires_grad_(True)
             probabilities_s = predict_proba(model, adv_s_var)
             loss_attack_s = const * attack_loss_terms(
@@ -346,10 +308,8 @@ def cfproto_attack(
             gradient = gradient.clamp(GRADIENT_CLIP[0], GRADIENT_CLIP[1])
 
             with torch.no_grad():
-                # gradient descent step on adv_s
                 adv_s_step = adv_s - learning_rate * gradient
 
-                # FISTA: shrinkage-thresholding then momentum update
                 adv_new = shrinkage_thresholding(adv_s_step, orig, beta)
                 zt = (iteration + 1) / (iteration + 4)
                 adv_s = (adv_new + zt * (adv_new - adv)).clamp(
@@ -357,7 +317,6 @@ def cfproto_attack(
                 )
                 adv = adv_new
 
-                # evaluate the counterfactual candidate adv
                 probabilities = predict_proba(model, adv)[0]
                 adv_class = int(torch.argmax(probabilities).item())
                 delta = adv - orig
@@ -395,7 +354,6 @@ def cfproto_attack(
 
         last_adv = adv.detach().clone()
 
-        # adjust the constant c like the original binary search
         entry = {
             "c_step": c_step,
             "attack_const": const,
