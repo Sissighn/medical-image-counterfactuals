@@ -1,12 +1,3 @@
-"""Original-style DVCE generation core for medical classifiers.
-
-This module keeps the medical DVCE wrapper close to the locally vendored DVCE
-implementation in ``external/DVCEs``. In particular, the guidance function
-recomputes ``p_mean_variance`` internally, evaluates the medical classifier and
-distance term on ``pred_xstart``, and normalizes the guidance terms against the
-diffusion model output when ``enforce_same_norms`` is enabled.
-"""
-
 from __future__ import annotations
 
 import random
@@ -106,8 +97,6 @@ def load_dvce_diffusion_backbone(
 
     state_dict = torch.load(checkpoint_path, map_location="cpu")
     model.load_state_dict(state_dict)
-    # Original DiffusionAttack order: freeze -> eval -> to(device),
-    # then re-enable qkv/norm/proj gradients, then convert_to_fp16.
     model.requires_grad_(False)
     model.eval()
     model = model.to(device)
@@ -136,14 +125,6 @@ def load_dvce_diffusion_backbone(
 
 
 def load_image_augmentations_class() -> Any:
-    """Load the original ImageAugmentations class directly from its file.
-
-    Importing ``blended_diffusion.optimization.augmentations`` normally
-    triggers the package ``__init__`` which pulls in heavy, unneeded
-    dependencies (pytorch_msssim, lpips, tensorboard). Loading the module by
-    file path keeps the class byte-identical to the original while avoiding
-    those imports. Requires ``add_dvce_to_python_path`` to have been called.
-    """
     import importlib.util
 
     import blended_diffusion
@@ -160,12 +141,6 @@ def load_image_augmentations_class() -> Any:
 
 
 def map_minus1_1_to_0_1(images: torch.Tensor) -> torch.Tensor:
-    """Original ``_map_img``: 0.5 * (x + 1) without clamping.
-
-    The original DVCE guidance feeds unclamped values to the classifier so
-    gradients keep flowing for out-of-range pixels. Clamping happens only on
-    the final returned image.
-    """
     return images.add(1.0).div(2.0)
 
 
@@ -281,20 +256,9 @@ def make_original_style_cond_fn(
     deg_cone_projection: float,
     classifier_size: int = 224,
 ) -> Any:
-    """Build the original-style DVCE ``cond_fn_clean``.
-
-    Role mapping to the original ``DiffusionAttack``: ``classifier`` is the
-    model being explained (the original's ``second_classifier`` in cone runs),
-    ``second_classifier`` is the robust helper (the original's main
-    ``classifier``). The cone is centered on the explained classifier's
-    gradient and the robust gradient is projected onto it, exactly as in
-    ``dff_attack.py``.
-    """
     target = torch.tensor([target_class], dtype=torch.long, device=init_image.device)
     augmentations = None
     if aug_num > 1:
-        # The original uses ImageAugmentations(clip_size, aug_num) where
-        # clip_size == classifier_size_1 (224), not the diffusion resolution.
         augmentations = load_image_augmentations_class()(classifier_size, aug_num).to(
             init_image.device
         )
@@ -306,9 +270,6 @@ def make_original_style_cond_fn(
         if augmentations is None:
             return images
         if images.device.type == "mps":
-            # Device workaround only: MPS lacks non-divisible adaptive
-            # pooling. The CPU roundtrip keeps the autograd graph intact and
-            # does not change the method; CUDA runs stay on-device.
             return augmentations.cpu()(images.cpu()).to(images.device)
         return augmentations(images)
 
@@ -347,8 +308,6 @@ def make_original_style_cond_fn(
                 )[0]
 
                 if second_classifier is not None and deg_cone_projection > 0:
-                    # The original draws fresh augmentations for the second
-                    # classifier instead of reusing the first batch.
                     x_classifier_2 = apply_augmentations(x_in)
                     logits_2 = second_classifier(map_minus1_1_to_0_1(x_classifier_2))
                     log_probs_2 = F.log_softmax(logits_2, dim=-1)
@@ -361,12 +320,6 @@ def make_original_style_cond_fn(
                         x,
                         retain_graph=denoise_dist_input,
                     )[0]
-                    # Original argument order (dff_attack.py): the robust
-                    # helper gradient is projected onto the cone centered at
-                    # the explained classifier's gradient. Here grad_2 is the
-                    # robust helper and grad_class the explained model, and
-                    # the projection runs on flattened CPU tensors as in the
-                    # original.
                     grad_class = (
                         cone_projection(
                             grad_2.view(x.shape[0], -1).cpu(),
@@ -422,7 +375,6 @@ def generate_dvce_counterfactual(
     second_classifier: torch.nn.Module | None = None,
     classifier_size: int = 224,
 ) -> tuple[torch.Tensor, dict[str, Any]]:
-    """Generate one original-style DVCE counterfactual for a fixed target class."""
 
     start_time = time.time()
     torch.manual_seed(seed)
@@ -480,8 +432,6 @@ def generate_dvce_counterfactual(
     final_sample = None
     steps_seen = 0
     loop_kwargs = {
-        # The original DiffusionAttack passes no explicit noise; the vendored
-        # p_sample_loop_progressive reseeds with `seed` and draws it itself.
         "clip_denoised": clip_denoised,
         "cond_fn": cond_fn,
         "model_kwargs": model_kwargs,
