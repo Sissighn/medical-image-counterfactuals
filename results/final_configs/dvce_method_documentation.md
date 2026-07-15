@@ -33,10 +33,13 @@ adversarial perturbation.
 
 The central idea of the paper is that meaningful diffusion guidance needs
 **robust classifier gradients**. Non-robust classifiers produce adversarial,
-noise-like gradients. DVCE therefore uses **Cone Projection**: the (non-robust)
-explained classifier's gradient is projected into a cone around a **robust**
-classifier's gradient, keeping the explained model's direction only where it
-already agrees with the robust one.
+noise-like gradients. DVCE therefore uses **Cone Projection**: the **robust**
+classifier's gradient is projected into a 30° cone around the (non-robust)
+explained classifier's gradient. The explained model's own gradient direction
+is kept unchanged whenever it is already within that cone (i.e. already close
+to the robust direction); only when it diverges by more than 30° is it pulled
+toward the robust direction, and even then only up to the cone boundary, never
+replaced outright.
 
 This project ports the original guidance logic to PyTorch and applies it to
 medical ResNet-18 classifiers (BUSI ultrasound, Pneumonia X-ray). The guidance
