@@ -14,8 +14,6 @@ Sie führt die früheren Einzeldateien `final_method_summary.md`,
   `metadata.json` per `scripts/summarize_counterfactual_evaluation.py`).
 - Originaltreue-Audit je Methode:
   [`method_fidelity_comparison.md`](method_fidelity_comparison.md).
-- Code-, Funktions- und Parameter-Walkthrough:
-  [`notebooklm_code_walkthrough.md`](notebooklm_code_walkthrough.md).
 - Methoden-Detaildokus und Run-Kommandos: [`results/final_configs/`](../final_configs/).
 
 **Grundprinzip fürs Reporting:** „Validity" bedeutet ausschließlich, dass der

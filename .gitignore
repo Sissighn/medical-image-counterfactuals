@@ -21,14 +21,9 @@ env/
 # Local environment files
 .env
 .env.*
-.codex_project_notes.md
 paper_drafts/
-seminar_paper_outline.md
-evaluation_chapter_plan.md
 results/docs/seminar_paper_outline.md
 results/docs/evaluation_chapter_plan.md
-results/dvce_finetuning_plan.md
-results/dvce_feasibility.md
 results/dvce_feasibility/
 results/diffusion_training_setup/
 
