@@ -93,7 +93,7 @@ the intended project-specific substitutions.
 
 ---
 
-## 3. Soll-Ist comparison with the original
+## 3. Implementation-to-Reference Comparison
 
 | Aspect | Original (Goyal et al. 2019 / Meta baseline) | This implementation | Status |
 |---|---|---|---|
