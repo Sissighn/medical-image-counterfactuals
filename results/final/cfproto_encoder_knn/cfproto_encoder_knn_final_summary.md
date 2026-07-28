@@ -6,7 +6,7 @@ untargeted hinge attack loss, encoder-space class prototypes from classifier
 predictions, binary c-search, elastic-net best-counterfactual selection),
 following `alibi.explainers.cfproto.CounterfactualProto`. See
 [`cfproto_encoder_method_documentation.md`](../../final_configs/cfproto_encoder_method_documentation.md)
-for the full method documentation and Soll-Ist comparison with the original.
+for the full method documentation and implementation-to-reference comparison.
 
 These runs were executed on a CUDA machine (university GPU) rather than the
 project's usual Apple Silicon/MPS machine, using the exact commands below.
