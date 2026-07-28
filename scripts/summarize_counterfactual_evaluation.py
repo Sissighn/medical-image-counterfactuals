@@ -164,9 +164,10 @@ def write_markdown(rows, output_path):
             "- Validity only checks whether the model prediction changed to the target class.",
             "- Mean change is method-dependent and should be interpreted together with the qualitative images.",
             "- Medical plausibility must be discussed separately from model validity.",
-            "- DVCE rows should use the original-code-nearer pred_xstart guidance core without Cone Projection unless explicitly stated otherwise.",
-            "- For DVCE rows, Mean change prioritizes the existing project metric and falls back to original-style L1 norm only when needed.",
-            "- CFProto follows `alibi.explainers.cfproto.CounterfactualProto` faithfully (FISTA with shrinkage-thresholding, untargeted hinge attack loss, binary c-search, encoder-space class prototypes); see `results/final_configs/cfproto_encoder_method_documentation.md` for the full Soll-Ist comparison. Not reproduced: the original TensorFlow graph itself (reimplemented in PyTorch), black-box/numerical-gradient mode, categorical variables and k-d-tree prototypes, and TrustScore filtering (disabled by default in alibi too).",
+            "- DVCE uses the implementation closest to the original code, with `pred_xstart` guidance. Cone Projection with a robust PGD ResNet18 as the second classifier is the original-faithful variant for the non-robust explained ResNet18; rows without Cone Projection are explicit ablations. See `results/final_configs/dvce_method_documentation.md`.",
+            "- The two DVCE OpenAI-checkpoint runtimes reflect a CPU-bound machine and are not comparable with the other rows; the fine-tuned-checkpoint runtimes are more representative.",
+            "- For DVCE rows, mean change is the changed-pixel fraction at threshold 0.05, consistent with the SEDC-T and Goyal rows.",
+            "- CFProto follows `alibi.explainers.cfproto.CounterfactualProto` faithfully (FISTA with shrinkage-thresholding, untargeted hinge attack loss, binary search over `c`, and encoder-space class prototypes). See `results/final_configs/cfproto_encoder_method_documentation.md` for the full implementation-to-reference comparison. The original TensorFlow graph, black-box numerical-gradient mode, categorical variables, k-d-tree prototypes, and TrustScore filtering are not reproduced; TrustScore filtering is disabled by default in Alibi.",
         ]
     )
 
