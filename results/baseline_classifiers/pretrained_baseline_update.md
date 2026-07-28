@@ -61,13 +61,17 @@ For BUSI, the weighted F1 score increased from 0.7043 in the original baseline t
 
 For Pneumonia, the weighted F1 score increased from 0.7679 in the original baseline to 0.8732 with pretrained weights. This passes the target range of 0.85+. The main remaining issue is that some NORMAL images are still classified as PNEUMONIA, but the number of these false positives decreased clearly.
 
-## Next Step
+## Role in the Project
 
-The pretrained models are now the best available baselines and should be used for the next project phase:
+The pretrained models were selected as the classifiers for the fixed-manifest
+counterfactual evaluation. The subsequent pipeline:
 
 ```text
-1. Start with prototype-guided / prototype-based counterfactual baselines.
-2. Use the pretrained BUSI and Pneumonia checkpoints.
-3. Generate first counterfactual examples.
-4. Save original image, counterfactual image, original prediction, new prediction, and runtime.
+1. uses the pretrained BUSI and Pneumonia checkpoints;
+2. applies all counterfactual methods to fixed samples and target classes; and
+3. records the original prediction, counterfactual prediction, change metrics,
+   and runtime for each sample.
 ```
+
+The final cross-method results are documented in
+[`../docs/method_comparison_and_results.md`](../docs/method_comparison_and_results.md).
