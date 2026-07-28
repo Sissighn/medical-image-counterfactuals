@@ -963,7 +963,11 @@ def main():
 
     metadata_path = output_dir / "metadata.json"
     with open(metadata_path, "w") as f:
-        json.dump(metadata, f, indent=4)
+        # Search histories can contain thousands of entries. Compact JSON keeps
+        # the complete trace without inflating final metadata files with
+        # indentation whitespace.
+        json.dump(metadata, f, separators=(",", ":"))
+        f.write("\n")
 
     valid_count = sum(record["valid_counterfactual"] for record in records)
     print(f"Saved {len(records)} SEDC-T attempts to {output_dir}")
