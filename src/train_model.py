@@ -28,8 +28,8 @@ def create_model(num_classes, pretrained=False, download_timeout=30):
         try:
             weights = ResNet18_Weights.DEFAULT
         except Exception as error:
-            print(f"Pretrained weights konnten nicht vorbereitet werden: {error}")
-            print("Training wird mit zufälliger Initialisierung fortgesetzt.")
+            print(f"Could not prepare pretrained weights: {error}")
+            print("Continuing training with random initialization.")
 
     previous_timeout = socket.getdefaulttimeout()
     socket.setdefaulttimeout(download_timeout)
@@ -37,8 +37,8 @@ def create_model(num_classes, pretrained=False, download_timeout=30):
         try:
             model = models.resnet18(weights=weights)
         except Exception as error:
-            print(f"Pretrained weights konnten nicht geladen werden: {error}")
-            print("Training wird mit zufälliger Initialisierung fortgesetzt.")
+            print(f"Could not load pretrained weights: {error}")
+            print("Continuing training with random initialization.")
             model = models.resnet18(weights=None)
     finally:
         socket.setdefaulttimeout(previous_timeout)
