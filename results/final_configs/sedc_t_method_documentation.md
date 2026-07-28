@@ -70,7 +70,7 @@ classifier are the intended project-specific substitutions.
 
 ---
 
-## 3. Soll-Ist comparison with the original
+## 3. Implementation-to-Reference Comparison
 
 | Aspect | Original (`sedc_t2_fast.py`) | This implementation | Status |
 |---|---|---|---|
