@@ -8,7 +8,7 @@ def test_dataset(name, path):
 
     data = create_dataloaders(path)
 
-    print("Klassen:")
+    print("Classes:")
     print(data["classes"])
     print()
 
@@ -16,13 +16,13 @@ def test_dataset(name, path):
     print(data["class_to_idx"])
     print()
 
-    print("Anzahl Klassen:")
+    print("Number of classes:")
     print(data["num_classes"])
     print()
 
     images, labels = next(iter(data["train_loader"]))
 
-    print("Batch erfolgreich geladen.")
+    print("Batch loaded successfully.")
     print("Images shape:", images.shape)
     print("Labels shape:", labels.shape)
     print()
