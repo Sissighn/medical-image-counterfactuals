@@ -77,7 +77,7 @@ def main():
         print(f"  test:  {len(test_files)}")
         print()
 
-    print("BUSI wurde sauber vorbereitet.")
+    print("BUSI dataset prepared successfully.")
 
 
 if __name__ == "__main__":
