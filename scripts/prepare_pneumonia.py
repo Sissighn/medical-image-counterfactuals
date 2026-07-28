@@ -44,7 +44,7 @@ def main():
 
         print()
 
-    print("Pneumonia wurde sauber vorbereitet.")
+    print("Pneumonia dataset prepared successfully.")
 
 
 if __name__ == "__main__":
