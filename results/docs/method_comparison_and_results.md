@@ -1,243 +1,242 @@
-# Methodenvergleich & Ergebnisse
+# Method Comparison and Results
 
-Diese Datei ist die zentrale, handgepflegte Zusammenfassung des Methodenvergleichs
-für das Seminarprojekt: welche vier Counterfactual-Methoden verglichen werden,
-ihre quantitativen Ergebnisse, die Interpretation, sowie die Frage, welche
-Methoden-Varianten behalten bzw. ersetzt wurden und wie sie zu benennen sind.
+This document is the central, manually maintained summary of the seminar
+project. It defines the four counterfactual methods under comparison, reports
+their quantitative results, interprets the findings, and records which method
+variants were retained or superseded.
 
-Sie führt die früheren Einzeldateien `final_method_summary.md`,
-`method_comparison.md` und `method_variant_rationale.md` zusammen.
+It consolidates the former `final_method_summary.md`, `method_comparison.md`,
+and `method_variant_rationale.md` documents.
 
-**Verwandte Dokumente (nicht hier dupliziert):**
-- Kanonische, **automatisch generierte** Zahlentabelle:
-  [`fixed_evaluation_summary.md`](fixed_evaluation_summary.md) (aus den
-  `metadata.json` per `scripts/summarize_counterfactual_evaluation.py`).
-- Originaltreue-Audit je Methode:
-  [`method_fidelity_comparison.md`](method_fidelity_comparison.md).
-- Methoden-Detaildokus und Run-Kommandos: [`results/final_configs/`](../final_configs/).
+Related documentation:
 
-**Grundprinzip fürs Reporting:** „Validity" bedeutet ausschließlich, dass der
-Klassifikator die Zielklasse vorhersagt. Es impliziert **keine** medizinische
-Plausibilität, klinische Kausalität oder dass die hervorgehobene Bildänderung ein
-menschlich interpretierbarer Krankheitsmarker ist.
+- [Fixed evaluation summary](fixed_evaluation_summary.md): canonical,
+  automatically generated metrics table produced from the method
+  `metadata.json` files by
+  [`summarize_counterfactual_evaluation.py`](../../scripts/summarize_counterfactual_evaluation.py).
+- [Method fidelity comparison](method_fidelity_comparison.md): detailed audit
+  of each implementation against its reference method.
+- [Final configurations](../final_configs/): method documentation and
+  reproducible run commands.
 
----
+> **Reporting principle:** Validity means only that the classifier predicts the
+> requested target class. It does not establish medical plausibility, clinical
+> causality, or that a highlighted image change is a human-interpretable disease
+> marker.
 
-## 1. Verglichene Methoden
+## 1. Methods Compared
 
-Das Projekt vergleicht vier Counterfactual-Richtungen für die medizinische
-Bildklassifikation:
+The project compares four counterfactual approaches for medical image
+classification:
 
-1. **CFProto (original-style)** — optimierungsbasiert (prototyp-geführt)
-2. **Goyal et al. 2019 CVE** — instanzbasiert (Feature-Zell-Tausch)
-3. **SEDC-T** — regionenbasiert (Segment-Ersatz)
-4. **DVCE (original-style)** — generativ (diffusionsgeführt)
+1. **CFProto (original-style):** optimization-based and prototype-guided.
+2. **Goyal et al. (2019) CVE:** instance-based feature-cell replacement.
+3. **SEDC-T:** region-based segment replacement.
+4. **DVCE (original-style):** generative, diffusion-guided counterfactuals.
 
-Alle Methoden laufen auf denselben festen Evaluations-Manifesten (BUSI 15,
-Pneumonia 20), also identischen Samples und Zielklassen. DVCE ist pro Sample
-teurer (Diffusions-Sampling), wird aber ebenfalls auf den vollen Manifesten mit
-dem original-code-näheren Kern ausgeführt; die originaltreue Variante für das
-nicht-robuste ResNet-18 ist die Cone-Projektion.
+All methods use the same fixed evaluation manifests: 15 BUSI samples and 20
+Pneumonia samples, with identical inputs and target classes across methods.
+DVCE is more expensive per sample because it requires diffusion sampling, but
+it is also evaluated on the complete manifests using the implementation closest
+to the original code. For the non-robust ResNet18, Cone Projection is the
+original-faithful DVCE variant.
 
-## 2. Baseline-Klassifikatoren
+## 2. Baseline Classifiers
 
-| Datensatz | Klassen | Modell | Accuracy | Weighted F1 |
+| Dataset | Classes | Model | Accuracy | Weighted F1 |
 | --- | --- | --- | ---: | ---: |
-| BUSI | benign, malignant, normal | ResNet18 pretrained | 0.8390 | 0.8365 |
-| Pneumonia | NORMAL, PNEUMONIA | ResNet18 pretrained | 0.8782 | 0.8732 |
+| BUSI | benign, malignant, normal | Pretrained ResNet18 | 0.8390 | 0.8365 |
+| Pneumonia | NORMAL, PNEUMONIA | Pretrained ResNet18 | 0.8782 | 0.8732 |
 
----
+## 3. Method 1: CFProto
 
-## 3. Methode 1 — CFProto (original-style prototyp-geführte Optimierung)
+The original-style CFProto implementation optimizes the image in pixel space
+and closely follows Alibi's `CounterfactualProto`:
 
-Optimiert das Bild im Pixelraum. Folgt Alibis `CounterfactualProto` originalgetreu:
+- FISTA optimization with shrinkage-thresholding and Nesterov momentum;
+- a hinge attack loss that suppresses the original class relative to the
+  strongest alternative class;
+- the sum-based objective
+  `c·L_attack + L2 + beta·L1 + gamma·L_AE + theta·L_proto`;
+- binary search over the attack constant `c`, including tenfold escalation;
+- encoder-space class prototypes derived from the classifier's own predictions
+  on the training split using the mean of the k nearest neighbors; and
+- Elastic Net distance (`L2 + beta·L1`) to select the best counterfactual.
 
-- FISTA-Optimierung mit Shrinkage-Thresholding und Nesterov-Momentum,
-- Hinge-Attack-Loss, der die Originalklasse unter die beste andere Klasse drückt,
-- summenbasierte Loss `c·L_attack + L2 + beta·L1 + gamma·L_AE + theta·L_proto`,
-- binäre Suche über die Attack-Konstante `c` (×10-Eskalation),
-- Encoder-Raum-Klassenprototypen aus den eigenen Vorhersagen des Klassifikators
-  auf dem Trainingssplit (kNN-Mittel),
-- Elastic-Net-Auswahl (`L2 + beta·L1`) des besten Counterfactuals.
+The intentional differences are the framework (PyTorch instead of the original
+TensorFlow 1.x graph) and dataset-/autoencoder-specific recalibration of
+`gamma` and `theta`. Because all objective terms are sums, their raw magnitude
+depends on the input and latent dimensions; the original MNIST example values
+do not transfer directly. The implementation does not reproduce the TensorFlow
+graph itself, black-box numerical gradients, categorical variables, k-d-tree
+prototypes, or TrustScore filtering, which is disabled by default in Alibi.
+See the complete
+[implementation-to-reference comparison](../final_configs/cfproto_encoder_method_documentation.md).
 
-**Bewusste Abweichungen:** nur das Framework (PyTorch statt TensorFlow-1.x-Graph)
-und die pro Datensatz/Autoencoder rekalibrierten `gamma`/`theta`-Gewichte — da
-alle Loss-Terme Summen sind, hängt ihre Rohgröße von der Eingabe- und
-Latent-Dimension ab, weshalb die MNIST-Beispielwerte des Originals nicht
-übertragbar sind. **Nicht reproduziert:** der TensorFlow-Graph selbst, der
-Black-Box-Modus mit numerischen Gradienten, kategoriale Variablen/k-d-Baum-
-Prototypen und der TrustScore-Filter (in Alibi per Default ohnehin deaktiviert).
-Vollständiger Soll-Ist-Abgleich:
-[`cfproto_encoder_method_documentation.md`](../final_configs/cfproto_encoder_method_documentation.md).
-
-| Datensatz | Samples | Validity | Ø CF-Confidence | Ø geänderter Pixelanteil | Ø Laufzeit |
+| Dataset | Samples | Validity | Mean CF confidence | Mean changed-pixel fraction | Mean runtime |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | BUSI | 15 | 0.87 | 0.6815 | 0.0529 | 46.10 s |
 | Pneumonia | 20 | 1.00 | 0.5740 | 0.0180 | 46.34 s |
 
-**Interpretation:** Die zwei BUSI-Fehlschläge (von 15) sind eine erwartete Folge
-des Hinge-Attack-Loss: Die Optimierung fand einen sicheren Wechsel *weg* von der
-Originalklasse, der aber nicht auf der im Manifest fixierten Zielklasse landete
-(BUSI mit `theta=0.5`: 0.87; Pneumonia mit `theta=0.05`: 1.00). Diese
-Konfiguration ersetzte die früheren Feature-Map-, Bottleneck-1024- und
-ResNet-/Klassenmittel-Prototyp-Experimente, die nicht mehr als eigene
-Vergleichszeilen geführt werden.
+**Interpretation.** The two BUSI failures out of 15 are an expected consequence
+of the untargeted hinge attack loss: optimization found a confident transition
+away from the original class, but not into the target class fixed by the
+manifest. BUSI uses `theta=0.5` and reaches 0.87 validity; Pneumonia uses
+`theta=0.05` and reaches 1.00. This configuration supersedes the earlier
+feature-map, bottleneck-1024, and ResNet/class-mean prototype experiments, which
+are no longer reported as separate comparison rows.
 
-## 4. Methode 2 — Goyal et al. 2019 Counterfactual Visual Explanations
+## 4. Method 2: Goyal et al. (2019) Counterfactual Visual Explanations
 
-Instanzbasierter Feature-Raum-Edit nach Goyal et al. (ICML 2019,
-arXiv:1904.07451). Das ResNet-18 wird in einen räumlichen Extraktor (`layer4`,
-7×7×512 Zellen) und einen Entscheidungskopf (GAP + FC) zerlegt. Ein
-Distraktor-Bild der Zielklasse wird als der nächste korrekt klassifizierte
-Trainings-Nachbar im gepoolten Feature-Raum abgerufen; danach werden räumliche
-Zellen der Query-Feature-Map greedy gegen Distraktor-Zellen getauscht (jede Zelle
-höchstens einmal), bis die Vorhersage zur Zielklasse kippt. Referenzimplementierung
-ist die Goyal-Baseline im Meta-Repo `facebookresearch/visual-counterfactuals`.
+This is an instance-based feature-space editing method based on Goyal et al.
+(ICML 2019, arXiv:1904.07451). ResNet18 is divided into a spatial extractor
+(`layer4`, with 7×7×512 cells) and a decision head (global average pooling and a
+fully connected layer). The method retrieves the nearest correctly classified
+training image from the target class in pooled feature space. It then greedily
+replaces spatial cells in the query feature map with distractor cells, using
+each cell at most once, until the prediction changes to the target class. The
+reference implementation is the Goyal baseline in
+[`facebookresearch/visual-counterfactuals`](https://github.com/facebookresearch/visual-counterfactuals).
 
-| Datensatz | Samples | Validity | Ø CF-Confidence | Ø Edits (von 49) | Ø geänderter Pixelanteil | Ø Laufzeit |
+| Dataset | Samples | Validity | Mean CF confidence | Mean edits (of 49) | Mean changed-pixel fraction | Mean runtime |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | BUSI | 15 | 1.00 | 0.5279 | 14.0 | 0.2596 | 0.25 s |
 | Pneumonia | 20 | 1.00 | 0.5231 | 16.15 | 0.3072 | 0.17 s |
 
-**Interpretation:** Validity ist per Konstruktion 1.00 — mit dem vollen
-49-Zellen-Budget konvergiert die gepoolte Feature zur der des Distraktors, sodass
-die Vorhersage garantiert kippt. Die aussagekräftige Kenngröße ist daher die
-**Anzahl editierter Zellen** (Sparsity: Ø 14.0 auf BUSI, 16.15 auf Pneumonia von
-49). Die Ø CF-Confidence liegt nahe 0.5, weil die Greedy-Suche beim ersten Flip
-stoppt (Sparsity vor Margin). Die Edits sind in einem realen Distraktor-Bild der
-Zielklasse verankert und auf ein grobes 7×7-Gitter lokalisiert. Diese Methode
-ersetzte die frühere reine Retrieval-NUN-Baseline, die nur den nächsten
-Nachbarn abrief, ohne das Query zu editieren, und nicht auf einer publizierten
-Originalmethode beruhte. Siehe
-[`goyal_cve_method_documentation.md`](../final_configs/goyal_cve_method_documentation.md).
+**Interpretation.** Validity is 1.00 by construction: with the full 49-cell
+budget, the pooled representation converges to that of the distractor, which
+guarantees a prediction change. The informative measure is therefore the
+number of edited cells: a mean of 14.0 for BUSI and 16.15 for Pneumonia, out of
+49. Mean counterfactual confidence remains close to 0.5 because the greedy
+search stops at the first class change, prioritizing sparsity over margin. The
+edits are grounded in a real target-class image and localized to a coarse 7×7
+grid. This method supersedes the earlier retrieval-only nearest-unlike-neighbor
+baseline, which returned a neighbor without editing the query and was not based
+on a published counterfactual method. See the
+[method documentation](../final_configs/goyal_cve_method_documentation.md).
 
-## 5. Methode 3 — SEDC-T-artiger Segment-Ersatz
+## 5. Method 3: SEDC-T-Style Segment Replacement
 
-SEDC-T verändert Bildsegmente und fragt den Klassifikator auf einen
-Zielklassen-Flip ab. Der original-style Best-First-Lauf ist die
-Methodentreue-Referenz. Behalten werden **zwei Zustände**, weil sie
-unterschiedliche Fragen beantworten:
+SEDC-T modifies image segments and queries the classifier for a target-class
+change. The original-style best-first run is the method-fidelity reference. Two
+variants are retained because they answer different questions:
 
-- **original-style Best-First:** näher am referenzierten SEDC-T-Suchmechanismus,
-- **Pneumonia Lung-Field-ROI-Ablation:** derselbe Best-First-/Quickshift-/
-  Gauß-Blur-Mechanismus, aber die Kandidatensegmente sind auf eine einfache
-  geometrische Lungenfeld-Maske beschränkt.
+- **Original-style best-first:** follows the referenced SEDC-T search
+  mechanism.
+- **Pneumonia lung-field ROI ablation:** uses the same best-first search,
+  Quickshift segmentation, and Gaussian-blur replacement, but restricts
+  candidate segments to a simple geometric lung-field mask.
 
-| Variante | Datensatz | Samples | Validity | Ø CF-Confidence | Ø geänderter Pixelanteil | Ø Laufzeit |
+| Variant | Dataset | Samples | Validity | Mean CF confidence | Mean changed-pixel fraction | Mean runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Original-style Best-First | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 6.71 s |
-| Original-style Best-First | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 | 13.92 s |
-| Lung-Field-ROI-Ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 | 15.23 s |
+| Original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 6.71 s |
+| Original-style best-first | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 | 13.92 s |
+| Lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 | 15.23 s |
 
-**Interpretation:** SEDC-T liefert lokalisierte Änderungen auf Segmentebene und
-ist visuell oft gut diskutierbar. Die Validity ist niedriger, besonders auf
-Pneumonia, wo diffuse Modell-Hinweise den Segment-Ersatz erschweren. Der
-original-style Best-First-Lauf ist als Methodentreue-Referenz zu verwenden; das
-ROI-Ergebnis ist **ausdrücklich als projektspezifische Pneumonia-Ablation** zu
-beschreiben — nicht als Teil des Original-SEDC-T und nicht als medizinische
-Lungensegmentierung. Siehe
-[`sedc_t_method_documentation.md`](../final_configs/sedc_t_method_documentation.md).
+**Interpretation.** SEDC-T produces localized, segment-level changes that are
+often straightforward to discuss visually. Validity is lower, particularly for
+Pneumonia, where diffuse model evidence makes segment replacement more
+difficult. The original-style best-first run should be used as the
+method-fidelity reference. The ROI result must be described explicitly as a
+project-specific Pneumonia ablation, not as part of the original SEDC-T method
+or as a medical lung segmentation. See the
+[method documentation](../final_configs/sedc_t_method_documentation.md).
 
-## 6. Methode 4 — DVCE diffusionsgeführte Generierung
+## 6. Method 4: DVCE Diffusion-Guided Generation
 
-DVCE deckt die generative Richtung ab und nutzt den original-code-näheren Kern
-([`src/dvce_core.py`](../../src/dvce_core.py)):
+DVCE represents the generative approach and uses the implementation closest to
+the original code in [`src/dvce_core.py`](../../src/dvce_core.py):
 
-- `gen_type=p_sample`,
-- `timestep_respacing=200`, `skip_timesteps=100`,
-- `classifier_lambda=0.1`, `lp_custom=1.0`, `lp_custom_value=0.15`,
-- `enforce_same_norms=True`, `clip_denoised=False`,
-- Cone-Projektion via `--second_model_path` (PGD-robustes ResNet-18) und
-  `--deg_cone_projection 30`, `--aug_num 16`.
+- `gen_type=p_sample`;
+- `timestep_respacing=200` and `skip_timesteps=100`;
+- `classifier_lambda=0.1`, `lp_custom=1.0`, and `lp_custom_value=0.15`;
+- `enforce_same_norms=True` and `clip_denoised=False`; and
+- Cone Projection through `--second_model_path` with a PGD-robust ResNet18,
+  `--deg_cone_projection 30`, and `--aug_num 16`.
 
-**Zwei Achsen:** (a) Guidance-Zustand — **Cone-Projektion** ist die
-originaltreue Variante für das nicht-robuste erklärte ResNet-18 (das Original
-erklärt nicht-robuste Modelle nur via Cone-Projektion); **ohne Cone-Projektion**
-ist nur als ausgewiesene **Ablation** behalten (original ohne Cone ist für robuste
-Klassifikatoren definiert). (b) Diffusions-Checkpoint — **OpenAI** 256×256
-unkonditional (Original-Backbone), **Pneumonia-** und **BUSI-feingetunte**
-medizinische EMA-Checkpoints.
+The evaluation varies two independent factors:
 
-| Variante | Checkpoint | Datensatz | n | Validity | Ø CF-Conf. | Ø abs. Diff | Geänderte Px (>0.05) |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Cone (originaltreu) | OpenAI | BUSI | 15 | 0.93 | 0.944 | 0.024 | 0.116 |
-| Cone (originaltreu) | OpenAI | Pneumonia | 20 | 0.80 | 0.837 | 0.017 | 0.051 |
-| Cone | BUSI feingetunt | BUSI | 15 | 1.00 | 0.998 | 0.028 | 0.156 |
-| Cone | Pneumonia feingetunt | Pneumonia | 20 | 1.00 | 0.980 | 0.019 | 0.067 |
-| No-Cone (Ablation) | BUSI feingetunt | BUSI | 15 | 1.00 | 0.998 | 0.026 | 0.136 |
-| No-Cone (Ablation) | Pneumonia feingetunt | Pneumonia | 20 | 1.00 | 0.995 | 0.017 | 0.052 |
-| No-Cone (Ablation) | OpenAI | Pneumonia | 20 | 1.00 | 0.997 | 0.018 | 0.060 |
+1. **Guidance:** Cone Projection is the original-faithful variant for the
+   non-robust ResNet18 under explanation. The no-cone configuration is retained
+   only as an explicit ablation; in the original work, no-cone guidance is
+   defined for robust classifiers.
+2. **Diffusion checkpoint:** the original OpenAI unconditional 256×256 backbone
+   and medical EMA checkpoints fine-tuned separately on Pneumonia and BUSI.
 
-**Interpretation:** Der Kern entspricht dem originalen `dff_attack.py`:
-`p_sample`, Klassifikator- und Distanz-Guidance auf `pred_xstart` (ungeclamptes
-`_map_img`), eps-Norm-Rebalancing bei `enforce_same_norms=True` und
-Cone-Projektion, die den Gradienten des robusten PGD-Klassifikators auf den Kegel
-um den Gradienten des erklärten Klassifikators projiziert. Die feingetunten
-Checkpoints erreichen volle Validity (1.00); der generische OpenAI-Checkpoint ist
-niedriger (0.93 BUSI, 0.80 Pneumonia), was erwartbar ist, da er auf natürlichen
-Bildern statt medizinischen Scans trainiert wurde. **Laufzeithinweis:** Die
-OpenAI-Laufzeiten (700–1173 s) spiegeln eine CPU-gebundene Maschine wider und sind
-nicht maschinenübergreifend vergleichbar; die feingetunten Läufe (~33–45 s) sind
-repräsentativ. Siehe
-[`dvce_method_documentation.md`](../final_configs/dvce_method_documentation.md)
-und [`dvce_cone_projection.md`](../final_configs/dvce_cone_projection.md).
+| Variant | Checkpoint | Dataset | n | Validity | Mean CF confidence | Mean absolute difference | Changed pixels (>0.05) |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Cone (original-faithful) | OpenAI | BUSI | 15 | 0.93 | 0.944 | 0.024 | 0.116 |
+| Cone (original-faithful) | OpenAI | Pneumonia | 20 | 0.80 | 0.837 | 0.017 | 0.051 |
+| Cone | BUSI fine-tuned | BUSI | 15 | 1.00 | 0.998 | 0.028 | 0.156 |
+| Cone | Pneumonia fine-tuned | Pneumonia | 20 | 1.00 | 0.980 | 0.019 | 0.067 |
+| No cone (ablation) | BUSI fine-tuned | BUSI | 15 | 1.00 | 0.998 | 0.026 | 0.136 |
+| No cone (ablation) | Pneumonia fine-tuned | Pneumonia | 20 | 1.00 | 0.995 | 0.017 | 0.052 |
+| No cone (ablation) | OpenAI | Pneumonia | 20 | 1.00 | 0.997 | 0.018 | 0.060 |
 
----
+**Interpretation.** The core follows the original `dff_attack.py`: `p_sample`,
+classifier and distance guidance on `pred_xstart`, an unclamped `_map_img`,
+epsilon-norm rebalancing when `enforce_same_norms=True`, and Cone Projection
+that projects the robust PGD classifier's gradient onto a cone around the
+explained classifier's gradient. The fine-tuned checkpoints achieve full
+validity, while the generic OpenAI checkpoint reaches 0.93 on BUSI and 0.80 on
+Pneumonia. This difference is expected because the generic checkpoint was
+trained on natural images rather than medical scans. The OpenAI runtimes of
+700–1,173 seconds reflect a CPU-bound machine and are not comparable across
+hardware; the fine-tuned runs of approximately 33–45 seconds are more
+representative. See the [DVCE method documentation](../final_configs/dvce_method_documentation.md)
+and [Cone Projection notes](../final_configs/dvce_cone_projection.md).
 
-## 7. Zusammenfassende Vergleichstabelle
+## 7. Summary Comparison
 
-| Methode | Datensatz | Samples | Validity | Ø CF-Confidence | Ø Änderung | Ø Laufzeit |
+| Method | Dataset | Samples | Validity | Mean CF confidence | Mean change | Mean runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| CFProto (original-style) | BUSI | 15 | 0.87 | 0.6815 | 0.0529 Pixelanteil | 46.10 s |
-| CFProto (original-style) | Pneumonia | 20 | 1.00 | 0.5740 | 0.0180 Pixelanteil | 46.34 s |
-| Goyal et al. 2019 CVE | BUSI | 15 | 1.00 | 0.5279 | 0.2596 Pixelanteil, 14.0 Edits | 0.25 s |
-| Goyal et al. 2019 CVE | Pneumonia | 20 | 1.00 | 0.5231 | 0.3072 Pixelanteil, 16.15 Edits | 0.17 s |
-| SEDC-T original-style Best-First | BUSI | 15 | 0.80 | 0.6343 | 0.2640 Pixelanteil | 6.71 s |
-| SEDC-T original-style Best-First | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 Pixelanteil | 13.92 s |
-| SEDC-T Lung-Field-ROI-Ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 Pixelanteil | 15.23 s |
-| DVCE Cone (OpenAI, originaltreu) | BUSI | 15 | 0.93 | 0.944 | 0.116 Pixelanteil | 1173.4 s |
-| DVCE Cone (OpenAI, originaltreu) | Pneumonia | 20 | 0.80 | 0.837 | 0.051 Pixelanteil | 700.2 s |
-| DVCE Cone (feingetunt) | BUSI | 15 | 1.00 | 0.998 | 0.156 Pixelanteil | 44.6 s |
-| DVCE Cone (feingetunt) | Pneumonia | 20 | 1.00 | 0.980 | 0.067 Pixelanteil | 44.9 s |
+| CFProto (original-style) | BUSI | 15 | 0.87 | 0.6815 | 0.0529 pixel fraction | 46.10 s |
+| CFProto (original-style) | Pneumonia | 20 | 1.00 | 0.5740 | 0.0180 pixel fraction | 46.34 s |
+| Goyal et al. (2019) CVE | BUSI | 15 | 1.00 | 0.5279 | 0.2596 pixel fraction, 14.0 edits | 0.25 s |
+| Goyal et al. (2019) CVE | Pneumonia | 20 | 1.00 | 0.5231 | 0.3072 pixel fraction, 16.15 edits | 0.17 s |
+| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 pixel fraction | 6.71 s |
+| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 pixel fraction | 13.92 s |
+| SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 pixel fraction | 15.23 s |
+| DVCE Cone (OpenAI, original-faithful) | BUSI | 15 | 0.93 | 0.944 | 0.116 pixel fraction | 1,173.4 s |
+| DVCE Cone (OpenAI, original-faithful) | Pneumonia | 20 | 0.80 | 0.837 | 0.051 pixel fraction | 700.2 s |
+| DVCE Cone (fine-tuned) | BUSI | 15 | 1.00 | 0.998 | 0.156 pixel fraction | 44.6 s |
+| DVCE Cone (fine-tuned) | Pneumonia | 20 | 1.00 | 0.980 | 0.067 pixel fraction | 44.9 s |
 
-Die vollständige, automatisch generierte Tabelle (inkl. aller No-Cone-Zeilen und
-Metadata-Pfade) steht in
-[`fixed_evaluation_summary.md`](fixed_evaluation_summary.md).
+The complete automatically generated table, including every no-cone row and
+its metadata path, is available in the
+[fixed evaluation summary](fixed_evaluation_summary.md).
 
----
+## 8. Retained and Superseded Variants
 
-## 8. Behaltene vs. ersetzte Varianten (Rationale)
-
-| Methodenfamilie | Behaltene Rolle | Anmerkungen |
+| Method family | Retained role | Notes |
 | --- | --- | --- |
-| CFProto (original-style) | Finale prototyp-geführte Methode | FISTA + Shrinkage-Thresholding, Hinge-Attack-Loss, Encoder-Raum-Prototypen, binäre c-Suche, Elastic-Net-Auswahl. Ersetzt Feature-Map-, Bottleneck-1024- und Klassenmittel-Experimente |
-| Goyal et al. 2019 CVE | Instanzbasierter Feature-Raum-Edit | Greedy-Zell-Swaps von einem Nearest-Unlike-Distraktor; ersetzt die frühere reine Retrieval-NUN-Baseline |
-| SEDC-T | Regionenbasierte/lokalisierte CFs | Original-style Best-First + Pneumonia Lung-Field-ROI-Ablation |
-| DVCE | Generative diffusionsgeführte CFs | Cone-Projektion (originaltreu für nicht-robustes ResNet-18) + No-Cone-Ablation; Checkpoints OpenAI, Pneumonia-medizinisch, BUSI-medizinisch |
+| CFProto (original-style) | Final prototype-guided method | FISTA with shrinkage-thresholding, hinge attack loss, encoder-space prototypes, binary search over `c`, and Elastic Net selection. Supersedes feature-map, bottleneck-1024, and class-mean experiments. |
+| Goyal et al. (2019) CVE | Instance-based feature-space editing | Greedy cell swaps from a nearest-unlike distractor. Supersedes the earlier retrieval-only NUN baseline. |
+| SEDC-T | Region-based, localized counterfactuals | Original-style best-first search plus the Pneumonia lung-field ROI ablation. |
+| DVCE | Generative, diffusion-guided counterfactuals | Cone Projection, which is original-faithful for a non-robust ResNet18, plus a no-cone ablation; evaluated with OpenAI, Pneumonia, and BUSI checkpoints. |
 
-## 9. Empfohlene Benennung (für Arbeit/Vortrag)
+## 9. Recommended Terminology
 
-- CFProto: „CFProto original-style prototyp-geführte Counterfactuals".
-- Goyal: „Goyal et al. 2019 Counterfactual Visual Explanations".
-- SEDC-T: original-style Best-First als Treue-Referenz; ROI stets als
-  „projektspezifische Pneumonia-Ablation" kennzeichnen.
-- DVCE: Cone-Projektion als originaltreue Hauptvariante; „ohne Cone-Projektion"
-  stets als **Ablation** kennzeichnen; Checkpoint-Achse getrennt nennen.
+- **CFProto:** “CFProto original-style prototype-guided counterfactuals.”
+- **Goyal:** “Goyal et al. (2019) Counterfactual Visual Explanations.”
+- **SEDC-T:** use “original-style best-first” for the fidelity reference and
+  label the ROI result as a “project-specific Pneumonia ablation.”
+- **DVCE:** use Cone Projection as the primary original-faithful variant, label
+  every no-cone result as an **ablation**, and state the checkpoint separately.
 
----
+## 10. Main Finding
 
-## 10. Haupterkenntnis
+The methods expose different trade-offs:
 
-Die Methoden legen unterschiedliche Trade-offs offen:
+- **CFProto** produces compact counterfactuals and is usually model-valid, with
+  small, plausibility-regularized changes.
+- **Goyal et al. CVE** produces sparse, localized edits grounded in real
+  target-class images. Validity is guaranteed by construction, and confidence
+  remains close to the decision boundary.
+- **SEDC-T** is localized but less consistently valid.
+- **DVCE** is generative and reaches full validity with the medically
+  fine-tuned checkpoints, while the generic OpenAI checkpoint reaches
+  0.80–0.93.
 
-- **CFProto** ist kompakt und meist modell-valide (kleine, plausibilitäts-
-  regularisierte Änderung).
-- **Goyal et al. CVE** liefert dünne, lokalisierte Edits, verankert in realen
-  Bildern der Zielklasse (Validity per Konstruktion garantiert, Confidence nahe
-  der Entscheidungsgrenze).
-- **SEDC-T** ist lokalisierter, aber weniger konsistent valide.
-- **DVCE** ist generativ und erreicht mit den medizinisch feingetunten Checkpoints
-  volle Validity, mit dem generischen OpenAI-Checkpoint niedriger (0.80–0.93).
-
-Modell-Validity darf nicht mit medizinischer Plausibilität gleichgesetzt werden —
-diese ist stets getrennt zu diskutieren.
+Model validity must not be conflated with medical plausibility; the latter
+requires separate evaluation.
