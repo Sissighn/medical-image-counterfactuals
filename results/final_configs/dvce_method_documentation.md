@@ -118,7 +118,7 @@ applies ImageNet normalization, and does **not** clamp its input.
 
 ---
 
-## 3. Soll-Ist comparison with the original
+## 3. Implementation-to-Reference Comparison
 
 | Aspect | Original (`dff_attack.py`) | This implementation | Status |
 |---|---|---|---|
