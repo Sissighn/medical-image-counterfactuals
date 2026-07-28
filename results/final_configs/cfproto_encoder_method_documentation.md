@@ -81,7 +81,7 @@ project-specific substitutions.
 
 ---
 
-## 3. Soll-Ist comparison with the original
+## 3. Implementation-to-Reference Comparison
 
 | Aspect | Original (alibi `CounterfactualProto`) | This implementation | Status |
 |---|---|---|---|
