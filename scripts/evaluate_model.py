@@ -75,9 +75,9 @@ def main():
     class_to_idx = checkpoint["class_to_idx"]
 
     print("Modellinformationen:")
-    print(f"  Klassen: {classes}")
+    print(f"  Classes: {classes}")
     print(f"  Class-to-index: {class_to_idx}")
-    print(f"  Anzahl Klassen: {num_classes}")
+    print(f"  Number of classes: {num_classes}")
     print()
 
     model = create_model(num_classes)
