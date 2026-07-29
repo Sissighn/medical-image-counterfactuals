@@ -1,118 +1,80 @@
 # Counterfactual Explanations for Medical Image Classification
 
 This repository contains the implementation and evaluation artifacts for a
-seminar project comparing counterfactual explanation methods for medical image
-classifiers.
+seminar project on counterfactual explanations for medical images. It covers
+two classification tasks:
 
-The study uses two image-classification tasks:
+- BUSI breast ultrasound with the classes `benign`, `malignant`, and `normal`
+- Chest X-ray pneumonia classification with `NORMAL` and `PNEUMONIA`
 
-- **BUSI breast ultrasound:** `benign`, `malignant`, and `normal`
-- **Chest X-ray pneumonia:** `NORMAL` and `PNEUMONIA`
+The project compares CFProto, Counterfactual Visual Explanations by Goyal et
+al. (2019), SEDC-T, and DVCE. Every method uses the same fixed set of correctly
+classified test images and the same target classes.
 
-The end-to-end workflow is:
+A counterfactual is valid when the classifier predicts the requested target
+class after the change. Model validity does not establish medical plausibility
+or clinical relevance.
 
-```text
-prepare data → train classifiers → create fixed manifests
-             → generate counterfactuals → compare and interpret results
-```
-
-> **Scope:** A valid counterfactual is one that makes the classifier predict
-> the requested target class. Model validity does not establish medical
-> plausibility, clinical causality, or diagnostic relevance.
-
-## Results at a Glance
+## Main Results
 
 ### Baseline Classifiers
 
 | Dataset | Model | Accuracy | Weighted F1 |
 | --- | --- | ---: | ---: |
-| BUSI | Pretrained ResNet18 | 0.8390 | 0.8365 |
-| Pneumonia | Pretrained ResNet18 | 0.8782 | 0.8732 |
+| BUSI | ImageNet-pretrained ResNet18 | 0.8390 | 0.8365 |
+| Pneumonia | ImageNet-pretrained ResNet18 | 0.8782 | 0.8732 |
 
 ### Fixed Counterfactual Evaluation
 
-| Method | Dataset | Samples | Validity | Mean CF confidence | Changed-pixel fraction | Mean runtime |
+| Method | Dataset | n | Validity | Mean CF confidence | Mean change fraction | Mean runtime |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| CFProto (original-style) | BUSI | 15 | 0.87 | 0.6815 | 0.0529 | 46.10 s |
-| CFProto (original-style) | Pneumonia | 20 | 1.00 | 0.5740 | 0.0180 | 46.34 s |
-| Goyal et al. (2019) CVE | BUSI | 15 | 1.00 | 0.5279 | 0.2596 | 0.25 s |
-| Goyal et al. (2019) CVE | Pneumonia | 20 | 1.00 | 0.5231 | 0.3072 | 0.17 s |
-| SEDC-T original-style best-first | BUSI | 15 | 0.80 | 0.6343 | 0.2640 | 6.71 s |
-| SEDC-T original-style best-first | Pneumonia | 20 | 0.55 | 0.6759 | 0.3270 | 13.92 s |
-| SEDC-T lung-field ROI ablation | Pneumonia | 20 | 0.50 | 0.7770 | 0.1745 | 15.23 s |
-| DVCE Cone, OpenAI checkpoint | BUSI | 15 | 0.93 | 0.944 | 0.116 | 1,173.4 s |
-| DVCE Cone, OpenAI checkpoint | Pneumonia | 20 | 0.80 | 0.837 | 0.051 | 700.2 s |
-| DVCE Cone, fine-tuned checkpoint | BUSI | 15 | 1.00 | 0.998 | 0.156 | 44.6 s |
-| DVCE Cone, fine-tuned checkpoint | Pneumonia | 20 | 1.00 | 0.980 | 0.067 | 44.9 s |
+| CFProto | BUSI | 15 | 0.8667 | 0.6815 | 0.0529 | 46.10 s |
+| CFProto | Pneumonia | 20 | 1.0000 | 0.5740 | 0.0180 | 46.34 s |
+| Goyal-CVE | BUSI | 15 | 1.0000 | 0.5279 | 0.2596 | 0.25 s |
+| Goyal-CVE | Pneumonia | 20 | 1.0000 | 0.5231 | 0.3072 | 0.17 s |
+| SEDC-T | BUSI | 15 | 0.8000 | 0.6343 | 0.2640 | 6.71 s |
+| SEDC-T | Pneumonia | 20 | 0.5500 | 0.6759 | 0.3270 | 13.92 s |
+| SEDC-T lung-field ROI | Pneumonia | 20 | 0.5000 | 0.7770 | 0.1745 | 15.23 s |
+| DVCE Cone, OpenAI checkpoint | BUSI | 15 | 0.9333 | 0.9439 | 0.1157 | 1173.45 s |
+| DVCE Cone, OpenAI checkpoint | Pneumonia | 20 | 0.8000 | 0.8369 | 0.0510 | 700.15 s |
+| DVCE Cone, medically fine-tuned | BUSI | 15 | 1.0000 | 0.9984 | 0.1565 | 44.62 s |
+| DVCE Cone, medically fine-tuned | Pneumonia | 20 | 1.0000 | 0.9800 | 0.0669 | 44.94 s |
 
-The OpenAI DVCE runs used MPS (BUSI) and CUDA (Pneumonia) without diffusion
-FP16, whereas the fine-tuned Cone runs used CUDA with diffusion FP16. Because
-device and precision conditions differ, these runtimes should not be compared
-directly.
+The change fraction is method-dependent. CFProto and Goyal-CVE report the
+pixel fraction above 0.03, DVCE reports the pixel fraction above 0.05, and
+SEDC-T reports the image area covered by the selected segment masks.
 
-For the complete evaluation, including ablations and interpretation, see the
-[method comparison and results](results/docs/method_comparison_and_results.md)
-and the automatically generated
-[fixed evaluation summary](results/docs/fixed_evaluation_summary.md).
+DVCE runtimes are meaningful only under comparable execution conditions. The
+OpenAI runs used MPS for BUSI and CUDA for Pneumonia without diffusion FP16.
+The medically fine-tuned Cone runs used CUDA with diffusion FP16.
 
-## Methods
+The complete table, including ablations, is available in
+[results/docs/fixed_evaluation_summary.md](results/docs/fixed_evaluation_summary.md).
 
-| Method | Approach | Role in this project |
-| --- | --- | --- |
-| CFProto | Prototype-guided pixel-space optimization | FISTA with shrinkage-thresholding, an untargeted hinge loss, encoder-space prototypes, and binary search over the attack constant |
-| Goyal et al. (2019) CVE | Instance-based feature-space editing | Greedy feature-cell swaps from a nearest-unlike target-class distractor |
-| SEDC-T | Region-based segment replacement | Original-style best-first search; the lung-field ROI variant is reported separately as an ablation |
-| DVCE | Diffusion-guided generation | Cone Projection with a robust PGD auxiliary classifier is the original-faithful configuration for the non-robust ResNet18 |
-
-The detailed [method fidelity audit](results/docs/method_fidelity_comparison.md)
-documents which components reproduce the original methods and which choices are
-project-specific.
-
-## Repository Structure
+## Repository Layout
 
 ```text
 .
-├── src/                         reusable model and data utilities
-├── scripts/                     data, training, generation, and evaluation CLIs
+├── src/                         reusable models and shared utilities
+├── scripts/                     data preparation, training, and evaluation
 ├── results/
-│   ├── baseline_classifiers/    classifier metrics and comparisons
-│   ├── docs/                    central result and fidelity documentation
-│   ├── evaluation_manifests/    fixed evaluation samples and target classes
-│   ├── final/                   compact metadata from final runs
-│   ├── final_configs/           method documentation and run commands
-│   └── qualitative_figures/     qualitative figure manifests and interpretation
-├── requirements.txt             core Python dependencies
-└── requirements-dvce.txt        optional DVCE-specific dependencies
+│   ├── baseline_classifiers/    classifier metrics
+│   ├── docs/                    result and method documentation
+│   ├── evaluation_manifests/    fixed samples and target classes
+│   ├── final/                   metadata from final method runs
+│   ├── final_configs/           authoritative method configurations
+│   └── qualitative_figures/     qualitative selection and interpretation
+├── requirements.txt
+└── requirements-dvce.txt
 ```
 
-Large or locally generated assets are intentionally excluded from version
-control, including:
-
-```text
-data/
-models/
-checkpoints/
-external/
-generated PNG and JPG result files
-debug, smoke-test, and ablation outputs
-```
-
-The repository therefore contains reproducibility code, fixed manifests,
-metrics, and compact metadata, but not datasets, trained weights, external
-method repositories, or generated image collections.
-
-## Documentation
-
-- [Scripts overview](scripts/README.md)
-- [Method comparison and results](results/docs/method_comparison_and_results.md)
-- [Method fidelity audit](results/docs/method_fidelity_comparison.md)
-- [Fixed evaluation summary](results/docs/fixed_evaluation_summary.md)
-- [Qualitative results](results/qualitative_figures/qualitative_results_interpretation.md)
-- [Final method configurations](results/final_configs/)
+Datasets, model weights, external repositories, and generated images are not
+versioned because of size and licensing constraints. Compact metadata, fixed
+evaluation manifests, and all project scripts remain in the repository.
 
 ## Installation
 
-Create an isolated environment and install the core dependencies:
+Create the core environment separately from the DVCE environment:
 
 ```bash
 python -m venv .venv
@@ -121,198 +83,117 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-DVCE has additional dependencies and is best run in a separate environment:
+For DVCE:
 
 ```bash
+python -m venv .venv-dvce
+source .venv-dvce/bin/activate
 python -m pip install -r requirements.txt
 python -m pip install -r requirements-dvce.txt
 ```
 
-The original DVCE code targets an older CUDA/PyTorch stack. Consult the comments
-in [`requirements-dvce.txt`](requirements-dvce.txt) before reproducing DVCE on a
-new platform.
+The local DVCE port was run with a newer PyTorch environment. The original
+DVCE repository targeted Python 3.8, PyTorch 1.9, and CUDA 10.2, so
+compatibility depends on the operating system, CUDA version, and checkpoints.
 
-## Data Layout
+## Data
 
-Raw and processed datasets are not distributed with this repository. After
-running the preparation scripts, each dataset must follow the ImageFolder
-layout:
+The preparation scripts expect raw data at:
+
+```text
+data/raw/BUSI/Dataset_BUSI_with_GT/
+data/raw/Pneumonia/chest_xray/
+```
+
+After preparation, both datasets use a torchvision `ImageFolder` layout:
 
 ```text
 data/processed/BUSI/{train,val,test}/{class_name}/...
 data/processed/Pneumonia/{train,val,test}/{class_name}/...
 ```
 
-Use [`prepare_busi.py`](scripts/prepare_busi.py) and
-[`prepare_pneumonia.py`](scripts/prepare_pneumonia.py) to create the processed
-splits. Dataset acquisition and use remain subject to the respective dataset
-licenses and access conditions.
+```bash
+PYTHONPATH=. python scripts/prepare_busi.py
+PYTHONPATH=. python scripts/prepare_pneumonia.py
+PYTHONPATH=. python scripts/check_dataset.py
+```
 
-## Reproducing the Pipeline
+Dataset acquisition and use remain subject to the original license and access
+conditions.
 
-Run commands from the repository root with `PYTHONPATH=.`.
+## Training and Evaluation
 
-### 1. Train the Classifiers
+Run all commands from the repository root with `PYTHONPATH=.`.
 
-BUSI:
+### Classifiers
 
 ```bash
 PYTHONPATH=. python src/train_model.py \
   --dataset_name BUSI_pretrained \
   --dataset_path data/processed/BUSI \
   --output_model_path models/busi_resnet18_pretrained.pth \
+  --history_path results/baseline_classifiers/busi_pretrained_training_history.json \
   --epochs 15 \
   --batch_size 16 \
   --learning_rate 0.0001 \
   --pretrained
 ```
 
-Pneumonia:
-
 ```bash
 PYTHONPATH=. python src/train_model.py \
   --dataset_name Pneumonia_pretrained \
   --dataset_path data/processed/Pneumonia \
   --output_model_path models/pneumonia_resnet18_pretrained.pth \
+  --history_path results/baseline_classifiers/pneumonia_pretrained_training_history.json \
   --epochs 10 \
   --batch_size 16 \
   --learning_rate 0.0001 \
   --pretrained
 ```
 
-Train the robust auxiliary classifiers required for DVCE Cone Projection with
-[`train_robust_resnet18_pgd.py`](scripts/train_robust_resnet18_pgd.py).
+Use `scripts/evaluate_model.py` for test evaluation. The PGD-robust ResNet18
+models used by DVCE Cone Projection are trained with
+`scripts/train_robust_resnet18_pgd.py`.
 
-### 2. Create a Fixed Evaluation Manifest
+### Fixed Evaluation Samples
 
-The committed manifests contain correctly classified test samples and fixed
-target classes:
+The committed manifests contain 15 BUSI images, balanced across three classes,
+and 20 Pneumonia images, balanced across two classes:
 
 - [BUSI manifest](results/evaluation_manifests/busi_balanced_5_per_class_second_best.json)
 - [Pneumonia manifest](results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json)
 
-Example:
+The target is the class with the second-highest original probability.
 
-```bash
-PYTHONPATH=. python scripts/create_evaluation_manifest.py \
-  --model_path models/busi_resnet18_pretrained.pth \
-  --dataset_path data/processed/BUSI \
-  --output_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
-  --samples_per_class 5 \
-  --target_strategy second_best
-```
+### Counterfactual Methods
 
-### 3. Generate Counterfactuals
+Final parameters and complete command examples are documented in
+[results/final_configs/README.md](results/final_configs/README.md). The method
+entry points are:
 
-#### CFProto
+- `scripts/run_cfproto_pytorch.py`
+- `scripts/run_goyal_cve_pytorch.py`
+- `scripts/run_sedc_t_pytorch.py`
+- `scripts/run_dvce_pytorch.py`
 
-```bash
-PYTHONPATH=. python scripts/run_cfproto_pytorch.py \
-  --model_path models/busi_resnet18_pretrained.pth \
-  --dataset_path data/processed/BUSI \
-  --output_dir results/final/cfproto_encoder_knn/busi \
-  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
-  --autoencoder_path models/autoencoder_busi_bottleneck256.pth \
-  --theta 0.5 \
-  --gamma 1.0 \
-  --c_steps 5 \
-  --prototype_k 3
-```
+### Result Summaries and Qualitative Figures
 
-The method is a PyTorch reimplementation of Alibi's `CounterfactualProto`.
-Black-box numerical gradients, categorical variables, k-d-tree prototypes, and
-TrustScore filtering are not reproduced. See the
-[CFProto documentation](results/final_configs/cfproto_encoder_method_documentation.md)
-for the complete implementation-to-reference comparison.
+`scripts/summarize_counterfactual_evaluation.py` builds the quantitative table
+from final metadata. `scripts/select_interpretable_examples.py` applies fixed
+selection rules, and `scripts/create_qualitative_comparison_figures.py`
+creates the 14 method- and dataset-specific figures.
 
-#### Goyal et al. (2019) CVE
+Generated PNG files are excluded from version control. The fixed selection is
+stored in
+[results/qualitative_figures/selected_examples.json](results/qualitative_figures/selected_examples.json),
+and the sample-to-figure mapping is stored in
+[results/qualitative_figures/qualitative_figure_manifest.json](results/qualitative_figures/qualitative_figure_manifest.json).
 
-```bash
-PYTHONPATH=. python scripts/run_goyal_cve_pytorch.py \
-  --model_path models/busi_resnet18_pretrained.pth \
-  --dataset_path data/processed/BUSI \
-  --output_dir results/final/goyal_cve_busi \
-  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json
-```
+## Documentation
 
-The implementation follows the greedy feature-cell replacement baseline from
-[Goyal et al.](https://github.com/facebookresearch/visual-counterfactuals),
-using a nearest correctly classified target-class training image as the
-distractor.
-
-#### SEDC-T
-
-```bash
-PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
-  --model_path models/busi_resnet18_pretrained.pth \
-  --dataset_path data/processed/BUSI \
-  --output_dir results/final/sedc_t_busi_original_style \
-  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
-  --search_timeout_seconds 30
-```
-
-The retained Pneumonia ROI configuration uses the same search and replacement
-mechanism but restricts candidate segments to a geometric lung-field region:
-
-```bash
-PYTHONPATH=. python scripts/run_sedc_t_pytorch.py \
-  --model_path models/pneumonia_resnet18_pretrained.pth \
-  --dataset_path data/processed/Pneumonia \
-  --output_dir results/final/sedc_t_pneumonia_lung_field_roi \
-  --manifest_path results/evaluation_manifests/pneumonia_balanced_10_per_class_second_best.json \
-  --roi_mode lung_fields \
-  --search_timeout_seconds 30
-```
-
-This ROI configuration is a project-specific ablation, not part of the
-original SEDC-T method and not a medical lung segmentation.
-
-#### DVCE
-
-The original-faithful configuration for the non-robust ResNet18 uses Cone
-Projection with a robust PGD ResNet18 as the second classifier:
-
-```bash
-PYTHONPATH=. python scripts/run_dvce_pytorch.py \
-  --model_path models/busi_resnet18_pretrained.pth \
-  --second_model_path models/busi_resnet18_robust_pgd.pth \
-  --dataset_path data/processed/BUSI \
-  --output_dir results/final/dvce_original_style_cone/openai/busi \
-  --manifest_path results/evaluation_manifests/busi_balanced_5_per_class_second_best.json \
-  --run_generation \
-  --device auto \
-  --timestep_respacing 200 \
-  --skip_timesteps 100 \
-  --classifier_lambda 0.1 \
-  --lp_custom 1.0 \
-  --lp_custom_value 0.15 \
-  --denoise_dist_input \
-  --no-clip_denoised \
-  --deg_cone_projection 30 \
-  --aug_num 16 \
-  --diffusion_checkpoint_path external/DVCEs/checkpoints/256x256_diffusion_uncond.pt
-```
-
-See the [DVCE method documentation](results/final_configs/dvce_method_documentation.md),
-[Cone Projection notes](results/final_configs/dvce_cone_projection.md), and
-[complete run commands](results/final_configs/dvce_original_style_commands.md).
-
-### 4. Summarize Results
-
-[`summarize_counterfactual_evaluation.py`](scripts/summarize_counterfactual_evaluation.py)
-builds compact comparison tables from the final metadata files.
-[`select_interpretable_examples.py`](scripts/select_interpretable_examples.py)
-and
-[`create_qualitative_comparison_figures.py`](scripts/create_qualitative_comparison_figures.py)
-support the qualitative analysis.
-
-## Reproducibility Notes
-
-- Fixed manifests keep samples and target classes identical across methods.
-- Final metadata and Markdown summaries are versioned; large image outputs are
-  regenerated locally and excluded from Git.
-- Scripts generally overwrite the path passed through `--output_path` or
-  `--output_dir`. Use a new output directory for exploratory runs that must be
-  preserved.
-- Random seeds and method-specific settings are recorded in the generated
-  metadata where applicable.
+- [Script overview](scripts/README.md)
+- [Method comparison and results](results/docs/method_comparison_and_results.md)
+- [Implementation fidelity](results/docs/method_fidelity_comparison.md)
+- [Baseline classifiers](results/baseline_classifiers/README.md)
+- [Final configurations](results/final_configs/README.md)
+- [Qualitative results](results/qualitative_figures/qualitative_results_interpretation.md)

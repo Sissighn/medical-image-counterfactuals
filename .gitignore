@@ -1,10 +1,9 @@
-# macOS / editor
+# Operating system and editor files
 .DS_Store
 .vscode/
 .idea/
-.claude/
 
-# Python
+# Python caches and build artifacts
 __pycache__/
 *.py[cod]
 *.pyo
@@ -13,47 +12,34 @@ __pycache__/
 .ruff_cache/
 .ipynb_checkpoints/
 
-# Virtual environments
+# Virtual environments and local configuration
 .venv/
 .venv-*/
 venv/
 env/
-
-# Local environment files
 .env
 .env.*
 
-# Datasets and generated dataset splits
+# Local datasets, weights, and external repositories
 data/
-
-# Model checkpoints and weights
 models/
 *.pth
 *.pt
 *.ckpt
 checkpoints/
-
-# External method repositories used for local experiments
 external/
 
-# Seminar paper drafts, working memory, and exploratory outputs
-paper_drafts/
-.seminararbeit_assistant/
-results/docs/seminar_paper_outline.md
-results/docs/evaluation_chapter_plan.md
-results/docs/project_structure_diagram.png
+# Temporary and exploratory outputs
 results/dvce_feasibility/
 results/diffusion_training_setup/
-
-# Local debug, smoke-test, and ablation outputs
 results/debug/
 results/ablations/
 results/fixed_evaluation_smoke/
 results/sedc_t/*smoke/
 results/autoencoder_plausibility_*
+results/qualitative_selection/
 
-# Large/generated visual artifacts, regenerated locally from metadata and scripts.
-# Final metadata and Markdown summaries stay tracked.
+# Generated image artifacts; metadata and summaries remain versioned
 results/cfproto/
 results/cfproto_tuned/
 results/cfproto*/**/*.png
@@ -68,7 +54,6 @@ results/fixed_evaluation/**/*.jpeg
 results/qualitative_figures/**/*.png
 results/qualitative_figures/**/*.jpg
 results/qualitative_figures/**/*.jpeg
-results/qualitative_selection/
 results/final/**/*.png
 results/final/**/*.jpg
 results/final/**/*.jpeg
