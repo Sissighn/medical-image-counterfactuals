@@ -11,7 +11,7 @@ Reference (original code): the official Meta repository
 al., ECCV 2022) contains a faithful implementation of the Goyal et al. method
 as a baseline.
 
-Run commands: [`goyal_cve_run_commands.md`](goyal_cve_run_commands.md)
+Run commands: [central configuration guide](README.md#goyal-cve)
 
 ---
 
