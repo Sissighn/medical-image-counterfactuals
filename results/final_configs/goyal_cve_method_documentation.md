@@ -97,14 +97,14 @@ the intended project-specific substitutions.
 
 | Aspect | Original (Goyal et al. 2019 / Meta baseline) | This implementation | Status |
 |---|---|---|---|
-| Network split | spatial extractor `f` + decision head `g` | `f` = ResNet18 through `layer4`, `g` = GAP + FC | ✅ |
-| Edit space | swap spatial cells of the last conv feature map | identical (7×7×512 `layer4` cells) | ✅ |
-| Search | greedy exhaustive over all `(i, j)` cell pairs | identical | ✅ |
-| Selection criterion | maximize target-class score per step | maximize target-class softmax probability | ✅ mathematically equivalent |
-| Permutation constraint `P` | each query/distractor cell used at most once | identical (open-cell masks) | ✅ |
-| Stopping | first prediction flip to the target class | identical | ✅ |
-| Sparsity metric | number of edited cells `||a||_1` | `num_edits` in `metadata.json` | ✅ |
-| Distractor | an image of the target ("distractor") class | nearest correctly classified target-class training image | ✅ standard instantiation |
+| Network split | spatial extractor `f` + decision head `g` | `f` = ResNet18 through `layer4`, `g` = GAP + FC | Faithful |
+| Edit space | swap spatial cells of the last conv feature map | identical (7×7×512 `layer4` cells) | Faithful |
+| Search | greedy exhaustive over all `(i, j)` cell pairs | identical | Faithful |
+| Selection criterion | maximize target-class score per step | maximize target-class softmax probability | Faithful, mathematically equivalent |
+| Permutation constraint `P` | each query/distractor cell used at most once | identical (open-cell masks) | Faithful |
+| Stopping | first prediction flip to the target class | identical | Faithful |
+| Sparsity metric | number of edited cells `||a||_1` | `num_edits` in `metadata.json` | Faithful |
+| Distractor | an image of the target ("distractor") class | nearest correctly classified target-class training image | Faithful, standard instantiation |
 
 ---
 
