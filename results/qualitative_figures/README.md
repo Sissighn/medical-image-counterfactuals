@@ -9,17 +9,19 @@ The main figures are stored in dataset-specific folders under `per_method/`, for
 - Low-plausibility valid case
 - Failure case
 
+The current figure-by-figure interpretation, including the exact displayed sample metrics and the conclusions aligned with Chapter 5 of the seminar paper, is documented in:
+
+- `results/qualitative_figures/qualitative_results_interpretation.md`
+
 The figures are composed from the existing per-example visualizations referenced in:
 
 - `results/qualitative_selection/selected_examples.json`
 
+The selected sample indices are preserved exactly. Redundant source headers and the repeated method/dataset heading are removed. Each row keeps one compact annotation with the class transition and both the original and counterfactual confidence, target, validity, MAD (`l1_mean`), RMS pixel difference (`l2_mean`), changed-pixel percentage, and only method-specific details needed for interpretation (Goyal distractor/embedding distance/edit count or SEDC-T segment count). The unrelated maximum norm `L_inf` from the former annotations is not shown because the paper defines RMS/`l2_mean` as its second proximity metric.
+
 The comparison script does not recompute, stretch, or per-image normalize the embedded difference maps. Source plots are displayed as saved, and image data is only converted to the standard display range `[0, 1]`. Long white bands inside source plots are compacted for readability, but the image panels and color values are not changed.
 
 This is intentional: very dark difference maps indicate genuinely small absolute changes on a fixed scale, not a plotting error. Stronger colors would only be appropriate with an explicitly labelled alternate scale, because otherwise tiny differences could appear misleadingly large.
-
-For method-level interpretation and the trade-offs between CFProto (original-style), Goyal 2019 CVE, SEDC-T, and DVCE, see:
-
-- `results/qualitative_figures/qualitative_results_interpretation.md`
 
 Generated per-method figures:
 
