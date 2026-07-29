@@ -1,5 +1,5 @@
 {
-  "selected_examples_path": "results/qualitative_selection/selected_examples.json",
+  "selected_examples_path": "results/qualitative_figures/selected_examples.json",
   "dpi": 300,
   "per_method_figures": [
     {
