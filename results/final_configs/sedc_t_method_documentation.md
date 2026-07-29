@@ -5,7 +5,7 @@ Implementation: [`scripts/run_sedc_t_pytorch.py`](../../scripts/run_sedc_t_pytor
 Reference (original code):
 <https://github.com/ADMAntwerp/ImageCounterfactualExplanations/blob/main/isedc/sedc_t2_fast.py>
 
-Run commands: [`sedc_t_run_commands.md`](sedc_t_run_commands.md)
+Run commands: [central configuration guide](README.md#sedc-t)
 
 ---
 
