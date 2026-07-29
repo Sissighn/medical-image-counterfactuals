@@ -10,7 +10,7 @@ Reference (original code): the official Seldon implementation
 `alibi.explainers.cfproto.CounterfactualProto` in
 <https://github.com/SeldonIO/alibi>.
 
-Run commands: [`cfproto_encoder_run_commands.md`](cfproto_encoder_run_commands.md)
+Run commands: [central configuration guide](README.md#cfproto)
 
 ---
 
@@ -115,7 +115,8 @@ project-specific substitutions.
    dimensionality. The alibi MNIST example's `gamma=theta=100` (28×28 inputs,
    small latent space) diverges at 224×224 with this project's autoencoders.
    Recalibrated so the weighted prototype/AE terms stay comparable to the L2
-   sum instead of dominating it (see `cfproto_encoder_run_commands.md` for
+   sum instead of dominating it (see the
+   [central configuration guide](README.md#cfproto) for
    the exact values and the calibration diagnostics behind them).
 
 4. **Not implemented (also unused in the paper's image experiments or

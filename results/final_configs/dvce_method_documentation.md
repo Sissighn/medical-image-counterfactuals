@@ -15,7 +15,7 @@ Explanations*, NeurIPS 2022.
 
 Run commands:
 [`dvce_cone_projection.md`](dvce_cone_projection.md) (Cone variant, original-faithful) and
-[`dvce_original_style_commands.md`](dvce_original_style_commands.md) (no-cone states).
+[central configuration guide](README.md#dvce) (no-cone states).
 
 ---
 
