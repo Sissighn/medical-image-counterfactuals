@@ -1,19 +1,21 @@
 import torch.nn as nn
 
-
 ARCHITECTURE_NAME = "conv_autoencoder_v1"
 BOTTLENECK_ARCHITECTURE_NAME = "conv_autoencoder_bottleneck_v1"
 
 
 class ConvAutoencoder(nn.Module):
-
     def __init__(self, input_channels=3, base_channels=32):
         super().__init__()
         self.encoder = nn.Sequential(
-            nn.Conv2d(input_channels, base_channels, kernel_size=4, stride=2, padding=1),
+            nn.Conv2d(
+                input_channels, base_channels, kernel_size=4, stride=2, padding=1
+            ),
             nn.BatchNorm2d(base_channels),
             nn.ReLU(inplace=True),
-            nn.Conv2d(base_channels, base_channels * 2, kernel_size=4, stride=2, padding=1),
+            nn.Conv2d(
+                base_channels, base_channels * 2, kernel_size=4, stride=2, padding=1
+            ),
             nn.BatchNorm2d(base_channels * 2),
             nn.ReLU(inplace=True),
             nn.Conv2d(
@@ -82,7 +84,6 @@ class ConvAutoencoder(nn.Module):
 
 
 class ConvAutoencoderBottleneck(nn.Module):
-
     def __init__(
         self,
         input_channels=3,
@@ -103,10 +104,14 @@ class ConvAutoencoderBottleneck(nn.Module):
         encoded_features = encoded_channels * self.spatial_size * self.spatial_size
 
         self.encoder_conv = nn.Sequential(
-            nn.Conv2d(input_channels, base_channels, kernel_size=4, stride=2, padding=1),
+            nn.Conv2d(
+                input_channels, base_channels, kernel_size=4, stride=2, padding=1
+            ),
             nn.BatchNorm2d(base_channels),
             nn.ReLU(inplace=True),
-            nn.Conv2d(base_channels, base_channels * 2, kernel_size=4, stride=2, padding=1),
+            nn.Conv2d(
+                base_channels, base_channels * 2, kernel_size=4, stride=2, padding=1
+            ),
             nn.BatchNorm2d(base_channels * 2),
             nn.ReLU(inplace=True),
             nn.Conv2d(

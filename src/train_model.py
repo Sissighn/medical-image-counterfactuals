@@ -1,14 +1,14 @@
-from pathlib import Path
 import argparse
 import json
 import socket
+from pathlib import Path
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from sklearn.metrics import accuracy_score, f1_score
 from torchvision import models
 from torchvision.models import ResNet18_Weights
-from sklearn.metrics import accuracy_score, f1_score, classification_report
 
 from src.data_utils import create_dataloaders
 
@@ -28,8 +28,9 @@ def create_model(num_classes, pretrained=False, download_timeout=30):
         try:
             weights = ResNet18_Weights.DEFAULT
         except Exception as error:
-            print(f"Could not prepare pretrained weights: {error}")
-            print("Continuing training with random initialization.")
+            raise RuntimeError(
+                "The pretrained ResNet18 weights could not be prepared."
+            ) from error
 
     previous_timeout = socket.getdefaulttimeout()
     socket.setdefaulttimeout(download_timeout)
@@ -37,9 +38,11 @@ def create_model(num_classes, pretrained=False, download_timeout=30):
         try:
             model = models.resnet18(weights=weights)
         except Exception as error:
-            print(f"Could not load pretrained weights: {error}")
-            print("Continuing training with random initialization.")
-            model = models.resnet18(weights=None)
+            if pretrained:
+                raise RuntimeError(
+                    "The pretrained ResNet18 weights could not be loaded."
+                ) from error
+            raise
     finally:
         socket.setdefaulttimeout(previous_timeout)
 
@@ -128,6 +131,7 @@ def train_model(
     epochs,
     batch_size,
     learning_rate,
+    history_path,
     pretrained,
     use_augmentation,
     use_class_weights,
@@ -158,11 +162,13 @@ def train_model(
 
     model = create_model(num_classes, pretrained=pretrained)
     model = model.to(device)
+    output_model_path = Path(output_model_path)
+    output_model_path.parent.mkdir(parents=True, exist_ok=True)
 
     class_weights = None
     if use_class_weights:
         class_weights = compute_class_weights(train_dataset, num_classes, device)
-        print("Berechnete Class Weights:")
+        print("Computed class weights:")
         for class_name, weight in zip(classes, class_weights.detach().cpu().tolist()):
             print(f"  {class_name}: {weight:.4f}")
         print()
@@ -231,17 +237,18 @@ def train_model(
             }
 
             torch.save(checkpoint, output_model_path)
-            print(f"Neues bestes Modell gespeichert: {output_model_path}")
+            print(f"Saved new best model: {output_model_path}")
             print()
 
-    results_path = Path("results") / f"{dataset_name.lower()}_training_history.json"
+    results_path = Path(history_path)
+    results_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(results_path, "w") as f:
+    with results_path.open("w", encoding="utf-8") as f:
         json.dump(history, f, indent=4)
 
-    print("Training abgeschlossen.")
-    print(f"Bestes Val F1: {best_val_f1:.4f}")
-    print(f"Training History gespeichert unter: {results_path}")
+    print("Training completed.")
+    print(f"Best validation F1: {best_val_f1:.4f}")
+    print(f"Saved training history to: {results_path}")
 
 
 def main():
@@ -250,6 +257,7 @@ def main():
     parser.add_argument("--dataset_name", type=str, required=True)
     parser.add_argument("--dataset_path", type=str, required=True)
     parser.add_argument("--output_model_path", type=str, required=True)
+    parser.add_argument("--history_path", type=str, required=True)
     parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--learning_rate", type=float, default=0.0001)
@@ -266,6 +274,7 @@ def main():
         epochs=args.epochs,
         batch_size=args.batch_size,
         learning_rate=args.learning_rate,
+        history_path=args.history_path,
         pretrained=args.pretrained,
         use_augmentation=not args.no_augmentation,
         use_class_weights=not args.no_class_weights,

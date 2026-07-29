@@ -1,16 +1,11 @@
 import argparse
 import json
-import sys
 import time
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.autoencoder import (
     ARCHITECTURE_NAME,
@@ -20,7 +15,6 @@ from src.autoencoder import (
 )
 from src.data_utils import IMAGE_SIZE, create_dataloaders
 from src.train_model import get_device
-
 
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
 IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
@@ -53,7 +47,9 @@ def save_loss_curve(history, output_path):
     print(f"Loss curve saved to: {figure_path}")
 
 
-def save_reconstruction_examples(autoencoder, data_loader, device, output_path, max_examples):
+def save_reconstruction_examples(
+    autoencoder, data_loader, device, output_path, max_examples
+):
     figure_path = output_path.with_name(f"{output_path.stem}_reconstructions.png")
     autoencoder.eval()
 
@@ -159,7 +155,9 @@ def train_autoencoder(
                 "num_batches": num_batches,
             }
         )
-        print(f"Epoch {epoch + 1}/{epochs} | Train reconstruction MSE: {epoch_loss:.6f}")
+        print(
+            f"Epoch {epoch + 1}/{epochs} | Train reconstruction MSE: {epoch_loss:.6f}"
+        )
 
     training_seconds = time.time() - start_time
 
@@ -173,7 +171,9 @@ def train_autoencoder(
         "base_channels": base_channels,
         "architecture": architecture_name,
         "architecture_cli": architecture,
-        "latent_dim": latent_dim if architecture == "conv_autoencoder_bottleneck" else None,
+        "latent_dim": latent_dim
+        if architecture == "conv_autoencoder_bottleneck"
+        else None,
         "loss": "mse_reconstruction",
         "pixel_range": "[0, 1]",
         "normalization_note": (
@@ -191,7 +191,9 @@ def train_autoencoder(
             "learning_rate": learning_rate,
             "base_channels": base_channels,
             "architecture": architecture,
-            "latent_dim": latent_dim if architecture == "conv_autoencoder_bottleneck" else None,
+            "latent_dim": latent_dim
+            if architecture == "conv_autoencoder_bottleneck"
+            else None,
             "num_workers": num_workers,
             "max_batches": max_batches,
         },

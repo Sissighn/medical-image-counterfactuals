@@ -13,9 +13,17 @@ import torch.nn.functional as F
 DVCE_CHECKPOINT_RELATIVE_PATH = Path("checkpoints") / "256x256_diffusion_uncond.pt"
 
 if not hasattr(np, "float"):
-    np.float = float
+    setattr(np, "float", float)
 if not hasattr(np, "int"):
-    np.int = int
+    setattr(np, "int", int)
+
+
+def portable_path(path: str | Path) -> str:
+    resolved = Path(path).resolve()
+    try:
+        return str(resolved.relative_to(Path.cwd().resolve()))
+    except ValueError:
+        return str(resolved)
 
 
 def add_dvce_to_python_path(repo_path: str | Path) -> None:
@@ -112,7 +120,7 @@ def load_dvce_diffusion_backbone(
         model,
         diffusion,
         {
-            "checkpoint_path": str(checkpoint_path),
+            "checkpoint_path": portable_path(checkpoint_path),
             "model_config": model_config,
             "diffusion_num_timesteps": int(getattr(diffusion, "num_timesteps", -1)),
             "gradient_parameter_count": len(gradient_parameter_names),
@@ -135,6 +143,8 @@ def load_image_augmentations_class() -> Any:
     spec = importlib.util.spec_from_file_location(
         "dvce_original_augmentations", module_path
     )
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Could not load the DVCE augmentation module: {module_path}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module.ImageAugmentations
@@ -149,14 +159,12 @@ def renormalize_gradient(
     eps: torch.Tensor,
     small_const: float = 1e-22,
 ) -> tuple[torch.Tensor, torch.Tensor]:
-    grad_norm = grad.view(grad.shape[0], -1).norm(p=2, dim=1).view(
-        grad.shape[0], 1, 1, 1
+    grad_norm = (
+        grad.view(grad.shape[0], -1).norm(p=2, dim=1).view(grad.shape[0], 1, 1, 1)
     )
     grad_norm = torch.where(grad_norm < small_const, grad_norm + small_const, grad_norm)
     grad /= grad_norm
-    grad *= eps.view(grad.shape[0], -1).norm(p=2, dim=1).view(
-        grad.shape[0], 1, 1, 1
-    )
+    grad *= eps.view(grad.shape[0], -1).norm(p=2, dim=1).view(grad.shape[0], 1, 1, 1)
     return grad, grad_norm
 
 
@@ -202,10 +210,13 @@ def cone_projection(
         )
 
         grad_temp_2 /= grad_temp_2.norm(p=2, dim=1).view(grad_temp_1.shape[0], -1)
-        grad_temp_1 = grad_temp_1 - (
-            (grad_temp_1 * grad_temp_2).sum(1)
-            / (grad_temp_2.norm(p=2, dim=1) ** 2)
-        ).view(grad_temp_1.shape[0], -1) * grad_temp_2
+        grad_temp_1 = (
+            grad_temp_1
+            - (
+                (grad_temp_1 * grad_temp_2).sum(1) / (grad_temp_2.norm(p=2, dim=1) ** 2)
+            ).view(grad_temp_1.shape[0], -1)
+            * grad_temp_2
+        )
         grad_temp_1 /= grad_temp_1.norm(p=2, dim=1).view(grad_temp_1.shape[0], -1)
         radians = torch.tensor([deg], device=grad_temp_1.device).deg2rad()
 
@@ -375,7 +386,6 @@ def generate_dvce_counterfactual(
     second_classifier: torch.nn.Module | None = None,
     classifier_size: int = 224,
 ) -> tuple[torch.Tensor, dict[str, Any]]:
-
     start_time = time.time()
     torch.manual_seed(seed)
     random.seed(seed)

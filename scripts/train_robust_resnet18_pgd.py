@@ -1,7 +1,6 @@
 import argparse
 import json
 import socket
-import sys
 from pathlib import Path
 
 import torch
@@ -11,13 +10,8 @@ from sklearn.metrics import accuracy_score, f1_score
 from torchvision import models
 from torchvision.models import ResNet18_Weights
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
 from src.data_utils import create_dataloaders
 from src.train_model import compute_class_weights, get_device
-
 
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
 IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
@@ -33,8 +27,11 @@ def create_model(num_classes, pretrained=False, download_timeout=30):
     try:
         model = models.resnet18(weights=weights)
     except Exception as error:
-        print(f"Could not load pretrained weights: {error}")
-        model = models.resnet18(weights=None)
+        if pretrained:
+            raise RuntimeError(
+                "The pretrained ResNet18 weights could not be loaded."
+            ) from error
+        raise
     finally:
         socket.setdefaulttimeout(previous_timeout)
 
