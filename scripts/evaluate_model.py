@@ -1,19 +1,18 @@
 import argparse
-from pathlib import Path
 import json
+from pathlib import Path
 
 import torch
 import torch.nn as nn
-from torchvision import models
-
 from sklearn.metrics import (
     accuracy_score,
+    classification_report,
+    confusion_matrix,
     f1_score,
     precision_score,
     recall_score,
-    classification_report,
-    confusion_matrix,
 )
+from torchvision import models
 
 from src.data_utils import create_dataloaders
 
@@ -74,7 +73,7 @@ def main():
     classes = checkpoint["classes"]
     class_to_idx = checkpoint["class_to_idx"]
 
-    print("Modellinformationen:")
+    print("Model information:")
     print(f"  Classes: {classes}")
     print(f"  Class-to-index: {class_to_idx}")
     print(f"  Number of classes: {num_classes}")
@@ -141,7 +140,7 @@ def main():
     with open(output_path, "w") as f:
         json.dump(results, f, indent=4)
 
-    print(f"Evaluation gespeichert unter: {output_path}")
+    print(f"Saved evaluation to: {output_path}")
 
 
 if __name__ == "__main__":
