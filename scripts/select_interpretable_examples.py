@@ -24,7 +24,6 @@ def infer_dataset(metadata):
 def infer_method(metadata):
     method = metadata.get("method") or metadata.get("purpose") or "unknown"
     checkpoint = str(metadata.get("diffusion_checkpoint_path") or "")
-    parameters = metadata.get("parameters", {})
 
     if method == "DVCE medical multi-sample generation evaluation":
         checkpoint_lower = checkpoint.lower()
