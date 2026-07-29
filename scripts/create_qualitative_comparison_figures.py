@@ -32,6 +32,14 @@ METHOD_ORDER = [
     "DVCE original-style with Cone Projection, BUSI fine-tuned checkpoint",
 ]
 
+SOURCE_HEADER_CROP_FRACTIONS = {
+    "CFProto original-style": 0.36,
+    "Goyal 2019 counterfactual visual explanations": 0.43,
+    "SEDC-T": 0.36,
+}
+
+OUTPUT_DIR = Path("results/qualitative_figures")
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -45,12 +53,6 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path("results/qualitative_selection/selected_examples.json"),
         help="JSON file created by select_interpretable_examples.py.",
-    )
-    parser.add_argument(
-        "--output_dir",
-        type=Path,
-        default=Path("results/qualitative_figures"),
-        help="Directory for generated qualitative comparison figures.",
     )
     parser.add_argument(
         "--dpi",
@@ -84,6 +86,51 @@ def load_selected_examples(path: Path) -> list[dict[str, Any]]:
     if not isinstance(examples, list):
         raise ValueError(f"Expected a list at key 'selected_examples' in {path}")
     return examples
+
+
+def enrich_examples_from_metadata(
+    examples: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    metadata_cache: dict[Path, dict[int, dict[str, Any]]] = {}
+    enriched_examples: list[dict[str, Any]] = []
+
+    for original_example in examples:
+        example = dict(original_example)
+        metadata_value = example.get("metadata_path")
+        sample_index = example.get(
+            "manifest_sample_index", example.get("sample_index")
+        )
+        if not metadata_value or sample_index is None:
+            enriched_examples.append(example)
+            continue
+
+        metadata_path = Path(metadata_value)
+        if metadata_path not in metadata_cache:
+            records_by_index: dict[int, dict[str, Any]] = {}
+            if metadata_path.exists():
+                with metadata_path.open("r", encoding="utf-8") as f:
+                    metadata = json.load(f)
+                for record in metadata.get("records", []):
+                    record_index = record.get(
+                        "manifest_sample_index", record.get("sample_index")
+                    )
+                    if record_index is not None:
+                        records_by_index[int(record_index)] = record
+            metadata_cache[metadata_path] = records_by_index
+
+        record = metadata_cache[metadata_path].get(int(sample_index), {})
+        for key in (
+            "true_label",
+            "original_confidence",
+            "num_edits",
+            "distractor_true_label",
+            "selected_segments",
+        ):
+            if example.get(key) is None and record.get(key) is not None:
+                example[key] = record[key]
+        enriched_examples.append(example)
+
+    return enriched_examples
 
 
 def method_sort_key(method: str) -> tuple[int, str]:
@@ -159,6 +206,65 @@ def compact_vertical_whitespace(
     return image[keep_mask]
 
 
+def remove_redundant_source_header(
+    image: np.ndarray,
+    method: str,
+    dataset: str,
+) -> np.ndarray:
+    if method.startswith("DVCE original-style"):
+        # The DVCE source layouts differ slightly: BUSI/OpenAI has a shorter
+        # metadata block than Pneumonia and the fine-tuned BUSI variants.
+        # These cut positions remove the old "Valid CF" line but retain every
+        # original panel title and every image row.
+        if dataset == "BUSI" and "OpenAI checkpoint" in method:
+            crop_fraction = 0.12875
+        else:
+            crop_fraction = 0.135
+    else:
+        crop_fraction = next(
+            (
+                fraction
+                for method_prefix, fraction in SOURCE_HEADER_CROP_FRACTIONS.items()
+                if method.startswith(method_prefix)
+            ),
+            0.0,
+        )
+    if crop_fraction <= 0.0:
+        return image
+
+    crop_row = int(round(image.shape[0] * crop_fraction))
+    if crop_row >= image.shape[0] - 1:
+        return image
+    cropped = image[crop_row:].copy()
+    if method.startswith("DVCE original-style") and crop_row == 108:
+        # A few DVCE source plots retain the final anti-aliased dot of the old
+        # metadata header between the second and third panels. Remove only that
+        # fixed blank-area remnant without touching panel titles or image data.
+        width = cropped.shape[1]
+        cropped[:4, int(width * 0.50) : int(width * 0.53)] = 1.0
+    return cropped
+
+
+def add_inner_figure_margin(
+    image: np.ndarray,
+    top_fraction: float = 0.025,
+    side_fraction: float = 0.008,
+    bottom_fraction: float = 0.008,
+) -> np.ndarray:
+    """Add white space between the source plot and the outer row border."""
+    if image.ndim < 2:
+        return image
+
+    height, width = image.shape[:2]
+    top = max(8, int(round(height * top_fraction)))
+    bottom = max(4, int(round(height * bottom_fraction)))
+    side = max(4, int(round(width * side_fraction)))
+    padding = [(top, bottom), (side, side)]
+    if image.ndim > 2:
+        padding.extend([(0, 0)] * (image.ndim - 2))
+    return np.pad(image, padding, mode="constant", constant_values=1.0)
+
+
 def format_float(value: Any, digits: int = 3) -> str:
     if value is None:
         return "n/a"
@@ -168,25 +274,79 @@ def format_float(value: Any, digits: int = 3) -> str:
         return "n/a"
 
 
-def format_cell_note(example: dict[str, Any]) -> str:
-    valid = "yes" if example.get("valid_counterfactual") else "no"
+def format_distance_metric(value: Any) -> str:
+    if value is None:
+        return "n/a"
+    try:
+        numeric_value = float(value)
+    except (TypeError, ValueError):
+        return "n/a"
+    digits = 6 if 0.0 < abs(numeric_value) < 0.001 else 4
+    return f"{numeric_value:.{digits}f}"
+
+
+def format_percentage(value: Any, digits: int = 2) -> str:
+    if value is None:
+        return "n/a"
+    try:
+        return f"{100.0 * float(value):.{digits}f}%"
+    except (TypeError, ValueError):
+        return "n/a"
+
+
+def format_cell_note(example: dict[str, Any], method: str) -> str:
+    valid = "valid" if example.get("valid_counterfactual") else "not valid"
     sample = example.get("manifest_sample_index", example.get("sample_index", "n/a"))
-    pred = example.get("counterfactual_prediction", "n/a")
+    true_label = example.get("true_label", "n/a")
+    original_prediction = example.get("original_prediction", "n/a")
+    counterfactual_prediction = example.get("counterfactual_prediction", "n/a")
     target = example.get("target_class", "n/a")
+    original_confidence = format_float(example.get("original_confidence"), 2)
     confidence = format_float(example.get("counterfactual_confidence"), 2)
-    l1 = format_float(example.get("l1"), 4)
-    linf = format_float(example.get("linf"), 4)
-    changed_fraction = format_float(example.get("changed_pixel_fraction"), 4)
-    embedding_distance = example.get("embedding_distance")
+    mad = format_distance_metric(example.get("l1"))
+    rms = format_distance_metric(example.get("l2"))
+    changed_fraction = format_percentage(example.get("changed_pixel_fraction"), 2)
     threshold = example.get("sparsity_threshold")
-    threshold_label = f">{float(threshold):.2f}" if threshold is not None else ""
-    embedding_text = ""
-    if embedding_distance is not None:
-        embedding_text = f" | emb dist {format_float(embedding_distance, 4)}"
-    return (
-        f"sample {sample} | target {target} | CF {pred} ({confidence})\n"
-        f"valid {valid}{embedding_text} | MAD {l1} | L_inf {linf} | changed{threshold_label} {changed_fraction}"
+    threshold_label = (
+        f" (> {float(threshold):.2f})" if threshold is not None else ""
     )
+    first_line = (
+        f"Sample {sample} | true: {true_label} | prediction: "
+        f"{original_prediction} ({original_confidence}) -> "
+        f"{counterfactual_prediction} ({confidence}) | "
+        f"target: {target} | {valid}"
+    )
+
+    method_details: list[str] = []
+    if method.startswith("Goyal"):
+        distractor_label = example.get("distractor_true_label")
+        if distractor_label is not None:
+            method_details.append(f"distractor: {distractor_label}")
+        embedding_distance = example.get("embedding_distance")
+        if embedding_distance is not None:
+            method_details.append(
+                f"embedding distance: {format_distance_metric(embedding_distance)}"
+            )
+        num_edits = example.get("num_edits")
+        if num_edits is not None:
+            method_details.append(f"feature-cell edits: {num_edits}")
+    elif method.startswith("SEDC-T"):
+        selected_segments = example.get("selected_segments")
+        num_segments = example.get("num_changed_segments")
+        if isinstance(selected_segments, list):
+            num_segments = len(selected_segments)
+        if num_segments is not None:
+            method_details.append(
+                f"overlay (selected segments): {num_segments}"
+            )
+
+    metric_line = (
+        f"MAD (l1_mean): {mad} | RMS (l2_mean): {rms} | "
+        f"changed pixels{threshold_label}: {changed_fraction}"
+    )
+    if method_details:
+        return f"{first_line}\n{metric_line}\n{' | '.join(method_details)}"
+    return f"{first_line}\n{metric_line}"
 
 
 def available_categories(examples_by_category: dict[str, dict[str, Any]]) -> list[tuple[str, str]]:
@@ -247,12 +407,6 @@ def create_dataset_figure(
         squeeze=False,
         constrained_layout=True,
     )
-    fig.suptitle(
-        f"Qualitative counterfactual comparison on {dataset}",
-        fontsize=16,
-        fontweight="bold",
-    )
-
     for col, method in enumerate(methods):
         axes[0, col].set_title(textwrap.fill(method, width=28), fontsize=11, pad=12)
 
@@ -292,8 +446,14 @@ def create_dataset_figure(
                 continue
 
             try:
-                image = compact_vertical_whitespace(
-                    normalize_image_for_display(mpimg.imread(image_path))
+                image = add_inner_figure_margin(
+                    compact_vertical_whitespace(
+                        remove_redundant_source_header(
+                            normalize_image_for_display(mpimg.imread(image_path)),
+                            method,
+                            dataset,
+                        )
+                    )
                 )
             except Exception as exc:  # pragma: no cover - defensive for broken image files.
                 draw_missing_cell(ax, "Could not read image")
@@ -304,7 +464,7 @@ def create_dataset_figure(
             ax.text(
                 0.5,
                 -0.08,
-                format_cell_note(example),
+                format_cell_note(example, method),
                 ha="center",
                 va="top",
                 fontsize=8,
@@ -354,12 +514,6 @@ def create_method_figure(
         squeeze=False,
         constrained_layout=True,
     )
-    fig.suptitle(
-        f"{method}\n{dataset}",
-        fontsize=15,
-        fontweight="bold",
-    )
-
     for row, (category, label) in enumerate(categories):
         ax = axes[row, 0]
         ax.set_xticks([])
@@ -390,8 +544,14 @@ def create_method_figure(
             continue
 
         try:
-            image = compact_vertical_whitespace(
-                normalize_image_for_display(mpimg.imread(image_path))
+            image = add_inner_figure_margin(
+                compact_vertical_whitespace(
+                    remove_redundant_source_header(
+                        normalize_image_for_display(mpimg.imread(image_path)),
+                        method,
+                        dataset,
+                    )
+                )
             )
         except Exception as exc:  # pragma: no cover - defensive for broken image files.
             draw_missing_cell(ax, "Could not read image")
@@ -402,10 +562,10 @@ def create_method_figure(
         ax.text(
             0.5,
             -0.08,
-            format_cell_note(example),
+            format_cell_note(example, method),
             ha="center",
             va="top",
-            fontsize=9,
+            fontsize=8.5,
             transform=ax.transAxes,
         )
 
@@ -421,6 +581,16 @@ def create_method_figure(
         "method": method,
         "figure_path": str(figure_path),
         "categories": [label for _, label in categories],
+        "samples": [
+            {
+                "category": category,
+                "manifest_sample_index": examples_by_category[category].get(
+                    "manifest_sample_index",
+                    examples_by_category[category].get("sample_index"),
+                ),
+            }
+            for category, _ in categories
+        ],
         "warnings": warnings,
     }
 
@@ -482,6 +652,18 @@ def write_readme(
             "",
             f"- `{selected_examples_path}`",
             "",
+            "The selected sample indices are preserved exactly. Redundant source "
+            "headers and the repeated method/dataset heading are removed. Each row "
+            "keeps one compact annotation with the class transition and both the "
+            "original and counterfactual confidence, target, validity, MAD "
+            "(`l1_mean`), RMS pixel difference (`l2_mean`), "
+            "changed-pixel percentage, and only method-specific details needed for "
+            "interpretation (Goyal distractor/embedding distance/edit count or "
+            "SEDC-T segment count). "
+            "The unrelated maximum norm `L_inf` from the former annotations is not "
+            "shown because the paper defines RMS/`l2_mean` as its second proximity "
+            "metric.",
+            "",
             "The comparison script does not recompute, stretch, or per-image normalize "
             "the embedded difference maps. Source plots are displayed as saved, and "
             "image data is only converted to the standard display range `[0, 1]`. "
@@ -493,11 +675,6 @@ def write_readme(
             "colors would only be appropriate with an explicitly labelled alternate "
             "scale, because otherwise tiny differences could appear misleadingly "
             "large.",
-            "",
-            "For method-level interpretation and the trade-offs between "
-            "CFProto (original-style), Goyal 2019 CVE, SEDC-T, and DVCE, see:",
-            "",
-            "- `results/qualitative_figures/qualitative_results_interpretation.md`",
             "",
             "Generated per-method figures:",
             "",
@@ -533,7 +710,9 @@ def write_readme(
 
 def main() -> None:
     args = parse_args()
-    examples = load_selected_examples(args.selected_examples)
+    examples = enrich_examples_from_metadata(
+        load_selected_examples(args.selected_examples)
+    )
     requested_datasets = set(args.datasets) if args.datasets else None
 
     by_dataset: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -546,7 +725,7 @@ def main() -> None:
     if not by_dataset:
         raise ValueError("No selected examples matched the requested datasets.")
 
-    method_results = create_method_figures(by_dataset, args.output_dir, args.dpi)
+    method_results = create_method_figures(by_dataset, OUTPUT_DIR, args.dpi)
     for result in method_results:
         for warning in result.get("warnings", []):
             print(f"WARNING: {warning}")
@@ -556,15 +735,15 @@ def main() -> None:
     overview_results = []
     if args.include_dataset_overview:
         for dataset in sorted(by_dataset):
-            result = create_dataset_figure(dataset, by_dataset[dataset], args.output_dir, args.dpi)
+            result = create_dataset_figure(dataset, by_dataset[dataset], OUTPUT_DIR, args.dpi)
             overview_results.append(result)
             for warning in result.get("warnings", []):
                 print(f"WARNING: {warning}")
             if result.get("figure_path"):
                 print(f"Wrote {result['figure_path']}")
 
-    manifest_path = args.output_dir / "qualitative_figure_manifest.json"
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    manifest_path = OUTPUT_DIR / "qualitative_figure_manifest.json"
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     with manifest_path.open("w", encoding="utf-8") as f:
         json.dump(
             {
@@ -576,7 +755,7 @@ def main() -> None:
             f,
             indent=2,
         )
-    write_readme(args.output_dir, args.selected_examples, method_results, overview_results)
+    write_readme(OUTPUT_DIR, args.selected_examples, method_results, overview_results)
     print(f"Wrote {manifest_path}")
 
 
