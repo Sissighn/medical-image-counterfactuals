@@ -13,7 +13,6 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 CATEGORY_ORDER = [
     ("best_valid_balanced", "Most balanced valid case"),
     ("highest_confidence_valid", "Highest-confidence valid case"),
@@ -43,36 +42,30 @@ OUTPUT_DIR = Path("results/qualitative_figures")
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description=(
-            "Create qualitative comparison figures from selected counterfactual "
-            "examples."
-        )
+        description="Create qualitative comparison figures."
     )
     parser.add_argument(
         "--selected_examples",
         type=Path,
-        default=Path("results/qualitative_selection/selected_examples.json"),
-        help="JSON file created by select_interpretable_examples.py.",
+        default=Path("results/qualitative_figures/selected_examples.json"),
+        help="JSON file containing the fixed qualitative selection.",
     )
     parser.add_argument(
         "--dpi",
         type=int,
         default=300,
-        help="DPI for saved PNG figures.",
+        help="Resolution of the saved PNG files.",
     )
     parser.add_argument(
         "--datasets",
         nargs="*",
         default=None,
-        help="Optional dataset names to include, for example BUSI Pneumonia.",
+        help="Optional dataset filter, for example BUSI Pneumonia.",
     )
     parser.add_argument(
         "--include_dataset_overview",
         action="store_true",
-        help=(
-            "Also create broad dataset-level figures with methods as columns. "
-            "By default, only paper-friendly per-method figures are created."
-        ),
+        help="Also create dataset-level overview figures.",
     )
     return parser.parse_args()
 
@@ -97,9 +90,7 @@ def enrich_examples_from_metadata(
     for original_example in examples:
         example = dict(original_example)
         metadata_value = example.get("metadata_path")
-        sample_index = example.get(
-            "manifest_sample_index", example.get("sample_index")
-        )
+        sample_index = example.get("manifest_sample_index", example.get("sample_index"))
         if not metadata_value or sample_index is None:
             enriched_examples.append(example)
             continue
@@ -212,10 +203,6 @@ def remove_redundant_source_header(
     dataset: str,
 ) -> np.ndarray:
     if method.startswith("DVCE original-style"):
-        # The DVCE source layouts differ slightly: BUSI/OpenAI has a shorter
-        # metadata block than Pneumonia and the fine-tuned BUSI variants.
-        # These cut positions remove the old "Valid CF" line but retain every
-        # original panel title and every image row.
         if dataset == "BUSI" and "OpenAI checkpoint" in method:
             crop_fraction = 0.12875
         else:
@@ -237,9 +224,6 @@ def remove_redundant_source_header(
         return image
     cropped = image[crop_row:].copy()
     if method.startswith("DVCE original-style") and crop_row == 108:
-        # A few DVCE source plots retain the final anti-aliased dot of the old
-        # metadata header between the second and third panels. Remove only that
-        # fixed blank-area remnant without touching panel titles or image data.
         width = cropped.shape[1]
         cropped[:4, int(width * 0.50) : int(width * 0.53)] = 1.0
     return cropped
@@ -251,7 +235,6 @@ def add_inner_figure_margin(
     side_fraction: float = 0.008,
     bottom_fraction: float = 0.008,
 ) -> np.ndarray:
-    """Add white space between the source plot and the outer row border."""
     if image.ndim < 2:
         return image
 
@@ -307,9 +290,7 @@ def format_cell_note(example: dict[str, Any], method: str) -> str:
     rms = format_distance_metric(example.get("l2"))
     changed_fraction = format_percentage(example.get("changed_pixel_fraction"), 2)
     threshold = example.get("sparsity_threshold")
-    threshold_label = (
-        f" (> {float(threshold):.2f})" if threshold is not None else ""
-    )
+    threshold_label = f" (> {float(threshold):.2f})" if threshold is not None else ""
     first_line = (
         f"Sample {sample} | true: {true_label} | prediction: "
         f"{original_prediction} ({original_confidence}) -> "
@@ -336,9 +317,7 @@ def format_cell_note(example: dict[str, Any], method: str) -> str:
         if isinstance(selected_segments, list):
             num_segments = len(selected_segments)
         if num_segments is not None:
-            method_details.append(
-                f"overlay (selected segments): {num_segments}"
-            )
+            method_details.append(f"overlay (selected segments): {num_segments}")
 
     metric_line = (
         f"MAD (l1_mean): {mad} | RMS (l2_mean): {rms} | "
@@ -349,7 +328,9 @@ def format_cell_note(example: dict[str, Any], method: str) -> str:
     return f"{first_line}\n{metric_line}"
 
 
-def available_categories(examples_by_category: dict[str, dict[str, Any]]) -> list[tuple[str, str]]:
+def available_categories(
+    examples_by_category: dict[str, dict[str, Any]],
+) -> list[tuple[str, str]]:
     return [
         (category, label)
         for category, label in CATEGORY_ORDER
@@ -394,7 +375,12 @@ def create_dataset_figure(
     methods = sorted(grouped.keys(), key=method_sort_key)
     if not methods:
         warnings.append(f"No methods found for dataset {dataset}.")
-        return {"dataset": dataset, "figure_path": None, "methods": [], "warnings": warnings}
+        return {
+            "dataset": dataset,
+            "figure_path": None,
+            "methods": [],
+            "warnings": warnings,
+        }
 
     n_rows = len(CATEGORY_ORDER)
     n_cols = len(methods)
@@ -425,8 +411,8 @@ def create_dataset_figure(
                     va="center",
                 )
 
-            example = grouped[method].get(category)
-            if example is None:
+            selected_example = grouped[method].get(category)
+            if selected_example is None:
                 message = f"No selected example\nfor {label}"
                 draw_missing_cell(ax, message)
                 warnings.append(
@@ -434,14 +420,15 @@ def create_dataset_figure(
                 )
                 continue
 
-            image_path, _ = choose_example_path(example)
+            image_path, _ = choose_example_path(selected_example)
             if image_path is None:
                 message = "Image missing"
                 draw_missing_cell(ax, message)
                 warnings.append(
                     f"{dataset} / {method} / {label}: missing image path. "
-                    f"Tried copied_plot_path={example.get('copied_plot_path')} and "
-                    f"image_path={example.get('image_path')}."
+                    "Tried copied_plot_path="
+                    f"{selected_example.get('copied_plot_path')} and "
+                    f"image_path={selected_example.get('image_path')}."
                 )
                 continue
 
@@ -455,7 +442,7 @@ def create_dataset_figure(
                         )
                     )
                 )
-            except Exception as exc:  # pragma: no cover - defensive for broken image files.
+            except Exception as exc:
                 draw_missing_cell(ax, "Could not read image")
                 warnings.append(f"{image_path}: could not be read ({exc}).")
                 continue
@@ -464,7 +451,7 @@ def create_dataset_figure(
             ax.text(
                 0.5,
                 -0.08,
-                format_cell_note(example, method),
+                format_cell_note(selected_example, method),
                 ha="center",
                 va="top",
                 fontsize=8,
@@ -530,7 +517,9 @@ def create_method_figure(
         example = examples_by_category.get(category)
         if example is None:
             draw_missing_cell(ax, f"No selected example\nfor {label}")
-            warnings.append(f"{dataset} / {method} / {label}: no selected example available.")
+            warnings.append(
+                f"{dataset} / {method} / {label}: no selected example available."
+            )
             continue
 
         image_path, _ = choose_example_path(example)
@@ -553,7 +542,7 @@ def create_method_figure(
                     )
                 )
             )
-        except Exception as exc:  # pragma: no cover - defensive for broken image files.
+        except Exception as exc:
             draw_missing_cell(ax, "Could not read image")
             warnings.append(f"{image_path}: could not be read ({exc}).")
             continue
@@ -630,16 +619,13 @@ def write_readme(
     all_results = method_results + overview_results
     warning_count = sum(len(result.get("warnings", [])) for result in all_results)
     lines = [
-        "# Qualitative Comparison Figures",
+        "# Qualitative Result Figures",
         "",
-        "This folder contains paper-friendly qualitative comparison figures for "
-        "the counterfactual methods evaluated in this project.",
+        "This directory contains the fixed qualitative selection and the "
+        "manifest for the method-specific result figures.",
         "",
-        "The main figures are stored in dataset-specific folders under "
-        "`per_method/`, for example `per_method/busi/` and "
-        "`per_method/pneumonia/`. Each figure contains one method on one "
-        "dataset. Rows correspond to the qualitative case types available for "
-        "that method:",
+        "Figures are generated under `per_method/busi/` and "
+        "`per_method/pneumonia/`. Rows represent the available case types:",
         "",
     ]
     for _, label in CATEGORY_ORDER:
@@ -647,36 +633,20 @@ def write_readme(
     lines.extend(
         [
             "",
-            "The figures are composed from the existing per-example visualizations "
-            "referenced in:",
+            "The fixed selection is stored in:",
             "",
             f"- `{selected_examples_path}`",
             "",
-            "The selected sample indices are preserved exactly. Redundant source "
-            "headers and the repeated method/dataset heading are removed. Each row "
-            "keeps one compact annotation with the class transition and both the "
-            "original and counterfactual confidence, target, validity, MAD "
-            "(`l1_mean`), RMS pixel difference (`l2_mean`), "
-            "changed-pixel percentage, and only method-specific details needed for "
-            "interpretation (Goyal distractor/embedding distance/edit count or "
-            "SEDC-T segment count). "
-            "The unrelated maximum norm `L_inf` from the former annotations is not "
-            "shown because the paper defines RMS/`l2_mean` as its second proximity "
-            "metric.",
+            "Sample indices are preserved exactly. Only redundant source headers "
+            "are removed. Each row reports the class transition, original and "
+            "counterfactual confidence, target class, validity, MAD (`l1_mean`), "
+            "RMS (`l2_mean`), change fraction, and method-specific values.",
             "",
-            "The comparison script does not recompute, stretch, or per-image normalize "
-            "the embedded difference maps. Source plots are displayed as saved, and "
-            "image data is only converted to the standard display range `[0, 1]`. "
-            "Long white bands inside source plots are compacted for readability, "
-            "but the image panels and color values are not changed.",
+            "The script does not recompute or normalize the embedded difference "
+            "maps per image. Source plots are converted only to the display range "
+            "`[0, 1]`, and redundant whitespace is removed.",
             "",
-            "This is intentional: very dark difference maps indicate genuinely small "
-            "absolute changes on a fixed scale, not a plotting error. Stronger "
-            "colors would only be appropriate with an explicitly labelled alternate "
-            "scale, because otherwise tiny differences could appear misleadingly "
-            "large.",
-            "",
-            "Generated per-method figures:",
+            "Generated method-specific figures:",
             "",
         ]
     )
@@ -685,7 +655,7 @@ def write_readme(
         if figure_path:
             lines.append(f"- `{figure_path}`")
     if overview_results:
-        lines.extend(["", "Optional dataset overview figures:", ""])
+        lines.extend(["", "Additional dataset overviews:", ""])
         for result in overview_results:
             figure_path = result.get("figure_path")
             if figure_path:
@@ -693,7 +663,7 @@ def write_readme(
     lines.extend(
         [
             "",
-            f"Warnings emitted during generation: {warning_count}",
+            f"Warnings during generation: {warning_count}",
             "",
         ]
     )
@@ -735,7 +705,9 @@ def main() -> None:
     overview_results = []
     if args.include_dataset_overview:
         for dataset in sorted(by_dataset):
-            result = create_dataset_figure(dataset, by_dataset[dataset], OUTPUT_DIR, args.dpi)
+            result = create_dataset_figure(
+                dataset, by_dataset[dataset], OUTPUT_DIR, args.dpi
+            )
             overview_results.append(result)
             for warning in result.get("warnings", []):
                 print(f"WARNING: {warning}")
