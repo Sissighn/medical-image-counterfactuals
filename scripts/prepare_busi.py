@@ -1,6 +1,6 @@
-from pathlib import Path
-import shutil
 import random
+import shutil
+from pathlib import Path
 
 random.seed(42)
 
