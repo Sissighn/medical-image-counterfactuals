@@ -1,5 +1,5 @@
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 RAW_DIR = Path("data/raw/Pneumonia/chest_xray")
 OUT_DIR = Path("data/processed/Pneumonia")
