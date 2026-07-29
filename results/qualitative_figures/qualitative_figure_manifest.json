@@ -13,6 +13,24 @@
         "Low-plausibility valid case",
         "Failure case"
       ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 14
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 11
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 3
+        },
+        {
+          "category": "failure_case",
+          "manifest_sample_index": 13
+        }
+      ],
       "warnings": []
     },
     {
@@ -24,6 +42,20 @@
         "Most balanced valid case",
         "Highest-confidence valid case",
         "Low-plausibility valid case"
+      ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 6
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 13
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 9
+        }
       ],
       "warnings": []
     },
@@ -38,6 +70,24 @@
         "Low-plausibility valid case",
         "Failure case"
       ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 14
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 0
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 9
+        },
+        {
+          "category": "failure_case",
+          "manifest_sample_index": 3
+        }
+      ],
       "warnings": []
     },
     {
@@ -51,6 +101,24 @@
         "Low-plausibility valid case",
         "Failure case"
       ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 3
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 14
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 0
+        },
+        {
+          "category": "failure_case",
+          "manifest_sample_index": 1
+        }
+      ],
       "warnings": []
     },
     {
@@ -62,6 +130,20 @@
         "Most balanced valid case",
         "Highest-confidence valid case",
         "Low-plausibility valid case"
+      ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 5
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 8
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 0
+        }
       ],
       "warnings": []
     },
@@ -75,6 +157,20 @@
         "Highest-confidence valid case",
         "Low-plausibility valid case"
       ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 5
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 14
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 0
+        }
+      ],
       "warnings": []
     },
     {
@@ -87,6 +183,20 @@
         "Highest-confidence valid case",
         "Low-plausibility valid case"
       ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 3
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 16
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 8
+        }
+      ],
       "warnings": []
     },
     {
@@ -98,6 +208,20 @@
         "Most balanced valid case",
         "Highest-confidence valid case",
         "Low-plausibility valid case"
+      ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 3
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 1
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 10
+        }
       ],
       "warnings": []
     },
@@ -112,6 +236,24 @@
         "Low-plausibility valid case",
         "Failure case"
       ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 3
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 4
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 19
+        },
+        {
+          "category": "failure_case",
+          "manifest_sample_index": 17
+        }
+      ],
       "warnings": []
     },
     {
@@ -125,6 +267,24 @@
         "Low-plausibility valid case",
         "Failure case"
       ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 3
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 6
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 9
+        },
+        {
+          "category": "failure_case",
+          "manifest_sample_index": 19
+        }
+      ],
       "warnings": []
     },
     {
@@ -136,6 +296,20 @@
         "Most balanced valid case",
         "Highest-confidence valid case",
         "Low-plausibility valid case"
+      ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 19
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 2
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 10
+        }
       ],
       "warnings": []
     },
@@ -150,6 +324,24 @@
         "Low-plausibility valid case",
         "Failure case"
       ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 17
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 7
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 10
+        },
+        {
+          "category": "failure_case",
+          "manifest_sample_index": 13
+        }
+      ],
       "warnings": []
     },
     {
@@ -162,6 +354,20 @@
         "Highest-confidence valid case",
         "Low-plausibility valid case"
       ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 19
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 3
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 10
+        }
+      ],
       "warnings": []
     },
     {
@@ -173,6 +379,20 @@
         "Most balanced valid case",
         "Highest-confidence valid case",
         "Low-plausibility valid case"
+      ],
+      "samples": [
+        {
+          "category": "best_valid_balanced",
+          "manifest_sample_index": 17
+        },
+        {
+          "category": "highest_confidence_valid",
+          "manifest_sample_index": 1
+        },
+        {
+          "category": "visually_questionable_valid",
+          "manifest_sample_index": 10
+        }
       ],
       "warnings": []
     }
