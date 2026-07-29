@@ -1,16 +1,11 @@
 import argparse
 import json
-import sys
 from pathlib import Path
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.data_utils import create_dataloaders
 
@@ -69,7 +64,9 @@ def build_manifest(model, data, classes, device, max_samples, target_strategy):
                 current_dataset_index = dataset_index + batch_index
                 true_label_index = int(labels[batch_index].item())
                 prediction_index = int(predictions[batch_index].item())
-                sample_probabilities = probabilities[batch_index].detach().cpu().tolist()
+                sample_probabilities = (
+                    probabilities[batch_index].detach().cpu().tolist()
+                )
 
                 if prediction_index != true_label_index:
                     continue
@@ -132,7 +129,9 @@ def build_balanced_manifest(
                 current_dataset_index = dataset_index + batch_index
                 true_label_index = int(labels[batch_index].item())
                 prediction_index = int(predictions[batch_index].item())
-                sample_probabilities = probabilities[batch_index].detach().cpu().tolist()
+                sample_probabilities = (
+                    probabilities[batch_index].detach().cpu().tolist()
+                )
 
                 if prediction_index != true_label_index:
                     continue
@@ -165,7 +164,9 @@ def build_balanced_manifest(
                 )
                 counts_by_class[true_label_index] += 1
 
-                if all(count >= samples_per_class for count in counts_by_class.values()):
+                if all(
+                    count >= samples_per_class for count in counts_by_class.values()
+                ):
                     return records, counts_by_class
 
             dataset_index += images.shape[0]
