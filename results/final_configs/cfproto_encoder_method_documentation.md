@@ -85,16 +85,16 @@ project-specific substitutions.
 
 | Aspect | Original (alibi `CounterfactualProto`) | This implementation | Status |
 |---|---|---|---|
-| Optimizer | FISTA: gradient step + shrinkage-thresholding + Nesterov momentum | identical | ✅ |
-| Attack loss | untargeted hinge `max(0, p_orig − max_{i≠orig} p_i + κ)` | identical | ✅ |
-| Loss terms | `c·L_attack + L2 + β·L1 + γ·L_AE + θ·L_proto` (sums) | identical | ✅ |
-| L1 handling | via shrinkage-thresholding, not the gradient | identical | ✅ |
-| `c` search | binary search, ×10 escalation, no upper bound until a valid CF is found | identical | ✅ |
-| Class prototypes | mean/kNN-mean of training encodings, membership via classifier predictions | identical | ✅ |
-| Target selection | nearest prototype among candidate classes | identical | ✅ |
-| Best-CF selection | smallest `L2 + β·L1` among valid candidates | identical | ✅ |
-| Learning-rate schedule | polynomial decay, power 0.5 | identical | ✅ |
-| Feature range / gradient clip | `(0, 1)` / `(-1000, 1000)` | identical | ✅ |
+| Optimizer | FISTA: gradient step + shrinkage-thresholding + Nesterov momentum | identical | Faithful |
+| Attack loss | untargeted hinge `max(0, p_orig − max_{i≠orig} p_i + κ)` | identical | Faithful |
+| Loss terms | `c·L_attack + L2 + β·L1 + γ·L_AE + θ·L_proto` (sums) | identical | Faithful |
+| L1 handling | via shrinkage-thresholding, not the gradient | identical | Faithful |
+| `c` search | binary search, ×10 escalation, no upper bound until a valid CF is found | identical | Faithful |
+| Class prototypes | mean/kNN-mean of training encodings, membership via classifier predictions | identical | Faithful |
+| Target selection | nearest prototype among candidate classes | identical | Faithful |
+| Best-CF selection | smallest `L2 + β·L1` among valid candidates | identical | Faithful |
+| Learning-rate schedule | polynomial decay, power 0.5 | identical | Faithful |
+| Feature range / gradient clip | `(0, 1)` / `(-1000, 1000)` | identical | Faithful |
 
 ---
 
