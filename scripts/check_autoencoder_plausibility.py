@@ -1,27 +1,20 @@
 import argparse
 import csv
 import json
-import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import torch
-import torch.nn.functional as F
 import torchvision.transforms.functional as TF
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-from src.autoencoder import (  # noqa: E402
+from src.autoencoder import (
     ARCHITECTURE_NAME,
     BOTTLENECK_ARCHITECTURE_NAME,
     ConvAutoencoder,
     ConvAutoencoderBottleneck,
 )
-from src.data_utils import IMAGE_SIZE, create_dataloaders  # noqa: E402
-from src.train_model import get_device  # noqa: E402
-
+from src.data_utils import IMAGE_SIZE, create_dataloaders
+from src.train_model import get_device
 
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
 IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
@@ -179,7 +172,10 @@ def check_plausibility(
 
                 if len(visual_records) < 5:
                     visual_records.append(
-                        {name: variant[idx].detach().cpu() for name, variant in variants.items()}
+                        {
+                            name: variant[idx].detach().cpu()
+                            for name, variant in variants.items()
+                        }
                     )
 
                 sample_counter += 1
@@ -225,7 +221,8 @@ def check_plausibility(
         },
         "mean_losses": means,
         "patch_above_original": means["loss_patch"] > means["loss_original"],
-        "strong_noise_above_original": means["loss_strong_noise"] > means["loss_original"],
+        "strong_noise_above_original": means["loss_strong_noise"]
+        > means["loss_original"],
     }
     summary_path = output_dir / "plausibility_summary.json"
     summary_path.write_text(json.dumps(summary, indent=4) + "\n")
