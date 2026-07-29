@@ -11,6 +11,7 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.ipynb_checkpoints/
 
 # Virtual environments
 .venv/
@@ -21,11 +22,6 @@ env/
 # Local environment files
 .env
 .env.*
-paper_drafts/
-results/docs/seminar_paper_outline.md
-results/docs/evaluation_chapter_plan.md
-results/dvce_feasibility/
-results/diffusion_training_setup/
 
 # Datasets and generated dataset splits
 data/
@@ -40,7 +36,24 @@ checkpoints/
 # External method repositories used for local experiments
 external/
 
-# Large/generated visual artifacts
+# Seminar paper drafts, working memory, and exploratory outputs
+paper_drafts/
+.seminararbeit_assistant/
+results/docs/seminar_paper_outline.md
+results/docs/evaluation_chapter_plan.md
+results/docs/project_structure_diagram.png
+results/dvce_feasibility/
+results/diffusion_training_setup/
+
+# Local debug, smoke-test, and ablation outputs
+results/debug/
+results/ablations/
+results/fixed_evaluation_smoke/
+results/sedc_t/*smoke/
+results/autoencoder_plausibility_*
+
+# Large/generated visual artifacts, regenerated locally from metadata and scripts.
+# Final metadata and Markdown summaries stay tracked.
 results/cfproto/
 results/cfproto_tuned/
 results/cfproto*/**/*.png
@@ -49,35 +62,13 @@ results/cfproto*/**/*.jpeg
 results/sedc_t/**/*.png
 results/sedc_t/**/*.jpg
 results/sedc_t/**/*.jpeg
-results/sedc_t/*smoke/
-results/dvce_feasibility/**/*.png
-results/dvce_feasibility/**/*.jpg
-results/dvce_feasibility/**/*.jpeg
 results/fixed_evaluation/**/*.png
 results/fixed_evaluation/**/*.jpg
 results/fixed_evaluation/**/*.jpeg
-results/fixed_evaluation_smoke/
 results/qualitative_figures/**/*.png
 results/qualitative_figures/**/*.jpg
 results/qualitative_figures/**/*.jpeg
 results/qualitative_selection/
-results/qualitative_selection/images/
-results/diffusion_training_setup/openai_logdir/
-
-# Local debug, smoke-test, and ablation outputs
-results/debug/
-results/ablations/
-results/autoencoder_plausibility_*
-
-# Final run image artifacts are regenerated from metadata and scripts.
-# Keep final metadata/markdown summaries trackable.
 results/final/**/*.png
 results/final/**/*.jpg
 results/final/**/*.jpeg
-
-# Notebook checkpoints
-.ipynb_checkpoints/
-results/docs/project_structure_diagram.png
-
-# Local working memory, backups, and Word-processing helpers for the seminar paper
-.seminararbeit_assistant/
