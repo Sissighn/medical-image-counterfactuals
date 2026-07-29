@@ -2,7 +2,6 @@ import argparse
 import json
 from pathlib import Path
 
-
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"}
 
 
