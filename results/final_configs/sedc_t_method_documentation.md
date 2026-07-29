@@ -74,16 +74,16 @@ classifier are the intended project-specific substitutions.
 
 | Aspect | Original (`sedc_t2_fast.py`) | This implementation | Status |
 |---|---|---|---|
-| Segmentation | quickshift(4, 200, 0.2), passed in externally | identical | ✅ verified against repo experiment scripts |
-| Replacement modes | mean / blur / random / inpaint | all four implemented | ✅ |
-| Blur perturbation | applied once to the whole image, then copied in per segment | identical | ✅ |
-| Initial candidates | each segment alone, one batched predict | identical (batched) | ✅ |
-| Expansion | **one** pending node (highest expansion score) expanded per step; its children classified in one batch | identical — exactly one parent per while-iteration | ✅ |
-| Stop condition | `len(R)==0 and len(combo_set)>0 and max_time>elapsed` | `not valid_candidates and pending and expansion_produced_children and not timed_out()` | ✅ |
-| Selection on success | `argmax(P − p)` over valid candidates of the successful level | `max(..., key=target_score_increase)` | ✅ mathematically identical |
-| Explanation image | original pixels of selected segments, rest set to 0 | identical | ✅ |
-| Timeout check frequency | once per node expansion, not per forward pass | identical | ✅ |
-| Expansion score | `p_target − p_current_class` | identical | ✅ |
+| Segmentation | quickshift(4, 200, 0.2), passed in externally | identical | Faithful, verified against repo experiment scripts |
+| Replacement modes | mean / blur / random / inpaint | all four implemented | Faithful |
+| Blur perturbation | applied once to the whole image, then copied in per segment | identical | Faithful |
+| Initial candidates | each segment alone, one batched predict | identical (batched) | Faithful |
+| Expansion | **one** pending node (highest expansion score) expanded per step; its children classified in one batch | identical — exactly one parent per while-iteration | Faithful |
+| Stop condition | `len(R)==0 and len(combo_set)>0 and max_time>elapsed` | `not valid_candidates and pending and expansion_produced_children and not timed_out()` | Faithful |
+| Selection on success | `argmax(P − p)` over valid candidates of the successful level | `max(..., key=target_score_increase)` | Faithful, mathematically identical |
+| Explanation image | original pixels of selected segments, rest set to 0 | identical | Faithful |
+| Timeout check frequency | once per node expansion, not per forward pass | identical | Faithful |
+| Expansion score | `p_target − p_current_class` | identical | Faithful |
 
 ---
 
