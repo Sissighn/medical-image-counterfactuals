@@ -181,9 +181,10 @@ explained classifier's gradient. The fine-tuned checkpoints achieve full
 validity, while the generic OpenAI checkpoint reaches 0.93 on BUSI and 0.80 on
 Pneumonia. This difference is expected because the generic checkpoint was
 trained on natural images rather than medical scans. The OpenAI runtimes of
-700–1,173 seconds reflect a CPU-bound machine and are not comparable across
-hardware; the fine-tuned runs of approximately 33–45 seconds are more
-representative. See the [DVCE method documentation](../final_configs/dvce_method_documentation.md)
+700–1,173 seconds were measured on MPS (BUSI) and CUDA (Pneumonia) without
+diffusion FP16, whereas the fine-tuned runs of approximately 33–45 seconds used
+CUDA with diffusion FP16; because device and precision conditions differ, these
+runtimes are not comparable across configurations. See the [DVCE method documentation](../final_configs/dvce_method_documentation.md)
 and [Cone Projection notes](../final_configs/dvce_cone_projection.md).
 
 ## 7. Summary Comparison
