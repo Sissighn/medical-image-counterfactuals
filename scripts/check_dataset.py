@@ -39,7 +39,7 @@ def main():
                 folder = dataset_path / split / class_name
 
                 if not folder.exists():
-                    print(f"  {class_name}: ORDNER FEHLT")
+                    print(f"  {class_name}: DIRECTORY MISSING")
                     continue
 
                 count = count_images(folder)
