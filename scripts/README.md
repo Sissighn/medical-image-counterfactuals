@@ -1,54 +1,45 @@
-# Scripts Overview
+# Script Overview
 
-This folder contains pipeline scripts, evaluation scripts, and a few older
-debug/smoke-test utilities. The main project workflow should use the core
-scripts below.
+Run all commands from the repository root with `PYTHONPATH=.`.
 
-## Core Pipeline Scripts
+## Data Preparation
 
-| Script | Role |
+| Script | Purpose |
 | --- | --- |
-| `prepare_busi.py` | Prepare the BUSI dataset in the processed `train/val/test` folder structure. |
-| `prepare_pneumonia.py` | Prepare the Pneumonia dataset in the processed `train/val/test` folder structure. |
-| `evaluate_model.py` | Evaluate a saved classifier on the full test split and write metrics to JSON. |
-| `train_robust_resnet18_pgd.py` | Train a PGD-adversarially robust ResNet18 in the same checkpoint format as the normal classifiers, for DVCE Cone Projection. |
-| `train_autoencoder.py` | Train an unsupervised ConvAutoencoder, including the compact bottleneck variant, on denormalized `[0, 1]` images for the CFProto (original-style) encoder-prototype method. |
-| `check_autoencoder_plausibility.py` | Check whether a trained autoencoder assigns higher reconstruction loss to brightness/contrast, blur, patch, and noise perturbations than to original images. |
-| `create_evaluation_manifest.py` | Create fixed correctly classified evaluation samples for counterfactual comparison. |
-| `run_cfproto_pytorch.py` | Run the CFProto original-style prototype-guided counterfactual method (FISTA with shrinkage-thresholding, hinge attack loss, binary c-search, encoder-space class prototypes) following alibi's `CounterfactualProto`. |
-| `run_goyal_cve_pytorch.py` | Run Goyal et al. 2019 counterfactual visual explanations (greedy exhaustive feature-cell swaps from a nearest-unlike-neighbor distractor). |
-| `run_sedc_t_pytorch.py` | Run SEDC-T original-style best-first, plus the retained Pneumonia lung-field ROI ablation via `--roi_mode lung_fields`. |
-| `run_dvce_pytorch.py` | Run the original-style DVCE diffusion-guided counterfactual generation with OpenAI or medical fine-tuned diffusion checkpoints. |
-| `summarize_counterfactual_evaluation.py` | Generate compact summary tables from method metadata files. |
-| `select_interpretable_examples.py` | Select good, difficult, and failure examples from existing metadata for qualitative inspection. |
-| `create_qualitative_comparison_figures.py` | Compose selected per-example plots into dataset-level qualitative comparison figures. |
+| `prepare_busi.py` | Excludes BUSI mask images and creates class-wise 70/15/15 splits with seed 42. |
+| `prepare_pneumonia.py` | Copies the existing train, validation, and test structure of the Pneumonia dataset. |
+| `check_dataset.py` | Reports image counts by dataset, split, and class. |
+| `test_data_utils.py` | Loads one test batch from each prepared dataset. |
+| `prepare_diffusion_training_data.py` | Builds the image collection used for diffusion training. |
+| `check_diffusion_training_setup.py` | Checks paths and parameters for the local DVCE training setup. |
 
-## Diffusion Fine-Tuning Utilities
+## Model Training
 
-| Script | Role |
+| Script | Purpose |
 | --- | --- |
-| `prepare_diffusion_training_data.py` | Export processed medical images as flat 256x256 RGB folders for diffusion fine-tuning. |
-| `check_diffusion_training_setup.py` | Check training data/checkpoints and generate a guided-diffusion training command. |
+| `src/train_model.py` | Trains ResNet18 with optional ImageNet initialization, augmentation, and class weights. |
+| `evaluate_model.py` | Computes accuracy, weighted F1, precision, recall, and the confusion matrix on the test split. |
+| `train_autoencoder.py` | Trains the autoencoder used by CFProto. |
+| `check_autoencoder_plausibility.py` | Compares reconstruction losses for original and artificially perturbed images. |
+| `train_robust_resnet18_pgd.py` | Trains the robust auxiliary classifier used for DVCE Cone Projection. |
 
-These scripts support the DVCE method but are not themselves a counterfactual
-method. They document how the medical fine-tuned diffusion checkpoints were
-prepared and are kept for reproducibility. If rerunning
-`prepare_diffusion_training_data.py` with a smaller subset, use a clean output
-folder to avoid leaving stale exported images.
+## Counterfactual Methods
 
-## Lightweight Checks
-
-| Script | Role |
+| Script | Purpose |
 | --- | --- |
-| `check_dataset.py` | Count processed images per split and class. |
-| `test_data_utils.py` | Smoke-test the central `src.data_utils.create_dataloaders` function. |
+| `create_evaluation_manifest.py` | Selects correctly classified test images and fixed target classes. |
+| `run_cfproto_pytorch.py` | Generates prototype-guided pixel-space counterfactuals. |
+| `run_goyal_cve_pytorch.py` | Replaces spatial feature cells with cells from a target-class distractor. |
+| `run_sedc_t_pytorch.py` | Searches for counterfactuals by replacing Quickshift segments. |
+| `run_dvce_pytorch.py` | Generates diffusion-based counterfactuals with optional Cone Projection. |
 
-These scripts are intentionally lightweight. They should not be used as final
-evaluation scripts for the seminar results.
+## Result Processing
 
-## Output Behavior
+| Script | Purpose |
+| --- | --- |
+| `summarize_counterfactual_evaluation.py` | Builds the shared quantitative table from final metadata. |
+| `select_interpretable_examples.py` | Selects representative valid cases, visually questionable cases, and failures. |
+| `create_qualitative_comparison_figures.py` | Creates the method-specific qualitative figures. |
 
-Most scripts overwrite the file or folder passed via `--output_path` or
-`--output_dir`. This is intentional for reproducible reruns, but important when
-preserving old results. Use a new output folder name for parameter studies or
-exploratory runs.
+Authoritative parameters are documented in
+[`results/final_configs/README.md`](../results/final_configs/README.md).
