@@ -122,18 +122,18 @@ applies ImageNet normalization, and does **not** clamp its input.
 
 | Aspect | Original (`dff_attack.py`) | This implementation | Status |
 |---|---|---|---|
-| Diffusion backbone + config | 256×256 guided-diffusion, specific config | identical config | ✅ |
-| Model prep order | freeze → eval → to(device) → re-enable qkv/norm/proj grads → fp16 | identical | ✅ |
-| Guidance space | `x_in = pred_xstart` | identical | ✅ |
-| Classifier input mapping | `_map_img = 0.5*(x+1)`, unclamped | identical (unclamped) | ✅ |
-| Classifier term | `log_softmax` target, grad w.r.t. x | identical | ✅ |
-| Cone Projection order | `cone_projection(grad_1, grad_2)` = robust gradient projected onto cone around explained-model gradient, flattened on CPU | identical argument order and device handling | ✅ |
-| Distance term | `lp_custom` on `x_in − init_image`, analytic or denoise-autograd | identical | ✅ |
-| eps-norm rebalancing | `_renormalize_gradient(..., eps)` per term when `enforce_same_norms` | identical | ✅ |
-| Combination | `classifier_lambda*grad_class − lp_custom_value*lp_grad` | identical | ✅ |
-| Augmentations | `ImageAugmentations(clip_size=classifier_size, aug_num)`, per-classifier | identical (size 224) | ✅ |
-| Sampler | `p_sample_loop_progressive`, seeded, skip_timesteps | identical (vendored file) | ✅ |
-| Default params | `timestep_respacing=200`, `skip_timesteps=100`, `classifier_lambda=0.1`, `lp_custom=1.0`, `lp_custom_value=0.15`, `deg=30`, `aug_num=16` (cone) | identical (from `configs/default.yml` + readme) | ✅ |
+| Diffusion backbone + config | 256×256 guided-diffusion, specific config | identical config | Faithful |
+| Model prep order | freeze → eval → to(device) → re-enable qkv/norm/proj grads → fp16 | identical | Faithful |
+| Guidance space | `x_in = pred_xstart` | identical | Faithful |
+| Classifier input mapping | `_map_img = 0.5*(x+1)`, unclamped | identical (unclamped) | Faithful |
+| Classifier term | `log_softmax` target, grad w.r.t. x | identical | Faithful |
+| Cone Projection order | `cone_projection(grad_1, grad_2)` = robust gradient projected onto cone around explained-model gradient, flattened on CPU | identical argument order and device handling | Faithful |
+| Distance term | `lp_custom` on `x_in − init_image`, analytic or denoise-autograd | identical | Faithful |
+| eps-norm rebalancing | `_renormalize_gradient(..., eps)` per term when `enforce_same_norms` | identical | Faithful |
+| Combination | `classifier_lambda*grad_class − lp_custom_value*lp_grad` | identical | Faithful |
+| Augmentations | `ImageAugmentations(clip_size=classifier_size, aug_num)`, per-classifier | identical (size 224) | Faithful |
+| Sampler | `p_sample_loop_progressive`, seeded, skip_timesteps | identical (vendored file) | Faithful |
+| Default params | `timestep_respacing=200`, `skip_timesteps=100`, `classifier_lambda=0.1`, `lp_custom=1.0`, `lp_custom_value=0.15`, `deg=30`, `aug_num=16` (cone) | identical (from `configs/default.yml` + readme) | Faithful |
 
 ---
 
