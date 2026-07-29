@@ -91,7 +91,7 @@ ResNet18 and uses the encoder of a convolutional autoencoder.
 ### 1.3 Intentional Design Decisions
 
 - **Hyperparameters based on the Alibi MNIST example rather than class
-  defaults:** `c_init=1, c_steps=2`, while the Alibi class defaults are 10 and
+  defaults:** `c_init=1, c_steps=5`, while the Alibi class defaults are 10 and
   10. This keeps runtime manageable for medical images without changing the
   bisection logic.
 - **Rescaled `gamma` and `theta`:** the Alibi MNIST examples use values of 100
@@ -347,7 +347,7 @@ code comments:
 | --- | --- | --- | --- |
 | 1 | Goyal CVE | Nearest-unlike-neighbor distractor selected by cosine distance in pooled feature space instead of random confusion-matrix sampling | The edit search is identical; only the distractor source is project-specific. |
 | 2 | SEDC-T | Search timeout of 30 rather than 600 seconds | No observed valid counterfactual is lost; only the wait for failure cases is capped. |
-| 3 | CFProto | Hyperparameters based on the Alibi MNIST example (`c_init=1, c_steps=2`) with dimension-dependent rescaling of `gamma` and `theta` | The algorithm is unchanged; computational effort and weighting are adapted to 224×224 inputs. |
+| 3 | CFProto | Hyperparameters based on the Alibi MNIST example (`c_init=1, c_steps=5`) with dimension-dependent rescaling of `gamma` and `theta` | The algorithm is unchanged; computational effort and weighting are adapted to 224×224 inputs. |
 
 All other differences arise from the framework (TensorFlow to PyTorch),
 classifier domain (ImageNet to medical imaging), or reporting protocol and are
