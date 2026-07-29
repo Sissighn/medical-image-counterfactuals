@@ -8,31 +8,28 @@ import traceback
 import types
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
+import torch.hub
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.hub
-import matplotlib.pyplot as plt
 from torchvision import models, utils
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
 from src.data_utils import create_dataloaders
-from src.evaluation_manifest import (
-    load_image_from_manifest_record,
-    load_manifest_records,
-    manifest_record_metadata,
-)
 from src.dvce_core import (
     DVCE_CHECKPOINT_RELATIVE_PATH,
     add_dvce_to_python_path,
     build_dvce_model_config,
     cast_diffusion_numpy_arrays_to_float32,
     generate_dvce_counterfactual,
+    portable_path,
     resolve_diffusion_checkpoint_path,
+)
+from src.evaluation_manifest import (
+    load_image_from_manifest_record,
+    load_manifest_records,
+    manifest_record_metadata,
 )
 
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
@@ -41,9 +38,9 @@ IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
 
 def apply_dvce_compatibility_patches():
     if not hasattr(np, "float"):
-        np.float = float
+        setattr(np, "float", float)
     if not hasattr(np, "int"):
-        np.int = int
+        setattr(np, "int", int)
 
     torchvision_utils = types.ModuleType("torchvision.models.utils")
     torchvision_utils.load_state_dict_from_url = torch.hub.load_state_dict_from_url
@@ -103,7 +100,6 @@ def validate_second_classifier_checkpoint(primary_checkpoint, second_checkpoint)
 
 
 class MedicalResNetAdapter(nn.Module):
-
     def __init__(self, model):
         super().__init__()
         self.model = model
@@ -291,7 +287,7 @@ def run_dvce_core_initialization(
 
     metadata = {
         "ok": True,
-        "checkpoint_path": str(checkpoint_path),
+        "checkpoint_path": portable_path(checkpoint_path),
         "checkpoint_exists": checkpoint_path.exists(),
         "model_output_size": model_output_size,
         "timestep_respacing": timestep_respacing,
@@ -735,7 +731,9 @@ def main():
             "--deg_cone_projection > 0 requires --second_model_path/"
             "--second_classifier_path so Cone Projection is actually defined."
         )
-    cone_projection_enabled = second_adapter is not None and args.deg_cone_projection > 0
+    cone_projection_enabled = (
+        second_adapter is not None and args.deg_cone_projection > 0
+    )
     dvce_variant = (
         "original_style_medical_cone_projection"
         if cone_projection_enabled
@@ -844,9 +842,11 @@ def main():
             "cone_projection_enabled": cone_projection_enabled,
             "python": sys.version,
             "device": str(device),
-            "dvce_repo": str(repo_path),
-            "dvce_default_checkpoint": str(repo_path / DVCE_CHECKPOINT_RELATIVE_PATH),
-            "diffusion_checkpoint_path": str(diffusion_checkpoint_path),
+            "dvce_repo": portable_path(repo_path),
+            "dvce_default_checkpoint": portable_path(
+                repo_path / DVCE_CHECKPOINT_RELATIVE_PATH
+            ),
+            "diffusion_checkpoint_path": portable_path(diffusion_checkpoint_path),
             "runner_settings": {
                 "timestep_respacing": args.timestep_respacing,
                 "skip_timesteps": args.skip_timesteps,
@@ -867,7 +867,7 @@ def main():
                 "use_ddim": args.use_ddim,
                 "diffusion_fp16": args.diffusion_fp16,
                 "seed": args.seed,
-                "diffusion_checkpoint_path": str(diffusion_checkpoint_path),
+                "diffusion_checkpoint_path": portable_path(diffusion_checkpoint_path),
                 "diffusion_checkpoint_arg": args.diffusion_checkpoint_path,
                 "second_model_path": args.second_model_path,
             },
@@ -1050,9 +1050,11 @@ def main():
         "cone_projection_enabled": cone_projection_enabled,
         "python": sys.version,
         "device": str(device),
-        "dvce_repo": str(repo_path),
-        "dvce_default_checkpoint": str(repo_path / DVCE_CHECKPOINT_RELATIVE_PATH),
-        "diffusion_checkpoint_path": str(diffusion_checkpoint_path),
+        "dvce_repo": portable_path(repo_path),
+        "dvce_default_checkpoint": portable_path(
+            repo_path / DVCE_CHECKPOINT_RELATIVE_PATH
+        ),
+        "diffusion_checkpoint_path": portable_path(diffusion_checkpoint_path),
         "runner_settings": {
             "timestep_respacing": args.timestep_respacing,
             "skip_timesteps": args.skip_timesteps,
@@ -1067,7 +1069,7 @@ def main():
             "denoise_dist_input": args.denoise_dist_input,
             "deg_cone_projection": args.deg_cone_projection,
             "aug_num": args.aug_num,
-            "diffusion_checkpoint_path": str(diffusion_checkpoint_path),
+            "diffusion_checkpoint_path": portable_path(diffusion_checkpoint_path),
             "diffusion_checkpoint_arg": args.diffusion_checkpoint_path,
             "second_model_path": args.second_model_path,
         },

@@ -1,6 +1,5 @@
 import argparse
 import json
-import sys
 import time
 from pathlib import Path
 
@@ -9,10 +8,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models, utils
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.autoencoder import (
     ARCHITECTURE_NAME,
@@ -27,7 +22,6 @@ from src.evaluation_manifest import (
     manifest_record_metadata,
 )
 from src.train_model import get_device
-
 
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
 IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
@@ -192,13 +186,17 @@ def select_class_prototype(
 
         id_proto = min(dist_proto, key=dist_proto.get)
 
-    return proto_by_class[id_proto], id_proto, {
-        "prototype_mode": "class_mean" if k is None else f"knn_{k_type}",
-        "prototype_k": k,
-        "k_type": k_type,
-        "candidate_distances": {str(c): d for c, d in dist_proto.items()},
-        "id_proto": int(id_proto),
-    }
+    return (
+        proto_by_class[id_proto],
+        id_proto,
+        {
+            "prototype_mode": "class_mean" if k is None else f"knn_{k_type}",
+            "prototype_k": k,
+            "k_type": k_type,
+            "candidate_distances": {str(c): d for c, d in dist_proto.items()},
+            "id_proto": int(id_proto),
+        },
+    )
 
 
 def compare(probabilities, orig_class, kappa):
@@ -295,9 +293,9 @@ def cfproto_attack(
 
             adv_s_var = adv_s.clone().requires_grad_(True)
             probabilities_s = predict_proba(model, adv_s_var)
-            loss_attack_s = const * attack_loss_terms(
-                probabilities_s, orig_class, kappa
-            ).sum()
+            loss_attack_s = (
+                const * attack_loss_terms(probabilities_s, orig_class, kappa).sum()
+            )
             loss_l2_s = torch.sum((adv_s_var - orig) ** 2)
             loss_ae_s = gamma * torch.sum((autoencoder(adv_s_var) - adv_s_var) ** 2)
             loss_proto_s = theta * torch.sum(
@@ -430,13 +428,17 @@ def choose_samples(model, test_loader, device, max_samples):
     return samples
 
 
-def choose_manifest_samples(model, test_dataset, device, manifest_path, max_records=None):
+def choose_manifest_samples(
+    model, test_dataset, device, manifest_path, max_records=None
+):
     manifest, records = load_manifest_records(manifest_path, max_records=max_records)
     samples = []
 
     with torch.no_grad():
         for record in records:
-            image, label, image_path = load_image_from_manifest_record(test_dataset, record)
+            image, label, image_path = load_image_from_manifest_record(
+                test_dataset, record
+            )
             image = image.to(device)
             logits, features = model(image)
             probabilities = F.softmax(logits, dim=1)
@@ -786,7 +788,9 @@ def main():
 
     print(f"Device: {device}")
     print(f"Classes: {classes}")
-    print("Fitting encoder-space class prototypes from training split (like alibi fit)...")
+    print(
+        "Fitting encoder-space class prototypes from training split (like alibi fit)..."
+    )
     class_enc, class_proto = fit_class_encodings(
         model, autoencoder, data["train_loader"], device
     )
@@ -857,7 +861,9 @@ def main():
         )
 
         target_class = id_proto
-        valid_counterfactual = result["valid"] and result["prediction"] in target_candidates
+        valid_counterfactual = (
+            result["valid"] and result["prediction"] in target_candidates
+        )
         loss_terms = compute_loss_terms(
             model=model,
             autoencoder=autoencoder,
@@ -968,7 +974,9 @@ def main():
             "c_steps": args.c_steps,
             "autoencoder_path": args.autoencoder_path,
             "prototype_space": "encoder",
-            "prototype_mode": "class_mean" if args.prototype_k is None else f"knn_{args.k_type}",
+            "prototype_mode": "class_mean"
+            if args.prototype_k is None
+            else f"knn_{args.k_type}",
             "prototype_k": args.prototype_k,
             "k_type": args.k_type,
             "feature_range": list(FEATURE_RANGE),
@@ -1016,7 +1024,9 @@ def main():
         },
         "prototype_configuration": {
             "prototype_space": "encoder",
-            "prototype_mode": "class_mean" if args.prototype_k is None else f"knn_{args.k_type}",
+            "prototype_mode": "class_mean"
+            if args.prototype_k is None
+            else f"knn_{args.k_type}",
             "prototype_k": args.prototype_k,
             "k_type": args.k_type,
             "class_membership": "classifier predictions on the training split",

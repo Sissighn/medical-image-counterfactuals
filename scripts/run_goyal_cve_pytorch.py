@@ -2,23 +2,18 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 import time
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from matplotlib.patches import Rectangle
 from torch.utils.data import DataLoader
 from torchvision import models, utils
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.data_utils import create_dataloaders
 from src.evaluation_manifest import (
@@ -27,7 +22,6 @@ from src.evaluation_manifest import (
     manifest_record_metadata,
 )
 from src.train_model import get_device
-
 
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
 IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
@@ -40,7 +34,6 @@ def create_model(num_classes: int) -> nn.Module:
 
 
 class ResNetSpatialSplit(nn.Module):
-
     def __init__(self, model: nn.Module) -> None:
         super().__init__()
         self.spatial_extractor = nn.Sequential(*list(model.children())[:-2])
@@ -53,14 +46,18 @@ class ResNetSpatialSplit(nn.Module):
     def head_from_pooled(self, pooled: torch.Tensor) -> torch.Tensor:
         return self.classifier(pooled)
 
-    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def forward(
+        self, x: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         spatial = self.spatial_features(x)
         pooled = torch.flatten(self.pool(spatial), 1)
         logits = self.head_from_pooled(pooled)
         return logits, pooled, spatial
 
 
-def load_checkpoint_model(model_path: str, device: torch.device) -> tuple[ResNetSpatialSplit, dict[str, Any]]:
+def load_checkpoint_model(
+    model_path: str, device: torch.device
+) -> tuple[ResNetSpatialSplit, dict[str, Any]]:
     checkpoint = torch.load(model_path, map_location=device)
     model = create_model(checkpoint["num_classes"])
     model.load_state_dict(checkpoint["model_state_dict"])
@@ -189,7 +186,9 @@ def load_manifest_samples(
 
     with torch.no_grad():
         for record in records:
-            image, label, image_path = load_image_from_manifest_record(test_dataset, record)
+            image, label, image_path = load_image_from_manifest_record(
+                test_dataset, record
+            )
             image = image.to(device)
             logits, pooled, spatial = model(image)
             probabilities = F.softmax(logits, dim=1)
@@ -482,9 +481,9 @@ def compute_aggregate_metrics(records: list[dict[str, Any]]) -> dict[str, Any]:
             "max": max(values),
         }
 
-    aggregate["mean_counterfactual_confidence"] = aggregate["counterfactual_confidence"][
-        "mean"
-    ]
+    aggregate["mean_counterfactual_confidence"] = aggregate[
+        "counterfactual_confidence"
+    ]["mean"]
     return aggregate
 
 

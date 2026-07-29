@@ -1,6 +1,5 @@
 import argparse
 import json
-import sys
 import time
 from pathlib import Path
 
@@ -16,10 +15,6 @@ try:
     import cv2
 except ImportError:
     cv2 = None
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.data_utils import create_dataloaders
 from src.evaluation_manifest import (
@@ -385,7 +380,6 @@ def generate_sedc_t_original_best_first_counterfactual(
     allowed_segments,
     timeout_seconds,
 ):
-
     start_time = time.time()
     allowed_segments = sorted(allowed_segments)
     if not allowed_segments:
@@ -963,9 +957,6 @@ def main():
 
     metadata_path = output_dir / "metadata.json"
     with open(metadata_path, "w") as f:
-        # Search histories can contain thousands of entries. Compact JSON keeps
-        # the complete trace without inflating final metadata files with
-        # indentation whitespace.
         json.dump(metadata, f, separators=(",", ":"))
         f.write("\n")
 
