@@ -4,7 +4,6 @@ from pathlib import Path
 
 from PIL import Image
 
-
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"}
 
 
@@ -111,7 +110,9 @@ def main():
             output_path = combined_dir / f"combined_{index:06d}_{source_path.name}"
             with Image.open(source_path) as image:
                 image.save(output_path)
-            combined_records.append({**record, "combined_output_path": str(output_path)})
+            combined_records.append(
+                {**record, "combined_output_path": str(output_path)}
+            )
     else:
         combined_records = []
 
@@ -124,7 +125,9 @@ def main():
         "num_images": len(all_records),
         "num_combined_images": len(combined_records),
         "counts_by_dataset": {
-            dataset_name: sum(1 for record in all_records if record["dataset"] == dataset_name)
+            dataset_name: sum(
+                1 for record in all_records if record["dataset"] == dataset_name
+            )
             for dataset_name, _ in dataset_configs
         },
         "records": all_records,
