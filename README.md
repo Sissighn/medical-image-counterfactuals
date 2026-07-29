@@ -45,8 +45,10 @@ prepare data → train classifiers → create fixed manifests
 | DVCE Cone, fine-tuned checkpoint | BUSI | 15 | 1.00 | 0.998 | 0.156 | 44.6 s |
 | DVCE Cone, fine-tuned checkpoint | Pneumonia | 20 | 1.00 | 0.980 | 0.067 | 44.9 s |
 
-The OpenAI DVCE runtimes were measured on a CPU-bound machine and should not be
-compared directly with runtimes from different hardware.
+The OpenAI DVCE runs used MPS (BUSI) and CUDA (Pneumonia) without diffusion
+FP16, whereas the fine-tuned Cone runs used CUDA with diffusion FP16. Because
+device and precision conditions differ, these runtimes should not be compared
+directly.
 
 For the complete evaluation, including ablations and interpretation, see the
 [method comparison and results](results/docs/method_comparison_and_results.md)
