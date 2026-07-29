@@ -7,9 +7,9 @@
     "cone_projection_enabled": false,
     "python": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
     "device": "cuda",
-    "dvce_repo": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs",
-    "dvce_default_checkpoint": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\256x256_diffusion_uncond.pt",
-    "diffusion_checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+    "dvce_repo": "external/DVCEs",
+    "dvce_default_checkpoint": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+    "diffusion_checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
     "runner_settings": {
         "timestep_respacing": "200",
         "skip_timesteps": 100,
@@ -30,7 +30,7 @@
         "use_ddim": false,
         "diffusion_fp16": true,
         "seed": 1,
-        "diffusion_checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+        "diffusion_checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
         "diffusion_checkpoint_arg": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
         "second_model_path": null
     },
@@ -56,7 +56,7 @@
     },
     "dvce_core_initialization": {
         "ok": true,
-        "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+        "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
         "checkpoint_exists": true,
         "model_output_size": 256,
         "timestep_respacing": "200",
@@ -179,7 +179,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -364,7 +364,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -549,7 +549,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -734,7 +734,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -919,7 +919,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -1104,7 +1104,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -1289,7 +1289,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -1474,7 +1474,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -1659,7 +1659,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -1844,7 +1844,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2029,7 +2029,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2214,7 +2214,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2399,7 +2399,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2584,7 +2584,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2769,7 +2769,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2954,7 +2954,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -3139,7 +3139,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -3324,7 +3324,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -3509,7 +3509,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -3694,7 +3694,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,

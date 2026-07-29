@@ -92,7 +92,7 @@
     "guidance_space": "pred_xstart",
     "distance_target": "init_image",
     "sampling_backbone": {
-        "checkpoint_path": "C:\\Users\\levir\\medical-image-counterfactuals\\external\\DVCEs\\checkpoints\\medical_diffusion_pneumonia_ema.pt",
+        "checkpoint_path": "external/DVCEs/checkpoints/medical_diffusion_pneumonia_ema.pt",
         "model_config": {
             "image_size": 256,
             "num_channels": 256,

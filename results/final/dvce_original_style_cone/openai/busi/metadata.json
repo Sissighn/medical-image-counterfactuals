@@ -7,9 +7,9 @@
     "cone_projection_enabled": true,
     "python": "3.14.0 (v3.14.0:ebf955df7a8, Oct  7 2025, 08:20:14) [Clang 16.0.0 (clang-1600.0.26.6)]",
     "device": "mps",
-    "dvce_repo": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs",
-    "dvce_default_checkpoint": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
-    "diffusion_checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+    "dvce_repo": "external/DVCEs",
+    "dvce_default_checkpoint": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+    "diffusion_checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
     "runner_settings": {
         "timestep_respacing": "200",
         "skip_timesteps": 100,
@@ -30,7 +30,7 @@
         "use_ddim": false,
         "diffusion_fp16": false,
         "seed": 1,
-        "diffusion_checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+        "diffusion_checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
         "diffusion_checkpoint_arg": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
         "second_model_path": "models/busi_resnet18_robust_pgd.pth"
     },
@@ -61,7 +61,7 @@
     },
     "dvce_core_initialization": {
         "ok": true,
-        "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+        "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
         "checkpoint_exists": true,
         "model_output_size": 256,
         "timestep_respacing": "200",
@@ -185,7 +185,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -373,7 +373,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -561,7 +561,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -749,7 +749,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -937,7 +937,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -1125,7 +1125,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -1313,7 +1313,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -1501,7 +1501,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -1689,7 +1689,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -1877,7 +1877,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2065,7 +2065,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2253,7 +2253,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2441,7 +2441,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2629,7 +2629,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
@@ -2817,7 +2817,7 @@
             "guidance_space": "pred_xstart",
             "distance_target": "init_image",
             "sampling_backbone": {
-                "checkpoint_path": "/Users/setayesh/Desktop/university/Projektseminar/external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
+                "checkpoint_path": "external/DVCEs/checkpoints/256x256_diffusion_uncond.pt",
                 "model_config": {
                     "image_size": 256,
                     "num_channels": 256,
