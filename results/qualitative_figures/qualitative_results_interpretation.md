@@ -1,222 +1,222 @@
-# Qualitative Ergebnisinterpretation
+# Qualitative Results Interpretation
 
-Stand: 29.07.2026
+Status: 2026-07-29
 
-## Zweck und Datenbasis
+## Purpose and Data Basis
 
-Diese Datei dokumentiert die Interpretation der 14 finalen qualitativen Ergebnisabbildungen. Sie ist auf den aktuellen Ergebnisdateien des Projekts und dem aktuellen Stand von Kapitel 5 der Seminararbeit aufgebaut. Sie ersetzt die frühere, veraltete Interpretationsdatei.
+This document records the interpretation of the 14 final qualitative result figures. It is built on the current project result files and the current state of Chapter 5 of the seminar paper. It replaces the earlier, outdated interpretation file.
 
-Maßgebliche Grundlagen:
+Authoritative sources:
 
-- Seminararbeit: `Seminararbeit.docx`, Stand 29.07.2026, 16:17:49 Uhr, SHA-256 `8c9e9f235e84a570d8990aa79352a790d93808f8125756a4ea7dc6d3685c1762`
-- ausgewählte Samples und Messwerte: `results/qualitative_selection/selected_examples.json`
-- Zuordnung der Samples zu den Abbildungen: `results/qualitative_figures/qualitative_figure_manifest.json`
-- quantitative Methodenübersicht: `results/qualitative_selection/method_tradeoff_table.md`
-- Rohmetadaten der Läufe: `results/final/**/metadata.json`
-- finale Abbildungen: `results/qualitative_figures/per_method/`
+- Seminar paper: `Seminararbeit.docx`, state 2026-07-29, 17:11:36, SHA-256 `d4cc372059875dc7735da13cbbd5352948d0ea92699d6ca895a45a607bba2ce9`
+- selected samples and measured values: `results/qualitative_selection/selected_examples.json`
+- mapping of samples to figures: `results/qualitative_figures/qualitative_figure_manifest.json`
+- quantitative method overview: `results/qualitative_selection/method_tradeoff_table.md`
+- raw run metadata: `results/final/**/metadata.json`
+- final figures: `results/qualitative_figures/per_method/`
 
-Die Seminararbeit bleibt für die wissenschaftliche Argumentation maßgeblich. Diese Datei dient als technische Evidenz- und Interpretationshilfe. Sie enthält keine zusätzliche medizinische Bewertung und erweitert die Aussagen der Arbeit nicht um unbelegte Kausalbehauptungen.
+The seminar paper remains authoritative for the scientific argument. This document serves as technical evidence and interpretation support. It contains no additional medical assessment and does not extend the statements of the paper with unsupported causal claims.
 
-## Lesart der Abbildungen
+## How to Read the Figures
 
-- `prediction` bezeichnet die vom Modell vorhergesagte Ausgangsklasse. Der danebenstehende Wert ist die Konfidenz des Modells für diese Klasse.
-- Die Klasse und Konfidenz rechts vom Pfeil beziehen sich auf das Counterfactual.
-- `target` ist die vorgegebene Zielklasse.
-- `valid: yes` bedeutet ausschließlich, dass die Vorhersage des Modells nach der Veränderung der Zielklasse entspricht. Daraus folgt weder visuelle noch medizinische Plausibilität.
-- `MAD (l1_mean)` ist die mittlere absolute Pixelabweichung zwischen Original und Counterfactual.
-- `RMS (l2_mean)` ist `sqrt(mean((CF - Original)^2))` im Bildwertebereich `[0, 1]`. Es handelt sich nicht um die unnormalisierte volle L2-Norm.
-- Bei CFProto, Goyal-CVE und DVCE ist die `changed pixel fraction` der Pixelanteil oberhalb des jeweils ausgewiesenen Schwellwerts. Für CFProto und Goyal-CVE beträgt dieser `0,03`, für DVCE `0,05`.
-- Bei SEDC-T entspricht die `changed pixel fraction` dem von den ausgewählten Segmentmasken bedeckten Bildanteil. Es wird hierfür kein Intensitätsschwellwert verwendet.
-- Bei Goyal-CVE ist die `embedding distance` die Kosinusdistanz zwischen Original und ausgewähltem Distraktor im normalisierten penultimativen ResNet18-Merkmalsraum. Die `feature-cell edits` geben die Anzahl der ausgetauschten Zellen des `7 × 7`-Gitters an.
-- Bei SEDC-T gibt `overlay (selected segments)` die Zahl der ausgewählten Segmente an.
-- Die Differenzkarten verwenden eine feste Skala. Eine nahezu schwarze Differenzkarte steht daher für tatsächlich sehr kleine absolute Änderungen und ist kein Darstellungsfehler.
-- Die Rollen „ausgewogener valider Fall“, „höchstkonfidenter valider Fall“, „valider Fall mit geringer visueller Plausibilität“ und „Failure Case“ strukturieren die qualitative Auswahl. Sie sind keine zusätzlichen quantitativen Gesamtstatistiken.
+- `prediction` denotes the model's predicted source class. The adjacent value is the model's confidence for that class.
+- The class and confidence to the right of the arrow refer to the counterfactual.
+- `target` is the requested target class.
+- `valid: yes` only means that the model prediction after the change matches the target class. Neither visual nor medical plausibility follows from it.
+- `MAD (l1_mean)` is the mean absolute pixel difference between the original and the counterfactual.
+- `RMS (l2_mean)` is `sqrt(mean((CF - Original)^2))` in the image value range `[0, 1]`. It is not the unnormalized full L2 norm.
+- For CFProto, Goyal-CVE, and DVCE, the `changed pixel fraction` is the pixel share above the stated threshold. For CFProto and Goyal-CVE this threshold is `0.03`, for DVCE `0.05`.
+- For SEDC-T, the `changed pixel fraction` is the image share covered by the selected segment masks. No intensity threshold is used for it.
+- For Goyal-CVE, the `embedding distance` is the cosine distance between the original and the selected distractor in the normalized penultimate ResNet18 feature space. The `feature-cell edits` give the number of exchanged cells of the `7 × 7` grid.
+- For SEDC-T, `overlay (selected segments)` gives the number of selected segments.
+- The difference maps use a fixed scale. A near-black difference map therefore stands for genuinely very small absolute changes and is not a rendering error.
+- The roles "balanced valid case", "highest-confidence valid case", "valid case with low visual plausibility", and "failure case" structure the qualitative selection. They are not additional aggregate quantitative statistics.
 
 ## BUSI
 
-### Bild 5-1: CFProto original-style
+### Figure 5-1: CFProto original-style
 
-Abbildung: [`per_method/busi/cfproto_original_style_bottleneck256.png`](per_method/busi/cfproto_original_style_bottleneck256.png)
+Figure: [`per_method/busi/cfproto_original_style_bottleneck256.png`](per_method/busi/cfproto_original_style_bottleneck256.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | MAD | RMS | Geänderte Pixel |
+| Role | Sample | Prediction | Target | Valid | MAD | RMS | Changed pixels |
 | --- | ---: | --- | --- | --- | ---: | ---: | ---: |
-| ausgewogen | 14 | normal `0,98` → benign `0,79` | benign | ja | `0,0003` | `0,0115` | `0,10 %` |
-| höchste Konfidenz | 11 | normal `0,96` → benign `0,93` | benign | ja | `0,0007` | `0,0159` | `0,23 %` |
-| geringe visuelle Plausibilität | 3 | benign `1,00` → normal `0,61` | normal | ja | `0,0782` | `0,1752` | `31,84 %` |
-| Failure Case | 13 | normal `1,00` → benign `0,90` | malignant | nein | `0,0013` | `0,0222` | `0,43 %` |
+| balanced | 14 | normal `0.98` → benign `0.79` | benign | yes | `0.0003` | `0.0115` | `0.10 %` |
+| highest confidence | 11 | normal `0.96` → benign `0.93` | benign | yes | `0.0007` | `0.0159` | `0.23 %` |
+| low visual plausibility | 3 | benign `1.00` → normal `0.61` | normal | yes | `0.0782` | `0.1752` | `31.84 %` |
+| failure case | 13 | normal `1.00` → benign `0.90` | malignant | no | `0.0013` | `0.0222` | `0.43 %` |
 
-Beim ausgewogenen Sample 14 genügt eine im Differenzbild kaum erkennbare Änderung für den Wechsel von `normal` zu `benign`; ein klar abgegrenztes sonografisches Merkmal ist daraus nicht ableitbar. Sample 3 zeigt das Gegenbeispiel: Trotz erfolgreicher Zielerreichung werden `31,84 %` der Pixel oberhalb des Schwellwerts verändert und es entsteht eine großflächige körnige Texturänderung. Beim Failure Case 13 bleibt die Änderung klein, das Modell wechselt aber zu `benign` statt zur Zielklasse `malignant`. Die Abbildung trennt damit drei unterschiedliche Eigenschaften: geringe Pixelabweichung, Zielerreichung und medizinische Interpretierbarkeit.
+For the balanced sample 14, a change that is barely visible in the difference image is enough to switch from `normal` to `benign`; a clearly delineated sonographic marker cannot be derived from it. Sample 3 shows the counterexample: despite reaching the target, `31.84 %` of the pixels above the threshold are changed and a large-area grainy texture change appears. In the failure case 13 the change stays small, but the model switches to `benign` instead of the target class `malignant`. The figure thus separates three distinct properties: small pixel difference, target achievement, and medical interpretability.
 
-### Bild 5-2: Goyal-CVE
+### Figure 5-2: Goyal-CVE
 
-Abbildung: [`per_method/busi/goyal_2019_counterfactual_visual_explanations.png`](per_method/busi/goyal_2019_counterfactual_visual_explanations.png)
+Figure: [`per_method/busi/goyal_2019_counterfactual_visual_explanations.png`](per_method/busi/goyal_2019_counterfactual_visual_explanations.png)
 
-| Rolle | Sample | Vorhersage | Zellen | Embedding-Distanz | Geänderte Pixel |
+| Role | Sample | Prediction | Cells | Embedding distance | Changed pixels |
 | --- | ---: | --- | ---: | ---: | ---: |
-| ausgewogen | 6 | malignant `0,98` → benign `0,52` | 7 | `0,2184` | `13,42 %` |
-| höchste Konfidenz | 13 | normal `1,00` → malignant `0,63` | 9 | `0,3311` | `16,44 %` |
-| geringe visuelle Plausibilität | 9 | malignant `1,00` → benign `0,49` | 26 | `0,2873` | `47,26 %` |
+| balanced | 6 | malignant `0.98` → benign `0.52` | 7 | `0.2184` | `13.42 %` |
+| highest confidence | 13 | normal `1.00` → malignant `0.63` | 9 | `0.3311` | `16.44 %` |
+| low visual plausibility | 9 | malignant `1.00` → benign `0.49` | 26 | `0.2873` | `47.26 %` |
 
-Alle drei Counterfactuals erreichen ihre jeweilige Zielklasse; die verwendeten Distraktoren gehören jeweils zur Zielklasse. Im ausgewogenen Sample 6 reichen sieben Zellen im zentralen Läsionsbereich für den Klassenwechsel aus. Die Counterfactual-Konfidenz von `0,52` zeigt, dass das Ergebnis knapp hinter der Entscheidungsgrenze liegt. Beim höchstkonfidenten Fall sind neun Zellen bereits über mehrere Bildbereiche verteilt. Sample 9 benötigt 26 von 49 Zellen und verändert `47,26 %` der Pixel. Die blockförmigen Übergänge und die großflächige Übernahme aus einem anderen Patientenbild zeigen, dass eine reale Distraktorquelle nicht automatisch eine medizinisch isolierte Läsionsveränderung erzeugt. Die Embedding-Distanz dokumentiert die Ähnlichkeit zum gewählten Distraktor, ist aber kein Plausibilitätsnachweis.
+All three counterfactuals reach their respective target class; the distractors used each belong to the target class. In the balanced sample 6, seven cells in the central lesion region are enough for the class change. The counterfactual confidence of `0.52` shows that the result lies just behind the decision boundary. In the highest-confidence case, nine cells are already spread across several image regions. Sample 9 requires 26 of 49 cells and changes `47.26 %` of the pixels. The block-shaped transitions and the large-area transfer from another patient image show that a real distractor source does not automatically produce a medically isolated lesion change. The embedding distance documents the similarity to the selected distractor but is not a proof of plausibility.
 
-### Bild 5-3: SEDC-T original-style
+### Figure 5-3: SEDC-T original-style
 
-Abbildung: [`per_method/busi/sedc_t_original_style_best_first.png`](per_method/busi/sedc_t_original_style_best_first.png)
+Figure: [`per_method/busi/sedc_t_original_style_best_first.png`](per_method/busi/sedc_t_original_style_best_first.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | Segmente | Maskenanteil |
+| Role | Sample | Prediction | Target | Valid | Segments | Mask fraction |
 | --- | ---: | --- | --- | --- | ---: | ---: |
-| ausgewogen | 14 | normal `0,98` → benign `0,73` | benign | ja | 2 | `4,43 %` |
-| höchste Konfidenz | 0 | benign `1,00` → malignant `0,63` | malignant | ja | 3 | `6,24 %` |
-| geringe visuelle Plausibilität | 9 | malignant `1,00` → benign `0,47` | benign | ja | 16 | `53,83 %` |
-| Failure Case | 3 | benign `1,00` → malignant `0,98` | normal | nein | 16 | `60,23 %` |
+| balanced | 14 | normal `0.98` → benign `0.73` | benign | yes | 2 | `4.43 %` |
+| highest confidence | 0 | benign `1.00` → malignant `0.63` | malignant | yes | 3 | `6.24 %` |
+| low visual plausibility | 9 | malignant `1.00` → benign `0.47` | benign | yes | 16 | `53.83 %` |
+| failure case | 3 | benign `1.00` → malignant `0.98` | normal | no | 16 | `60.23 %` |
 
-Beim ausgewogenen Sample 14 genügen zwei kleine, räumlich getrennte Segmente und ein Maskenanteil von `4,43 %` für den Klassenwechsel. Sample 9 betrifft dagegen 16 Segmente und mehr als die Hälfte des Bildes. Der Failure Case 3 ist besonders aussagekräftig: Obwohl 16 Segmente beziehungsweise `60,23 %` der Bildfläche ersetzt werden, wird nicht `normal`, sondern `malignant` mit `0,98` vorhergesagt. SEDC-T ermöglicht eine räumliche Zuordnung der veränderten Bereiche; eine große oder anatomisch breite Segmentauswahl garantiert jedoch weder die Zielerreichung noch medizinische Spezifität.
+For the balanced sample 14, two small, spatially separate segments and a mask fraction of `4.43 %` are enough for the class change. Sample 9, by contrast, affects 16 segments and more than half of the image. The failure case 3 is particularly informative: although 16 segments, or `60.23 %` of the image area, are replaced, the prediction is not `normal` but `malignant` with `0.98`. SEDC-T enables a spatial attribution of the changed regions; however, a large or anatomically broad segment selection guarantees neither target achievement nor medical specificity.
 
-### Bild 5-4: DVCE mit Cone Projection und OpenAI-Checkpoint
+### Figure 5-4: DVCE with Cone Projection and OpenAI checkpoint
 
-Abbildung: [`per_method/busi/dvce_original_style_with_cone_projection_openai_checkpoint.png`](per_method/busi/dvce_original_style_with_cone_projection_openai_checkpoint.png)
+Figure: [`per_method/busi/dvce_original_style_with_cone_projection_openai_checkpoint.png`](per_method/busi/dvce_original_style_with_cone_projection_openai_checkpoint.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | MAD | RMS | Geänderte Pixel |
+| Role | Sample | Prediction | Target | Valid | MAD | RMS | Changed pixels |
 | --- | ---: | --- | --- | --- | ---: | ---: | ---: |
-| ausgewogen | 3 | benign `1,00` → normal `0,67` | normal | ja | `0,0195` | `0,0284` | `7,04 %` |
-| höchste Konfidenz | 14 | normal `0,98` → benign `1,00` | benign | ja | `0,0238` | `0,0377` | `11,47 %` |
-| geringe visuelle Plausibilität | 0 | benign `1,00` → malignant `0,96` | malignant | ja | `0,0307` | `0,0452` | `18,45 %` |
-| Failure Case | 1 | benign `1,00` → benign `0,60` | normal | nein | `0,0203` | `0,0298` | `8,26 %` |
+| balanced | 3 | benign `1.00` → normal `0.67` | normal | yes | `0.0195` | `0.0284` | `7.04 %` |
+| highest confidence | 14 | normal `0.98` → benign `1.00` | benign | yes | `0.0238` | `0.0377` | `11.47 %` |
+| low visual plausibility | 0 | benign `1.00` → malignant `0.96` | malignant | yes | `0.0307` | `0.0452` | `18.45 %` |
+| failure case | 1 | benign `1.00` → benign `0.60` | normal | no | `0.0203` | `0.0298` | `8.26 %` |
 
-Die validen Beispiele zeigen eine über größere Bildbereiche verteilte Glättung von Specklemustern und Gewebeschichten. In Sample 0 treten zusätzlich scharf begrenzte farbige beziehungsweise rechteckige Strukturen auf, die keinem eindeutigen sonografischen Befund zugeordnet werden können. Im Failure Case 1 bleibt das Modell trotz sichtbarer globaler Veränderung bei `benign`. Die Abbildung dokumentiert damit den Domain-Mismatch des generischen Diffusionspriors: Die Veränderungen betreffen eher globale Bildstatistik und Textur als eine klar lokalisierte Läsionseigenschaft.
+The valid examples show a smoothing of speckle patterns and tissue layers distributed across larger image regions. In sample 0, sharply delineated colored or rectangular structures additionally appear that cannot be assigned to any clear sonographic finding. In the failure case 1 the model stays at `benign` despite a visible global change. The figure thus documents the domain mismatch of the generic diffusion prior: the changes affect global image statistics and texture rather than a clearly localized lesion property.
 
-### Bild 5-5: DVCE mit Cone Projection und BUSI-fine-getuntem Checkpoint
+### Figure 5-5: DVCE with Cone Projection and BUSI fine-tuned checkpoint
 
-Abbildung: [`per_method/busi/dvce_original_style_with_cone_projection_busi_fine_tuned_checkpoint.png`](per_method/busi/dvce_original_style_with_cone_projection_busi_fine_tuned_checkpoint.png)
+Figure: [`per_method/busi/dvce_original_style_with_cone_projection_busi_fine_tuned_checkpoint.png`](per_method/busi/dvce_original_style_with_cone_projection_busi_fine_tuned_checkpoint.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | MAD | RMS | Geänderte Pixel |
+| Role | Sample | Prediction | Target | Valid | MAD | RMS | Changed pixels |
 | --- | ---: | --- | --- | --- | ---: | ---: | ---: |
-| ausgewogen | 5 | malignant `0,98` → benign `1,00` | benign | ja | `0,0224` | `0,0337` | `10,73 %` |
-| höchste Konfidenz | 8 | malignant `0,94` → benign `1,00` | benign | ja | `0,0262` | `0,0392` | `13,52 %` |
-| geringe visuelle Plausibilität | 0 | benign `1,00` → malignant `1,00` | malignant | ja | `0,0349` | `0,0523` | `22,35 %` |
+| balanced | 5 | malignant `0.98` → benign `1.00` | benign | yes | `0.0224` | `0.0337` | `10.73 %` |
+| highest confidence | 8 | malignant `0.94` → benign `1.00` | benign | yes | `0.0262` | `0.0392` | `13.52 %` |
+| low visual plausibility | 0 | benign `1.00` → malignant `1.00` | malignant | yes | `0.0349` | `0.0523` | `22.35 %` |
 
-Alle dargestellten Fälle erreichen die Zielklasse mit `1,00`. Gegenüber der generischen Konfiguration in Bild 5-4 bleibt die grundlegende Ultraschallstruktur deutlicher erkennbar. Dennoch entstehen auffällige neue Strukturen: eine ringförmige dunkle Struktur im ausgewogenen Fall, zusätzliche rundliche echoarme Bereiche im zweiten Fall und eine großflächig veränderte Gewebetextur im wenig plausiblen Fall. Die konkrete fine-getunte Konfiguration weist im Gesamtlauf eine höhere Modellvalidität auf als die OpenAI-Cone-Konfiguration. Wegen weiterer Unterschiede der Läufe ist daraus kein isolierter kausaler Fine-Tuning-Effekt ableitbar. Auch hier belegt hohe Modellvalidität keine medizinische Plausibilität.
+All shown cases reach the target class with `1.00`. Compared with the generic configuration in Figure 5-4, the basic ultrasound structure remains more clearly recognizable. Nevertheless, conspicuous new structures appear: a ring-shaped dark structure in the balanced case, additional round hypoechoic regions in the second case, and a large-area changed tissue texture in the low-plausibility case. The specific fine-tuned configuration shows a higher model validity across the full run than the OpenAI Cone configuration. Because of further differences between the runs, no isolated causal fine-tuning effect can be derived from this. Here too, high model validity does not establish medical plausibility.
 
-### Bild 5-6: DVCE ohne Cone Projection und mit BUSI-fine-getuntem Checkpoint
+### Figure 5-6: DVCE without Cone Projection and with BUSI fine-tuned checkpoint
 
-Abbildung: [`per_method/busi/dvce_original_style_without_cone_projection_busi_fine_tuned_checkpoint.png`](per_method/busi/dvce_original_style_without_cone_projection_busi_fine_tuned_checkpoint.png)
+Figure: [`per_method/busi/dvce_original_style_without_cone_projection_busi_fine_tuned_checkpoint.png`](per_method/busi/dvce_original_style_without_cone_projection_busi_fine_tuned_checkpoint.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | MAD | RMS | Geänderte Pixel |
+| Role | Sample | Prediction | Target | Valid | MAD | RMS | Changed pixels |
 | --- | ---: | --- | --- | --- | ---: | ---: | ---: |
-| ausgewogen | 5 | malignant `0,98` → benign `1,00` | benign | ja | `0,0215` | `0,0307` | `9,99 %` |
-| höchste Konfidenz | 14 | normal `0,98` → benign `1,00` | benign | ja | `0,0245` | `0,0355` | `12,66 %` |
-| geringe visuelle Plausibilität | 0 | benign `1,00` → malignant `1,00` | malignant | ja | `0,0325` | `0,0481` | `20,06 %` |
+| balanced | 5 | malignant `0.98` → benign `1.00` | benign | yes | `0.0215` | `0.0307` | `9.99 %` |
+| highest confidence | 14 | normal `0.98` → benign `1.00` | benign | yes | `0.0245` | `0.0355` | `12.66 %` |
+| low visual plausibility | 0 | benign `1.00` → malignant `1.00` | malignant | yes | `0.0325` | `0.0481` | `20.06 %` |
 
-Die Abbildung ist als Ablationsvergleich zu Bild 5-5 zu lesen. Alle drei Counterfactuals sind modellvalide und erreichen `1,00` Konfidenz. Die Änderungen bleiben jedoch nicht eindeutig befundbezogen: Im ausgewogenen Fall wird die Läsionsumgebung diffus umgeformt, beim zweiten Fall tritt eine lokalisierte farbliche Struktur auf, und im wenig plausiblen Fall entsteht eine sternförmige dunkle Struktur bei gleichzeitig veränderter Bildbeschriftung. Die Ablation untersucht die Guidance-Variante; sie stellt keine klinisch realistische Tumortransformation dar.
+The figure is to be read as an ablation comparison to Figure 5-5. All three counterfactuals are model-valid and reach `1.00` confidence. The changes, however, are not clearly finding-related: in the balanced case the lesion surroundings are diffusely reshaped, in the second case a localized colored structure appears, and in the low-plausibility case a star-shaped dark structure emerges together with a changed image annotation. The ablation examines the guidance variant; it does not represent a clinically realistic tumor transformation.
 
 ## Pneumonia
 
-### Bild 5-7: CFProto original-style
+### Figure 5-7: CFProto original-style
 
-Abbildung: [`per_method/pneumonia/cfproto_original_style_bottleneck256.png`](per_method/pneumonia/cfproto_original_style_bottleneck256.png)
+Figure: [`per_method/pneumonia/cfproto_original_style_bottleneck256.png`](per_method/pneumonia/cfproto_original_style_bottleneck256.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | MAD | RMS | Geänderte Pixel |
+| Role | Sample | Prediction | Target | Valid | MAD | RMS | Changed pixels |
 | --- | ---: | --- | --- | --- | ---: | ---: | ---: |
-| ausgewogen | 3 | NORMAL `0,57` → PNEUMONIA `0,51` | PNEUMONIA | ja | `0,0000` | `0,0017` | `0,00 %`* |
-| höchste Konfidenz | 16 | PNEUMONIA `1,00` → NORMAL `0,79` | NORMAL | ja | `0,0028` | `0,0272` | `1,72 %` |
-| geringe visuelle Plausibilität | 8 | NORMAL `0,89` → PNEUMONIA `0,76` | PNEUMONIA | ja | `0,0153` | `0,0604` | `10,52 %` |
+| balanced | 3 | NORMAL `0.57` → PNEUMONIA `0.51` | PNEUMONIA | yes | `0.0000` | `0.0017` | `0.00 %`* |
+| highest confidence | 16 | PNEUMONIA `1.00` → NORMAL `0.79` | NORMAL | yes | `0.0028` | `0.0272` | `1.72 %` |
+| low visual plausibility | 8 | NORMAL `0.89` → PNEUMONIA `0.76` | PNEUMONIA | yes | `0.0153` | `0.0604` | `10.52 %` |
 
-\* Der ungerundete Anteil bei Sample 3 beträgt `0,002657 %`; die Anzeige `0,00 %` ist die korrekte Rundung auf zwei Nachkommastellen.
+\* The unrounded fraction at sample 3 is `0.002657 %`; the display `0.00 %` is the correct rounding to two decimal places.
 
-Beim ausgewogenen Sample 3 kippt die Vorhersage nur knapp zu `PNEUMONIA`, obwohl die Differenzkarte nahezu schwarz bleibt. Ein konkretes pneumonietypisches Muster ist daraus nicht ableitbar. Bei Sample 16 sind punktförmige Änderungen über Thorax und Randbereiche verteilt. Sample 8 zeigt ein großflächiges raster- und texturartiges Störmuster. Die vollständige Modellvalidität der Methode auf dem untersuchten Pneumonia-Manifest ist deshalb kein Nachweis dafür, dass gezielt medizinisch plausible Pneumonie-Evidenz erzeugt oder entfernt wurde.
+For the balanced sample 3, the prediction flips only narrowly to `PNEUMONIA`, even though the difference map stays almost black. A concrete pneumonia-typical pattern cannot be derived from it. In sample 16, point-like changes are spread across the thorax and border regions. Sample 8 shows a large-area grid- and texture-like noise pattern. The full model validity of the method on the examined Pneumonia manifest is therefore no proof that medically plausible pneumonia evidence was specifically created or removed.
 
-### Bild 5-8: Goyal-CVE
+### Figure 5-8: Goyal-CVE
 
-Abbildung: [`per_method/pneumonia/goyal_2019_counterfactual_visual_explanations.png`](per_method/pneumonia/goyal_2019_counterfactual_visual_explanations.png)
+Figure: [`per_method/pneumonia/goyal_2019_counterfactual_visual_explanations.png`](per_method/pneumonia/goyal_2019_counterfactual_visual_explanations.png)
 
-| Rolle | Sample | Vorhersage | Zellen | Embedding-Distanz | Geänderte Pixel |
+| Role | Sample | Prediction | Cells | Embedding distance | Changed pixels |
 | --- | ---: | --- | ---: | ---: | ---: |
-| ausgewogen | 3 | NORMAL `0,57` → PNEUMONIA `0,54` | 1 | `0,0684` | `1,97 %` |
-| höchste Konfidenz | 1 | NORMAL `0,88` → PNEUMONIA `0,58` | 5 | `0,0872` | `9,95 %` |
-| geringe visuelle Plausibilität | 10 | PNEUMONIA `1,00` → NORMAL `0,51` | 32 | `0,4402` | `57,81 %` |
+| balanced | 3 | NORMAL `0.57` → PNEUMONIA `0.54` | 1 | `0.0684` | `1.97 %` |
+| highest confidence | 1 | NORMAL `0.88` → PNEUMONIA `0.58` | 5 | `0.0872` | `9.95 %` |
+| low visual plausibility | 10 | PNEUMONIA `1.00` → NORMAL `0.51` | 32 | `0.4402` | `57.81 %` |
 
-Beim ausgewogenen Sample 3 genügt eine einzige Zelle im unteren Thoraxbereich für einen knappen Klassenwechsel. Der höchstkonfidente Fall benötigt fünf über Lungenbasis, Zwerchfell- und Randbereiche verteilte Zellen. Sample 10 ersetzt dagegen 32 von 49 Zellen beziehungsweise `57,81 %` der Pixel. Das resultierende Mosaik übernimmt großflächig Anatomie- und Aufnahmeunterschiede des Distraktorbildes. Wenige Zell-Swaps können eine räumlich gut lokalisierte Modellerklärung liefern; bei vielen Swaps liegt keine medizinisch isolierte Veränderung mehr vor. Die deutlich größere Embedding-Distanz von Sample 10 ist mit dieser Auswahl vereinbar, ersetzt aber keine visuelle oder medizinische Plausibilitätsprüfung.
+For the balanced sample 3, a single cell in the lower thorax region is enough for a narrow class change. The highest-confidence case requires five cells spread across the lung base, diaphragm, and border regions. Sample 10, by contrast, replaces 32 of 49 cells, or `57.81 %` of the pixels. The resulting mosaic takes over large-area anatomy and acquisition differences of the distractor image. Few cell swaps can provide a spatially well-localized model explanation; with many swaps there is no longer a medically isolated change. The clearly larger embedding distance of sample 10 is consistent with this selection but does not replace a visual or medical plausibility check.
 
-### Bild 5-9: SEDC-T original-style
+### Figure 5-9: SEDC-T original-style
 
-Abbildung: [`per_method/pneumonia/sedc_t_original_style_best_first.png`](per_method/pneumonia/sedc_t_original_style_best_first.png)
+Figure: [`per_method/pneumonia/sedc_t_original_style_best_first.png`](per_method/pneumonia/sedc_t_original_style_best_first.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | Segmente | Maskenanteil |
+| Role | Sample | Prediction | Target | Valid | Segments | Mask fraction |
 | --- | ---: | --- | --- | --- | ---: | ---: |
-| ausgewogen | 3 | NORMAL `0,57` → PNEUMONIA `0,64` | PNEUMONIA | ja | 1 | `6,40 %` |
-| höchste Konfidenz | 4 | NORMAL `0,84` → PNEUMONIA `0,63` | PNEUMONIA | ja | 4 | `17,21 %` |
-| geringe visuelle Plausibilität | 19 | PNEUMONIA `0,99` → NORMAL `0,54` | NORMAL | ja | 10 | `28,22 %` |
-| Failure Case | 17 | PNEUMONIA `1,00` → PNEUMONIA `0,82` | NORMAL | nein | 15 | `44,21 %` |
+| balanced | 3 | NORMAL `0.57` → PNEUMONIA `0.64` | PNEUMONIA | yes | 1 | `6.40 %` |
+| highest confidence | 4 | NORMAL `0.84` → PNEUMONIA `0.63` | PNEUMONIA | yes | 4 | `17.21 %` |
+| low visual plausibility | 19 | PNEUMONIA `0.99` → NORMAL `0.54` | NORMAL | yes | 10 | `28.22 %` |
+| failure case | 17 | PNEUMONIA `1.00` → PNEUMONIA `0.82` | NORMAL | no | 15 | `44.21 %` |
 
-Beim ausgewogenen Sample 3 liegt das entscheidende Segment am äußeren rechten Bildrand beziehungsweise im Schulterbereich und nicht innerhalb eines klaren Lungenbefunds. Dass die Vorhersage dennoch zu `PNEUMONIA` wechselt, ist ein Hinweis auf ein modellrelevantes, nicht eindeutig pathologisches Bildmerkmal. Die weiteren validen Beispiele benötigen breitere Änderungen. Im Failure Case 17 werden 15 Segmente und `44,21 %` der Bildfläche verändert, das Modell bleibt aber mit `0,82` bei `PNEUMONIA`. Die Abbildung begründet sowohl die Untersuchung einer ROI-Einschränkung als auch die begrenzte Validität der uneingeschränkten Suche.
+For the balanced sample 3, the decisive segment lies at the outer right image border or in the shoulder region and not within a clear lung finding. The fact that the prediction still switches to `PNEUMONIA` is an indication of a model-relevant but not clearly pathological image feature. The other valid examples require broader changes. In the failure case 17, 15 segments and `44.21 %` of the image area are changed, but the model stays at `PNEUMONIA` with `0.82`. The figure thus justifies both the investigation of an ROI restriction and the limited validity of the unrestricted search.
 
-### Bild 5-10: SEDC-T mit Lung-field-ROI
+### Figure 5-10: SEDC-T with lung-field ROI
 
-Abbildung: [`per_method/pneumonia/sedc_t_lung_field_roi_ablation.png`](per_method/pneumonia/sedc_t_lung_field_roi_ablation.png)
+Figure: [`per_method/pneumonia/sedc_t_lung_field_roi_ablation.png`](per_method/pneumonia/sedc_t_lung_field_roi_ablation.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | Segmente | Maskenanteil |
+| Role | Sample | Prediction | Target | Valid | Segments | Mask fraction |
 | --- | ---: | --- | --- | --- | ---: | ---: |
-| ausgewogen | 3 | NORMAL `0,57` → PNEUMONIA `0,62` | PNEUMONIA | ja | 1 | `3,38 %` |
-| höchste Konfidenz | 6 | NORMAL `0,95` → PNEUMONIA `0,69` | PNEUMONIA | ja | 9 | `25,22 %` |
-| geringe visuelle Plausibilität | 9 | NORMAL `0,84` → PNEUMONIA `0,55` | PNEUMONIA | ja | 6 | `20,06 %` |
-| Failure Case | 19 | PNEUMONIA `0,99` → PNEUMONIA `0,97` | NORMAL | nein | 3 | `5,88 %` |
+| balanced | 3 | NORMAL `0.57` → PNEUMONIA `0.62` | PNEUMONIA | yes | 1 | `3.38 %` |
+| highest confidence | 6 | NORMAL `0.95` → PNEUMONIA `0.69` | PNEUMONIA | yes | 9 | `25.22 %` |
+| low visual plausibility | 9 | NORMAL `0.84` → PNEUMONIA `0.55` | PNEUMONIA | yes | 6 | `20.06 %` |
+| failure case | 19 | PNEUMONIA `0.99` → PNEUMONIA `0.97` | NORMAL | no | 3 | `5.88 %` |
 
-Beim ausgewogenen Sample 3 konzentriert sich die Änderung auf ein Segment im oberen Lungenfeld. Gegenüber Bild 5-9 ist sie mit `3,38 %` Maskenanteil räumlich fokussierter. Die anderen Beispiele zeigen jedoch die Grenze der geometrischen ROI: Für valide Counterfactuals werden teilweise große Teile beider Lungenfelder oder angrenzender Bereiche ersetzt. Im Failure Case bleibt das Modell trotz drei ausgewählter Segmente mit `0,97` bei `PNEUMONIA`. Die ROI kann die Lokalität einzelner Beispiele verbessern, ist aber keine echte Lungensegmentierung und garantiert weder Zielerreichung noch medizinische Spezifität.
+For the balanced sample 3, the change concentrates on a single segment in the upper lung field. Compared with Figure 5-9, it is spatially more focused with a `3.38 %` mask fraction. The other examples, however, show the limit of the geometric ROI: for valid counterfactuals, large parts of both lung fields or adjacent regions are sometimes replaced. In the failure case, the model stays at `PNEUMONIA` with `0.97` despite three selected segments. The ROI can improve the locality of individual examples but is not a true lung segmentation and guarantees neither target achievement nor medical specificity.
 
-### Bild 5-11: DVCE mit Cone Projection und OpenAI-Checkpoint
+### Figure 5-11: DVCE with Cone Projection and OpenAI checkpoint
 
-Abbildung: [`per_method/pneumonia/dvce_original_style_with_cone_projection_openai_checkpoint.png`](per_method/pneumonia/dvce_original_style_with_cone_projection_openai_checkpoint.png)
+Figure: [`per_method/pneumonia/dvce_original_style_with_cone_projection_openai_checkpoint.png`](per_method/pneumonia/dvce_original_style_with_cone_projection_openai_checkpoint.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | MAD | RMS | Geänderte Pixel |
+| Role | Sample | Prediction | Target | Valid | MAD | RMS | Changed pixels |
 | --- | ---: | --- | --- | --- | ---: | ---: | ---: |
-| ausgewogen | 17 | PNEUMONIA `1,00` → NORMAL `0,52` | NORMAL | ja | `0,0133` | `0,0204` | `3,07 %` |
-| höchste Konfidenz | 7 | NORMAL `0,69` → PNEUMONIA `1,00` | PNEUMONIA | ja | `0,0187` | `0,0267` | `6,23 %` |
-| geringe visuelle Plausibilität | 10 | PNEUMONIA `1,00` → NORMAL `0,91` | NORMAL | ja | `0,0191` | `0,0310` | `7,28 %` |
-| Failure Case | 13 | PNEUMONIA `1,00` → PNEUMONIA `0,81` | NORMAL | nein | `0,0146` | `0,0266` | `3,48 %` |
+| balanced | 17 | PNEUMONIA `1.00` → NORMAL `0.52` | NORMAL | yes | `0.0133` | `0.0204` | `3.07 %` |
+| highest confidence | 7 | NORMAL `0.69` → PNEUMONIA `1.00` | PNEUMONIA | yes | `0.0187` | `0.0267` | `6.23 %` |
+| low visual plausibility | 10 | PNEUMONIA `1.00` → NORMAL `0.91` | NORMAL | yes | `0.0191` | `0.0310` | `7.28 %` |
+| failure case | 13 | PNEUMONIA `1.00` → PNEUMONIA `0.81` | NORMAL | no | `0.0146` | `0.0266` | `3.48 %` |
 
-Das ausgewogene Sample 17 erreicht `NORMAL` bei nur `3,07 %` geänderten Pixeln oberhalb des Schwellwerts. Das Counterfactual zeigt dennoch eine globale Glättung von Rippen, Lungenzeichnung und Herzsilhouette. Derselbe Rekonstruktionscharakter prägt die anderen validen Fälle. Im Failure Case 13 bleibt die Vorhersage trotz globaler Umformung bei `PNEUMONIA`. Die Abbildung zeigt damit, weshalb der generische Diffusionsprior trotz teilweise kleiner Messwerte und hoher Konfidenzen medizinisch nur eingeschränkt interpretierbar ist.
+The balanced sample 17 reaches `NORMAL` at only `3.07 %` changed pixels above the threshold. The counterfactual nonetheless shows a global smoothing of ribs, lung markings, and heart silhouette. The same reconstruction character shapes the other valid cases. In the failure case 13 the prediction stays at `PNEUMONIA` despite the global reshaping. The figure thus shows why the generic diffusion prior is only of limited medical interpretability despite partly small measured values and high confidences.
 
-### Bild 5-12: DVCE mit Cone Projection und Pneumonia-fine-getuntem Checkpoint
+### Figure 5-12: DVCE with Cone Projection and Pneumonia fine-tuned checkpoint
 
-Abbildung: [`per_method/pneumonia/dvce_original_style_with_cone_projection_pneumonia_fine_tuned_checkpoint.png`](per_method/pneumonia/dvce_original_style_with_cone_projection_pneumonia_fine_tuned_checkpoint.png)
+Figure: [`per_method/pneumonia/dvce_original_style_with_cone_projection_pneumonia_fine_tuned_checkpoint.png`](per_method/pneumonia/dvce_original_style_with_cone_projection_pneumonia_fine_tuned_checkpoint.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | MAD | RMS | Geänderte Pixel |
+| Role | Sample | Prediction | Target | Valid | MAD | RMS | Changed pixels |
 | --- | ---: | --- | --- | --- | ---: | ---: | ---: |
-| ausgewogen | 19 | PNEUMONIA `0,99` → NORMAL `0,99` | NORMAL | ja | `0,0171` | `0,0331` | `4,88 %` |
-| höchste Konfidenz | 3 | NORMAL `0,57` → PNEUMONIA `1,00` | PNEUMONIA | ja | `0,0195` | `0,0267` | `6,38 %` |
-| geringe visuelle Plausibilität | 10 | PNEUMONIA `1,00` → NORMAL `1,00` | NORMAL | ja | `0,0240` | `0,0391` | `12,08 %` |
+| balanced | 19 | PNEUMONIA `0.99` → NORMAL `0.99` | NORMAL | yes | `0.0171` | `0.0331` | `4.88 %` |
+| highest confidence | 3 | NORMAL `0.57` → PNEUMONIA `1.00` | PNEUMONIA | yes | `0.0195` | `0.0267` | `6.38 %` |
+| low visual plausibility | 10 | PNEUMONIA `1.00` → NORMAL `1.00` | NORMAL | yes | `0.0240` | `0.0391` | `12.08 %` |
 
-Alle drei Fälle sind modellvalide und erreichen Konfidenzen zwischen `0,99` und `1,00`. Gegenüber Bild 5-11 bleiben radiografische Grundstrukturen teilweise schärfer erhalten. Gleichzeitig treten punkt- und linienförmige helle, dunkle oder farbige Strukturen sowie Verformungen an Rippen- und Wirbelsäulenbereichen auf. Diese Artefakte lassen sich nicht eindeutig einem pneumoniespezifischen Befund zuordnen. Die Abbildung dokumentiert die hohe Zielklassenerreichung dieser konkreten Konfiguration, nicht einen nachgewiesenen medizinischen oder isolierten kausalen Fine-Tuning-Effekt.
+All three cases are model-valid and reach confidences between `0.99` and `1.00`. Compared with Figure 5-11, radiographic base structures remain partly sharper. At the same time, point- and line-shaped light, dark, or colored structures as well as deformations at the rib and spine regions appear. These artifacts cannot be clearly assigned to a pneumonia-specific finding. The figure documents the high target-class achievement of this specific configuration, not a proven medical or isolated causal fine-tuning effect.
 
-### Bild 5-13: DVCE ohne Cone Projection und mit OpenAI-Checkpoint
+### Figure 5-13: DVCE without Cone Projection and with OpenAI checkpoint
 
-Abbildung: [`per_method/pneumonia/dvce_original_style_without_cone_projection_openai_checkpoint.png`](per_method/pneumonia/dvce_original_style_without_cone_projection_openai_checkpoint.png)
+Figure: [`per_method/pneumonia/dvce_original_style_without_cone_projection_openai_checkpoint.png`](per_method/pneumonia/dvce_original_style_without_cone_projection_openai_checkpoint.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | MAD | RMS | Geänderte Pixel |
+| Role | Sample | Prediction | Target | Valid | MAD | RMS | Changed pixels |
 | --- | ---: | --- | --- | --- | ---: | ---: | ---: |
-| ausgewogen | 19 | PNEUMONIA `0,99` → NORMAL `1,00` | NORMAL | ja | `0,0148` | `0,0275` | `3,47 %` |
-| höchste Konfidenz | 2 | NORMAL `0,74` → PNEUMONIA `1,00` | PNEUMONIA | ja | `0,0194` | `0,0276` | `6,93 %` |
-| geringe visuelle Plausibilität | 10 | PNEUMONIA `1,00` → NORMAL `1,00` | NORMAL | ja | `0,0204` | `0,0328` | `8,65 %` |
+| balanced | 19 | PNEUMONIA `0.99` → NORMAL `1.00` | NORMAL | yes | `0.0148` | `0.0275` | `3.47 %` |
+| highest confidence | 2 | NORMAL `0.74` → PNEUMONIA `1.00` | PNEUMONIA | yes | `0.0194` | `0.0276` | `6.93 %` |
+| low visual plausibility | 10 | PNEUMONIA `1.00` → NORMAL `1.00` | NORMAL | yes | `0.0204` | `0.0328` | `8.65 %` |
 
-Alle dargestellten Counterfactuals erreichen die Zielklasse mit `1,00`. Im engen Sinn der Modellvalidität ist diese Ablation damit erfolgreicher als die Cone-Konfiguration mit OpenAI-Checkpoint in Bild 5-11. Visuell bleiben jedoch globale Texturänderungen, anatomische Verschiebungen sowie künstliche punkt- oder linienförmige Strukturen erkennbar. Insbesondere bei den Wechseln von `PNEUMONIA` zu `NORMAL` wird die gesamte Aufnahme umgeformt, ohne dass sich die Entscheidung auf die Entfernung einer klaren fokalen Verschattung zurückführen lässt. Höhere Zielklassenkonfidenz ohne Cone Projection ist daher kein Beleg für bessere medizinische Plausibilität.
+All shown counterfactuals reach the target class with `1.00`. In the narrow sense of model validity, this ablation is therefore more successful than the Cone configuration with the OpenAI checkpoint in Figure 5-11. Visually, however, global texture changes, anatomical shifts, and artificial point- or line-shaped structures remain recognizable. Particularly in the `PNEUMONIA` to `NORMAL` changes, the entire image is reshaped without the decision being traceable to the removal of a clear focal opacity. Higher target-class confidence without Cone Projection is therefore no evidence of better medical plausibility.
 
-### Bild 5-14: DVCE ohne Cone Projection und mit Pneumonia-fine-getuntem Checkpoint
+### Figure 5-14: DVCE without Cone Projection and with Pneumonia fine-tuned checkpoint
 
-Abbildung: [`per_method/pneumonia/dvce_original_style_without_cone_projection_pneumonia_fine_tuned_checkpoint.png`](per_method/pneumonia/dvce_original_style_without_cone_projection_pneumonia_fine_tuned_checkpoint.png)
+Figure: [`per_method/pneumonia/dvce_original_style_without_cone_projection_pneumonia_fine_tuned_checkpoint.png`](per_method/pneumonia/dvce_original_style_without_cone_projection_pneumonia_fine_tuned_checkpoint.png)
 
-| Rolle | Sample | Vorhersage | Ziel | Valide | MAD | RMS | Geänderte Pixel |
+| Role | Sample | Prediction | Target | Valid | MAD | RMS | Changed pixels |
 | --- | ---: | --- | --- | --- | ---: | ---: | ---: |
-| ausgewogen | 17 | PNEUMONIA `1,00` → NORMAL `0,99` | NORMAL | ja | `0,0137` | `0,0232` | `3,00 %` |
-| höchste Konfidenz | 1 | NORMAL `0,89` → PNEUMONIA `1,00` | PNEUMONIA | ja | `0,0168` | `0,0258` | `5,23 %` |
-| geringe visuelle Plausibilität | 10 | PNEUMONIA `1,00` → NORMAL `0,99` | NORMAL | ja | `0,0195` | `0,0305` | `7,59 %` |
+| balanced | 17 | PNEUMONIA `1.00` → NORMAL `0.99` | NORMAL | yes | `0.0137` | `0.0232` | `3.00 %` |
+| highest confidence | 1 | NORMAL `0.89` → PNEUMONIA `1.00` | PNEUMONIA | yes | `0.0168` | `0.0258` | `5.23 %` |
+| low visual plausibility | 10 | PNEUMONIA `1.00` → NORMAL `0.99` | NORMAL | yes | `0.0195` | `0.0305` | `7.59 %` |
 
-Die drei Counterfactuals sind mit Konfidenzen von `0,99` bis `1,00` modellvalide. Beim ausgewogenen Sample 17 liegt der geänderte Pixelanteil oberhalb des Schwellwerts bei `3,00 %`; dennoch verändern sich Kontrast, Wirbelsäulen- und Lungenzeichnung über größere Bereiche. Die übrigen Fälle zeigen diffuse Texturverstärkungen und anatomische Glättungen, die nicht als eindeutiges Hinzufügen oder Entfernen einer Pneumonie gelesen werden können. Gemeinsam mit Bild 5-12 zeigt die Abbildung, dass Cone und No-Cone unterschiedliche Artefaktmuster erzeugen. Die Wahl der Guidance ist deshalb ein Plausibilitäts- und nicht nur ein Validitätsproblem.
+The three counterfactuals are model-valid with confidences from `0.99` to `1.00`. For the balanced sample 17, the changed pixel fraction above the threshold is `3.00 %`; nonetheless, contrast, spine, and lung markings change across larger regions. The remaining cases show diffuse texture intensifications and anatomical smoothing that cannot be read as an unambiguous adding or removing of a pneumonia. Together with Figure 5-12, the figure shows that Cone and No-Cone produce different artifact patterns. The choice of guidance is therefore a plausibility problem and not only a validity problem.
 
-## Methodenübergreifende Schlussfolgerungen
+## Cross-Method Conclusions
 
-1. **Modellvalidität und medizinische Plausibilität bleiben strikt getrennt.** Ein erfolgreicher Zielklassenwechsel zeigt nur, dass das untersuchte Modell auf die Veränderung reagiert. Er beweist keine realistische Krankheitsentwicklung und keine kausale medizinische Transformation.
-2. **Kleine Distanzwerte reichen als Qualitätsnachweis nicht aus.** Besonders CFProto und einzelne DVCE-Fälle zeigen, dass geringe MAD-, RMS- oder Changed-Pixel-Werte mit kaum interpretierbaren, verteilten oder global wirkenden Veränderungen einhergehen können.
-3. **Die Lokalität ist methodenabhängig.** Goyal-CVE lokalisiert Änderungen auf einem groben `7 × 7`-Gitter und bindet sie an reale Distraktorbilder. SEDC-T lokalisiert Änderungen über Segmente. Beide Darstellungen sind räumlich nachvollziehbar, können aber breite Anatomie- oder Aufnahmeunterschiede enthalten.
-4. **Die Pneumonia-ROI ist eine Ablation, keine medizinische Lungensegmentierung.** Sie kann einzelne Änderungen fokussieren, erhöht in den vorliegenden Ergebnissen aber nicht automatisch die Validität und garantiert keine pneumoniespezifische Evidenz.
-5. **DVCE bleibt stark von Checkpoint und Guidance abhängig.** Die fine-getunten und die No-Cone-Konfigurationen erreichen in den untersuchten Läufen häufig eine höhere Zielklassenerreichung. Die Abbildungen zeigen jedoch weiterhin globale Rekonstruktionen und künstliche Strukturen. Aufgrund nicht vollständig kontrollierter Ausführungsbedingungen wird kein isolierter kausaler Fine-Tuning-Effekt behauptet.
-6. **Die Abbildungen sind Ergebnisbestandteil, nicht Dekoration.** Jede Abbildung erklärt entweder eine Methode, einen Validitäts-Lokalitäts-Plausibilitäts-Trade-off, einen Failure Case oder eine klar gekennzeichnete Ablation.
+1. **Model validity and medical plausibility remain strictly separate.** A successful target-class change only shows that the examined model reacts to the change. It proves neither a realistic disease progression nor a causal medical transformation.
+2. **Small distance values are not sufficient as proof of quality.** CFProto in particular, and individual DVCE cases, show that small MAD, RMS, or changed-pixel values can go together with barely interpretable, distributed, or globally acting changes.
+3. **Locality is method-dependent.** Goyal-CVE localizes changes on a coarse `7 × 7` grid and binds them to real distractor images. SEDC-T localizes changes over segments. Both representations are spatially traceable but can contain broad anatomy or acquisition differences.
+4. **The Pneumonia ROI is an ablation, not a medical lung segmentation.** It can focus individual changes but, in the present results, does not automatically increase validity and guarantees no pneumonia-specific evidence.
+5. **DVCE remains strongly dependent on checkpoint and guidance.** The fine-tuned and the No-Cone configurations frequently reach a higher target-class achievement in the examined runs. The figures, however, still show global reconstructions and artificial structures. Because of not fully controlled execution conditions, no isolated causal fine-tuning effect is claimed.
+6. **The figures are part of the results, not decoration.** Each figure explains either a method, a validity–locality–plausibility trade-off, a failure case, or a clearly marked ablation.
